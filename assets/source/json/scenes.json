@@ -1,0 +1,16 @@
+[
+    {
+        "name": "scene1",
+        "on?": false,
+        "id": "nge8lkujmaxr7twqk9ix",
+        "light": ["ieh2ysqe65f0l0b9th5g"],
+        "signal": []
+    },
+    {
+      "name": "scene2",
+        "on?": false,
+        "id": "bpxvgdifcnj2rhgkoz2v",
+        "light": ["ifp6t5ib8vfe4xeikfxh"],
+        "signal": []
+    }
+]

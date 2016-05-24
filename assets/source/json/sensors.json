@@ -1,0 +1,770 @@
+[
+    {
+        "name": "entrada alberca",
+        "hostname": "ladonaira14",
+        "id": "90:a2:da:f8:40:fa",
+
+        "isOnline": false,
+
+        "roomId": "if9g3wlnd3gppbe6hah1"
+    },
+    {
+        "name": "ausgang piano tür",
+        "hostname": "ladonaira38",
+        "id": "90:a2:da:fc:0e:4e",
+
+        "isOnline": false,
+
+        "roomId": "igdlgbaef9kfxuxsicx"
+    },
+    {
+        "name": "cama derecha",
+        "hostname": "ladonaira03",
+        "id": "90:a2:da:f8:0b:10",
+
+        "isOnline": false,
+
+    },
+    {
+        "name": "armario",
+        "hostname": "ladonaira26",
+        "id": "90:a2:da:f8:08:30",
+
+        "isOnline": false,
+
+        "roomId": "igdgg0tidn13srafpuo2"
+    },
+    {
+        "name": "cama derecha",
+        "hostname": "ladonaira52",
+        "id": "90:a2:da:f8:24:da",
+
+        "isOnline": false,
+
+        "roomId": "ifp6t5i32atw2r3ljdsc"
+    },
+    {
+        "name": "entrada",
+        "hostname": "ladonaira24",
+        "id": "90:a2:da:fc:0e:4f",
+
+        "isOnline": false,
+
+        "roomId": "igdgg0tidn13srafpuo2"
+    },
+    {
+        "name": "habitación",
+        "hostname": "ladonaira78",
+        "id": "90:a2:da:fc:0a:17",
+
+        "isOnline": false,
+
+        "roomId": "ieh1fuif31jtqk4106j4"
+    },
+    {
+        "name": "baño",
+        "hostname": "ladonaira19",
+        "id": "90:a2:da:fc:0b:0c",
+
+        "isOnline": false,
+
+        "roomId": "ife44cd3dndczlf35uyg"
+    },
+    {
+        "name": "ducha",
+        "hostname": "ladonaira60",
+        "id": "90:a2:da:f8:24:0c",
+
+        "isOnline": false,
+
+        "roomId": "ieh1fjdf8q9l245dxx91"
+    },
+    {
+        "name": "habitación planta alta",
+        "hostname": "ladonaira82",
+        "id": "90:a2:da:f8:41:2e",
+
+        "isOnline": false,
+
+        "roomId": "ieh41mu75v9jme3czcmd"
+    },
+    {
+        "name": "cabezero entreplanta",
+        "hostname": "ladonaira15",
+        "id": "90:a2:da:fc:0e:4d",
+
+        "isOnline": false,
+
+        "roomId": "ife44cd3dndczlf35uyg"
+    },
+    {
+        "name": "lavanderia cocina",
+        "hostname": "ladonaira44",
+        "id": "90:a2:da:f8:07:ee",
+
+        "isOnline": false,
+
+        "roomId": "ifmxjp3w8zbu779s72y5"
+    },
+    {
+        "name": "water",
+        "hostname": "ladonaira62",
+        "id": "90:a2:da:fc:0f:0c",
+
+        "isOnline": false,
+
+        "roomId": "ieh1fjdf8q9l245dxx91"
+    },
+    {
+        "name": "entrada",
+        "hostname": "ladonaira35",
+        "id": "90:a2:da:fc:09:d3",
+
+        "isOnline": false,
+
+        "roomId": "iffo87bqbodnyi2e8exe"
+    },
+    {
+        "name": "cama derecha",
+        "hostname": "ladonaira30",
+        "id": "90:a2:da:fc:09:e2",
+
+        "isOnline": false,
+
+        "roomId": "igdgg0tidn13srafpuo2"
+    },
+    {
+        "name": "escalera entreplanta",
+        "hostname": "ladonaira16",
+        "id": "90:a2:da:fc:08:ec",
+
+        "isOnline": false,
+
+        "roomId": "ife44cd3dndczlf35uyg"
+    },
+    {
+        "name": "chimenea",
+        "hostname": "ladonaira85",
+        "id": "90:a2:da:f8:08:be",
+
+        "isOnline": false,
+
+        "roomId": "if6uzfxz55i9kh5r84lp"
+    },
+    {
+        "name": "pasillo laura",
+        "hostname": "ladonaira23",
+        "id": "90:a2:da:fc:09:be",
+
+        "isOnline": false,
+
+        "roomId": "if9g3wlnd3gppbe6hah1"
+    },
+    {
+        "name": "baño",
+        "hostname": "ladonaira54",
+        "id": "90:a2:da:f8:23:fe",
+
+        "isOnline": false,
+
+        "roomId": "ifp6t5i32atw2r3ljdsc"
+    },
+    {
+        "name": "salon piano",
+        "hostname": "ladonaira40",
+        "id": "90:a2:da:f8:24:21",
+
+        "isOnline": false,
+
+        "roomId": "igdlgbaef9kfxuxsicx"
+    },
+    {
+        "name": "cama derecha",
+        "hostname": "ladonaira06",
+        "id": "90:a2:da:f8:41:05",
+
+        "isOnline": false,
+
+        "roomId": "iffo87bqbodnyi2e8exe"
+    },
+    {
+        "name": "acceso saloncito",
+        "hostname": "ladonaira11",
+        "id": "90:a2:da:f8:08:93",
+
+        "isOnline": false,
+
+        "roomId": "if6uzfxz55i9kh5r84lp"
+    },
+    {
+        "name": "entrada",
+        "hostname": "ladonaira20",
+        "id": "90:a2:da:f8:08:2f",
+
+        "isOnline": false,
+
+        "roomId": "ife44cd3dndczlf35uyg"
+    },
+    {
+        "name": "escalera entreplanta",
+        "hostname": "ladonaira28",
+        "id": "90:a2:da:fc:0f:0b",
+
+        "isOnline": false,
+
+        "roomId": "igdgg0tidn13srafpuo2"
+    },
+    {
+        "name": "muro chimenea",
+        "hostname": "ladonaira72",
+        "id": "90:a2:da:f9:0b:18",
+
+        "isOnline": false,
+
+        "roomId": "ieh2yspb4m8iu610zksj"
+    },
+    {
+        "name": "cama derecha",
+        "hostname": "ladonaira04",
+        "id": "90:a2:da:fc:0e:0e",
+
+        "isOnline": false,
+
+        "roomId": "iffo8joncwz1v9daa4ng"
+    },
+    {
+        "name": "baño",
+        "hostname": "ladonaira61",
+        "id": "90:a2:da:fc:0e:30",
+
+        "isOnline": false,
+
+        "roomId": "ieh1fjdf8q9l245dxx91"
+    },
+    {
+        "name": "cama derecha",
+        "hostname": "ladonaira89",
+        "id": "90:a2:da:f8:41:07",
+
+        "isOnline": false,
+
+        "roomId": "ife44cd3dndczlf35uyg"
+    },
+    {
+        "name": "cama derecha",
+        "hostname": "ladonaira32",
+        "id": "90:a2:da:f8:41:0c",
+
+        "isOnline": false,
+
+    },
+    {
+        "name": "entrada",
+        "hostname": "ladonaira10",
+        "id": "90:a2:da:f8:24:32",
+
+        "isOnline": false,
+
+        "roomId": "iffo8joncwz1v9daa4ng"
+    },
+    {
+        "name": "cama izquierda",
+        "hostname": "ladonaira51",
+        "id": "90:a2:da:fc:0e:1a",
+
+        "isOnline": false,
+
+        "roomId": "ifp6t5i32atw2r3ljdsc"
+    },
+    {
+        "name": "lavanderia salón",
+        "hostname": "ladonaira43",
+        "id": "90:a2:da:f8:0b:0b",
+
+        "isOnline": false,
+
+        "roomId": "ifmxjp3w8zbu779s72y5"
+    },
+    {
+        "name": "hinterausgang",
+        "hostname": "ladonaira39",
+        "id": "90:a2:da:fc:0f:14",
+
+        "isOnline": false,
+
+        "roomId": "igdlgbaef9kfxuxsicx"
+    },
+    {
+        "name": "baño",
+        "hostname": "ladonaira09",
+        "id": "90:a2:da:f8:24:db",
+
+        "isOnline": false,
+
+        "roomId": "iffo8joncwz1v9daa4ng"
+    },
+    {
+        "name": "baño",
+        "hostname": "ladonaira34",
+        "id": "90:a2:da:f8:24:a0",
+
+        "isOnline": false,
+
+        "roomId": "iffo87bqbodnyi2e8exe"
+    },
+    {
+        "name": "cocina - patio inglés",
+        "hostname": "ladonaira47",
+        "id": "90:a2:da:f8:06:fc",
+
+        "isOnline": false,
+
+        "roomId": "ifmxjp3w8zbu779s72y5"
+    },
+    {
+        "name": "escalera",
+        "hostname": "ladonaira27",
+        "id": "90:a2:da:f8:24:d8",
+
+        "isOnline": false,
+
+        "roomId": "igdgg0tidn13srafpuo2"
+    },
+    {
+        "name": "pasillo",
+        "hostname": "ladonaira77",
+        "id": "90:a2:da:f8:23:af",
+
+        "isOnline": false,
+
+        "roomId": "ieh1fuif31jtqk4106j4"
+    },
+    {
+        "name": "cocina lavanderia",
+        "hostname": "ladonaira45",
+        "id": "90:a2:da:f8:23:c7",
+
+        "isOnline": false,
+
+        "roomId": "ifmxjp3w8zbu779s72y5"
+    },
+    {
+        "name": "water",
+        "hostname": "ladonaira55",
+        "id": "90:a2:da:f8:08:4b",
+
+        "isOnline": false,
+
+        "roomId": "ifp6t5i32atw2r3ljdsc"
+    },
+    {
+        "name": "entrada patio inglés",
+        "hostname": "ladonaira21",
+        "id": "90:a2:da:fc:09:bb",
+
+        "isOnline": false,
+
+        "roomId": "if9g3wlnd3gppbe6hah1"
+    },
+    {
+        "name": "cama izquierda",
+        "hostname": "ladonaira07",
+        "id": "90:a2:da:fc:0e:43",
+
+        "isOnline": false,
+
+        "roomId": "iffo87bqbodnyi2e8exe"
+    },
+    {
+        "name": "cocina",
+        "hostname": "ladonaira42",
+        "id": "90:a2:da:fc:08:e5",
+
+        "isOnline": false,
+
+        "roomId": "igdlgbaef9kfxuxsicx"
+    },
+    {
+        "name": "baño planta alta",
+        "hostname": "ladonaira81",
+        "id": "90:a2:da:fc:09:df",
+
+        "isOnline": false,
+
+        "roomId": "ieh41mu75v9jme3czcmd"
+    },
+    {
+        "name": "acceso planta alta",
+        "hostname": "ladonaira80",
+        "id": "90:a2:da:fc:0a:47",
+
+        "isOnline": false,
+
+        "roomId": "ieh41mu75v9jme3czcmd"
+    },
+    {
+        "name": "cama derecha",
+        "hostname": "ladonaira58",
+        "id": "90:a2:da:fc:0a:06",
+
+        "isOnline": false,
+
+        "roomId": "ieh1fjdf8q9l245dxx91"
+    },
+    {
+        "name": "cama izquierda",
+        "hostname": "ladonaira70",
+        "id": "90:a2:da:f8:24:6e",
+
+        "isOnline": false,
+
+    },
+    {
+        "name": "ausgang piano ",
+        "hostname": "ladonaira37",
+        "id": "90:a2:da:fc:08:b8",
+
+        "isOnline": false,
+
+        "roomId": "igdlgbaef9kfxuxsicx"
+    },
+    {
+        "name": "cocina - era",
+        "hostname": "ladonaira46",
+        "id": "90:a2:da:f8:24:77",
+
+        "isOnline": false,
+
+        "roomId": "ifmxjp3w8zbu779s72y5"
+    },
+    {
+        "name": "cama izquierda",
+        "hostname": "ladonaira02",
+        "id": "90:a2:da:f8:41:13",
+
+        "isOnline": false,
+
+        "roomId": "ife44cd3dndczlf35uyg"
+    },
+    {
+        "name": "cocina",
+        "hostname": "ladonaira73",
+        "id": "90:a2:da:fc:0e:3e",
+
+        "isOnline": false,
+
+        "roomId": "ieh2yspb4m8iu610zksj"
+    },
+    {
+        "name": "nicho",
+        "hostname": "ladonaira79",
+        "id": "90:a2:da:f8:23:9a",
+
+        "isOnline": false,
+
+        "roomId": "ieh1fuif31jtqk4106j4"
+    },
+    {
+        "name": "entrada patio palmera",
+        "hostname": "ladonaira67",
+        "id": "90:a2:da:f8:06:e7",
+
+        "isOnline": false,
+
+        "roomId": "if6uzfxz55i9kh5r84lp"
+    },
+    {
+        "name": "water",
+        "hostname": "ladonaira86",
+        "id": "90:a2:da:fc:0e:5b",
+
+        "isOnline": false,
+
+        "roomId": "igdgg0tidn13srafpuo2"
+    },
+    {
+        "name": "entrada alberca",
+        "hostname": "ladonaira29",
+        "id": "90:a2:da:fc:08:d0",
+
+        "isOnline": false,
+
+        "roomId": "igdgg0tidn13srafpuo2"
+    },
+    {
+        "name": "cama izquierda",
+        "hostname": "ladonaira33",
+        "id": "90:a2:da:f8:0b:26",
+
+        "isOnline": false,
+
+    },
+    {
+        "name": "entrada",
+        "hostname": "ladonaira57",
+        "id": "90:a2:da:f8:24:c2",
+
+        "isOnline": false,
+
+        "roomId": "ieh1fjdf8q9l245dxx91"
+    },
+    {
+        "name": "bodega",
+        "hostname": "ladonaira49",
+        "id": "90:a2:da:fc:09:ce",
+
+        "isOnline": false,
+
+        "roomId": "ifmxjp3w8zbu779s72y5"
+    },
+    {
+        "name": "entrada alberca",
+        "hostname": "ladonaira17",
+        "id": "90:a2:da:fc:09:c5",
+
+        "isOnline": false,
+
+        "roomId": "ife44cd3dndczlf35uyg"
+    },
+    {
+        "name": "water",
+        "hostname": "ladonaira18",
+        "id": "90:a2:da:fc:0e:4b",
+
+        "isOnline": false,
+
+        "roomId": "ife44cd3dndczlf35uyg"
+    },
+    {
+        "name": "cama derecha",
+        "hostname": "ladonaira87",
+        "id": "90:a2:da:f8:24:24",
+
+        "isOnline": false,
+
+    },
+    {
+        "name": "entrada alberca",
+        "hostname": "ladonaira66",
+        "id": "90:a2:da:f8:0b:11",
+
+        "isOnline": false,
+
+        "roomId": "if6uzfxz55i9kh5r84lp"
+    },
+    {
+        "name": "ducha",
+        "hostname": "ladonaira08",
+        "id": "90:a2:da:f8:08:6d",
+
+        "isOnline": false,
+
+        "roomId": "iffo8joncwz1v9daa4ng"
+    },
+    {
+        "name": "entrada Ana",
+        "hostname": "ladonaira63",
+        "id": "90:a2:da:f8:08:9f",
+
+        "isOnline": false,
+
+        "roomId": "if6uzfxz55i9kh5r84lp"
+    },
+    {
+        "name": "entrada recibidor",
+        "hostname": "ladonaira13",
+        "id": "90:a2:da:f8:07:e1",
+
+        "isOnline": false,
+
+        "roomId": "if9g3wlnd3gppbe6hah1"
+    },
+    {
+        "name": "lavabo",
+        "hostname": "ladonaira75",
+        "id": "90:a2:da:f8:24:5c",
+
+        "isOnline": false,
+
+        "roomId": "ieh1fuif31jtqk4106j4"
+    },
+    {
+        "name": "entrada baño",
+        "hostname": "ladonaira53",
+        "id": "90:a2:da:f8:08:7f",
+
+        "isOnline": false,
+
+        "roomId": "ifp6t5i32atw2r3ljdsc"
+    },
+    {
+        "name": "cama izquierda",
+        "hostname": "ladonaira90",
+        "id": "90:a2:da:f8:40:e7",
+
+        "isOnline": false,
+
+        "roomId": "iffo8joncwz1v9daa4ng"
+    },
+    {
+        "name": "cabazero izquierda",
+        "hostname": "ladonaira84",
+        "id": "90:a2:da:f8:41:00",
+
+        "isOnline": false,
+
+        "roomId": "ieh41mu75v9jme3czcmd"
+    },
+    {
+        "name": "water",
+        "hostname": "ladonaira65",
+        "id": "90:a2:da:f8:0b:23",
+
+        "isOnline": false,
+
+        "roomId": "if6uzfxz55i9kh5r84lp"
+    },
+    {
+        "name": "galleria cabeza",
+        "hostname": "ladonaira36",
+        "id": "90:a2:da:fc:09:f3",
+
+        "isOnline": false,
+
+        "roomId": "igdlgbaef9kfxuxsicx"
+    },
+    {
+        "name": "recibidor salón",
+        "hostname": "ladonaira69",
+        "id": "90:a2:da:f8:07:24",
+
+        "isOnline": false,
+
+        "roomId": "if6uzfxz55i9kh5r84lp"
+    },
+    {
+        "name": "urinario",
+        "hostname": "ladonaira64",
+        "id": "90:a2:da:f8:0b:1e",
+
+        "isOnline": false,
+
+        "roomId": "if6uzfxz55i9kh5r84lp"
+    },
+    {
+        "name": "entrada",
+        "hostname": "ladonaira50",
+        "id": "90:a2:da:f8:41:2d",
+
+        "isOnline": false,
+
+        "roomId": "ifp6t5i32atw2r3ljdsc"
+    },
+    {
+        "name": "cama izquierda",
+        "hostname": "ladonaira31",
+        "id": "90:a2:da:f8:0b:1c",
+
+        "isOnline": false,
+
+        "roomId": "igdgg0tidn13srafpuo2"
+    },
+    {
+        "name": "entreplanta",
+        "hostname": "ladonaira56",
+        "id": "90:a2:da:fc:0a:15",
+
+        "isOnline": false,
+
+        "roomId": "ifp6t5i32atw2r3ljdsc"
+    },
+    {
+        "name": "entrada patio",
+        "hostname": "ladonaira74",
+        "id": "90:a2:da:fd:03:02",
+
+        "isOnline": false,
+
+        "roomId": "ieh2yspb4m8iu610zksj"
+    },
+    {
+        "name": "patio inglés",
+        "hostname": "ladonaira41",
+        "id": "90:a2:da:f8:24:d9",
+
+        "isOnline": false,
+
+        "roomId": "igdlgbaef9kfxuxsicx"
+    },
+    {
+        "name": "cocina - salón",
+        "hostname": "ladonaira48",
+        "id": "90:a2:da:f8:24:3d",
+
+        "isOnline": false,
+
+        "roomId": "ifmxjp3w8zbu779s72y5"
+    },
+    {
+        "name": "cama izquierda",
+        "hostname": "ladonaira88",
+        "id": "90:a2:da:fc:0e:25",
+
+        "isOnline": false,
+
+    },
+    {
+        "name": "entrada priam",
+        "hostname": "ladonaira12",
+        "id": "90:a2:da:f8:24:a5",
+
+        "isOnline": false,
+
+        "roomId": "if9g3wlnd3gppbe6hah1"
+    },
+    {
+        "name": "WC",
+        "hostname": "ladonaira76",
+        "id": "90:a2:da:fc:0a:03",
+
+        "isOnline": false,
+
+        "roomId": "ieh1fuif31jtqk4106j4"
+    },
+    {
+        "name": "cama izquierda",
+        "hostname": "ladonaira59",
+        "id": "90:a2:da:f9:0a:c3",
+
+        "isOnline": false,
+
+        "roomId": "ieh1fjdf8q9l245dxx91"
+    },
+    {
+        "name": "entrada recibidor",
+        "hostname": "ladonaira71",
+        "id": "90:a2:da:fc:0a:2a",
+
+        "isOnline": false,
+
+        "roomId": "ieh2yspb4m8iu610zksj"
+    },
+    {
+        "name": "pasillo sofia",
+        "hostname": "ladonaira22",
+        "id": "90:a2:da:f8:24:e4",
+
+        "isOnline": false,
+
+        "roomId": "if9g3wlnd3gppbe6hah1"
+    },
+    {
+        "name": "cabezero derecha",
+        "hostname": "ladonaira83",
+        "id": "90:a2:da:f8:24:81",
+
+        "isOnline": false,
+
+        "roomId": "ieh41mu75v9jme3czcmd"
+    }
+]

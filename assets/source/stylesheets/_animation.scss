@@ -1,0 +1,180 @@
+
+$rx0: 27.75px;
+$rx1: 2px;
+$width0: 55.5px;
+$width1: 128px;
+$height0: 55.5px;
+$height1: 32px;
+
+$opacity0: 0;
+$opacity1: 1;
+
+$color0: $re-yellow;
+$color1: $re-grey-3;
+
+@-webkit-keyframes NODE-ANIMATION {
+  0%   { 
+    rx: $rx0;
+    width: $width0;
+    height: $height0;
+    fill: $color0;
+  }
+  100% { 
+    rx: $rx1;
+    width: $width1;
+    height: $height1;
+    fill: $color1;
+  }
+}
+@-moz-keyframes NODE-ANIMATION {
+  0%   { 
+    rx: $rx0; 
+    width: $width0;
+    height: $height0;
+    fill: $color0;
+  }
+  100% { 
+    // opacity: $opacity1; 
+    rx: $rx1;
+    width: $width1;
+    height: $height1;
+    fill: $color1;
+  }
+}
+@-o-keyframes NODE-ANIMATION {
+  0%   { 
+    rx: $rx0;
+    width: $width0;
+    height: $height0;
+    fill: $color0;
+  }
+  100% { 
+    rx: $rx1;
+    width: $width1;
+    height: $height1;
+    fill: $color1;
+  }
+}
+@keyframes NODE-ANIMATION {
+  0%   { 
+    rx: $rx0;
+    width: $width0;
+    height: $height0;
+    fill: $color0;
+  }
+  100% { 
+    rx: $rx1;
+    width: $width1;
+    height: $height1;
+    fill: $color1;
+  }
+}
+
+@-webkit-keyframes NODE-CONTENT-ANIMATION {
+  0%   { 
+   opacity: $opacity0;
+  }
+  100% { 
+   opacity: $opacity1;
+  }
+}
+@-moz-keyframes NODE-CONTENT-ANIMATION {
+ 0%   { 
+   opacity: $opacity0;
+  }
+  100% { 
+   opacity: $opacity1;
+  }
+}
+@-o-keyframes NODE-CONTENT-ANIMATION {
+  0%   { 
+   opacity: $opacity0;
+  }
+  100% { 
+   opacity: $opacity1;
+  }
+}
+@keyframes NODE-CONTENT-ANIMATION {
+  0%   { 
+   opacity: $opacity0;
+  }
+  100% { 
+   opacity: $opacity1;
+  }
+}
+
+svg#pd-svg {
+    g.node {
+        rect.brand-new {
+
+          width: $width0;
+          height: $height0;
+          rx: $rx0;
+
+          -webkit-animation: NODE-ANIMATION ; /* Safari 4+ */
+          -moz-animation:    NODE-ANIMATION ; /* Fx 5+ */
+          -o-animation:      NODE-ANIMATION ; /* Opera 12+ */
+          animation:         NODE-ANIMATION ; /* IE 10+, Fx 29+ */
+
+          -webkit-animation-duration: 0.3s;
+          -moz-animation-duration:    0.3s;
+          -o-animation-duration:      0.3s;
+          animation-duration:         0.3s;
+
+          -webkit-animation-iteration-count: initial;
+          -moz-animation-iteration-count:    initial;
+          -o-animation-iteration-count:      initial;
+          animation-iteration-count:         initial;
+
+          -webkit-animation-timing-function: ease-in; 
+          -moz-animation-timing-function:    ease-in; 
+          -o-animation-timing-function:      ease-in; 
+          animation-timing-function:         ease-in; 
+
+          -webkit-animation-fill-mode: forwards; 
+          -moz-animation-fill-mode:    forwards; 
+          -o-animation-fill-mode:      forwards; 
+          animation-fill-mode:         forwards; 
+
+          -webkit-animation-delay: 0.2s; 
+          -moz-animation-delay:    0.2s; 
+          -o-animation-delay:      0.2s; 
+          animation-delay:         0.2s; 
+        }
+
+        g.node-content {
+            opacity: $opacity0;
+
+            -webkit-animation: NODE-CONTENT-ANIMATION ; /* Safari 4+ */
+            -moz-animation:    NODE-CONTENT-ANIMATION ; /* Fx 5+ */
+            -o-animation:      NODE-CONTENT-ANIMATION ; /* Opera 12+ */
+            animation:         NODE-CONTENT-ANIMATION ; /* IE 10+, Fx 29+ */
+
+            -webkit-animation-duration: 0.2s;
+            -moz-animation-duration:    0.2s;
+            -o-animation-duration:      0.2s;
+            animation-duration:         0.2s;
+
+            -webkit-animation-iteration-count: initial;
+            -moz-animation-iteration-count:    initial;
+            -o-animation-iteration-count:      initial;
+            animation-iteration-count:         initial;
+
+            -webkit-animation-timing-function: ease-in; 
+            -moz-animation-timing-function:    ease-in; 
+            -o-animation-timing-function:      ease-in; 
+            animation-timing-function:         ease-in; 
+
+            -webkit-animation-fill-mode: forwards; 
+            -moz-animation-fill-mode:    forwards; 
+            -o-animation-fill-mode:      forwards; 
+            animation-fill-mode:         forwards; 
+
+            -webkit-animation-delay: 0.4s; 
+            -moz-animation-delay:    0.4s; 
+            -o-animation-delay:      0.4s; 
+            animation-delay:         0.4s; 
+        }
+    }
+}
+

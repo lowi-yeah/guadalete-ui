@@ -1,0 +1,118 @@
+@font-face {
+    font-family: "AvenirNext";
+    src: url("#{$font-path}avenir-next/AvenirNextLTPro-UltLt.ttf") format("truetype");
+    font-weight: 100;
+   font-style: normal;
+}
+
+@font-face {
+   font-family: "AvenirNext";
+   src: url("#{$font-path}avenir-next/AvenirNextLTPro-Regular.ttf") format("truetype");
+   font-weight: 400;
+   font-style: normal;
+}
+
+@font-face {
+   font-family: "AvenirNext";
+   src: url("#{$font-path}avenir-next/AvenirNextLTPro-Medium.ttf") format("truetype");
+   font-weight: 500;
+   font-style: normal;
+}
+
+@font-face {
+   font-family: "AvenirNext";
+   src: url("#{$font-path}avenir-next/AvenirNextLTPro-Demi.ttf") format("truetype");
+   font-weight: 600;
+   font-style: normal;
+}
+
+@font-face {
+   font-family: "AvenirNext";
+   src: url("#{$font-path}avenir-next/AvenirNextLTPro-Bold.ttf") format("truetype");
+   font-weight: 700;
+   font-style: normal;
+}
+
+@font-face {
+   font-family: "AvenirNext";
+   src: url("#{$font-path}avenir-next/AvenirNextLTPro-Heavy.ttf") format("truetype");
+   font-weight: 900;
+   font-style: normal;
+}
+
+//  _   _
+// | |_(_)_ _ _  _
+// |  _| | ' \ || |
+//  \__|_|_||_\_, |
+//            |__/
+@font-face {
+    font-family: "Silkscreen";
+    src: url("#{$silkscreen-font-path}slkscre.ttf") format("truetype");
+}
+
+// @font-face {
+//     font-family: "Tiny";
+//     src: url("#{$font-path}tiny.ttf") format("truetype");
+// }
+
+
+//                                             _
+//  _ __  ___ _ _  ___ ____ __  __ _ __ ___ __| |
+// | '  \/ _ \ ' \/ _ (_-< '_ \/ _` / _/ -_) _` |
+// |_|_|_\___/_||_\___/__/ .__/\__,_\__\___\__,_|
+//                       |_|
+@font-face {
+    font-family: "Monofur";
+    src: url("#{$font-path}monofur/monof55.ttf") format("truetype");
+}
+
+// @font-face {
+//     font-family: "EnvyCode";
+//     src: url("#{$font-path}EnvyCode/EnvyCodeR.ttf") format("truetype");
+// }
+
+// @font-face {
+//     font-family: "FiraCode";
+//     src: url("#{$fira-font-path}FiraCode-Light.otf") format("otf");
+//     font-weight: 200;
+// }
+
+// @font-face {
+//     font-family: "FiraCodeLight";
+//     src: url("#{$fira-font-path}FiraCode-Light.otf") format("otf");
+//     font-weight: 200;
+// }
+
+// @font-face {
+//     font-family: "FiraCode";
+//     src: url("#{$fira-font-path}FiraCode-Medium.otf") format("otf");
+//     font-weight: 300;
+// }
+
+// @font-face {
+//     font-family: "FiraCode";
+//     src: url("#{$fira-font-path}FiraCode-Regular.otf") format("otf");
+//     font-weight: 400;
+// }
+
+// @font-face {
+//     font-family: "FiraCode";
+//     src: url("#{$fira-font-path}FiraCode-Bold.otf") format("otf");
+//     font-weight: 500;
+// }
+
+// @font-face {
+//     font-family: "FiraCodeBold";
+//     src: url("#{$fira-font-path}FiraCode-Bold.otf") format("otf");
+//     font-weight: 500;
+// }
+
+// @font-face {
+//     font-family: "Inconsolata";
+//     src: url("#{$font-path}inconsolata/Inconsolata.otf") format("otf"),
+//          url("#{$font-path}inconsolata/Inconsolata.ttf") format("truetype");
+//     font-weight: 400;
+// }
+
+
+

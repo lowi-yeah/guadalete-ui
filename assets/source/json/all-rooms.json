@@ -1,0 +1,428 @@
+[
+  {
+    "name": "ana planta baja",
+    "id": "ieh2yspb4m8iu610zksj",
+    "lights": [
+      "ieh2ysqe65f0l0b9th5g",
+      "ieh2ysqde3r0th9c0v6y",
+      "ieh2ysqd1kxd1f4fccm2",
+      "ieh2ysqe59gkvkb19co9",
+      "ieh2ysqd3bao4b5vz4uh",
+      "ieh2ysqe88l0p8b2mfy9",
+      "ieh2ysqe2qccxh7ku88z"
+    ],
+    "sensors": [
+      "90:a2:da:f9:0b:18",
+      "90:a2:da:fc:0e:3e",
+      "90:a2:da:fc:0a:2a",
+      "90:a2:da:fd:03:02"
+    ],
+    "scenes": [
+      "ieh2ysxtzvecsfcdgsw",
+      "ieh2ysxt4dl4zmao58i9",
+      "ieh2ysxt12i959f4a11r",
+      "ieh2ysxtepet2q7s51xo",
+      "ieh2ysxtahdpv39vvcg8"
+    ]
+  },
+  {
+    "name": "magnolia",
+    "id": "ifp6t5i32atw2r3ljdsc",
+    "lights": [
+      "ifp6t5ic87nqxq1yy7b9",
+      "ifp6t5ib683xnm4hnn3q",
+      "ifp6t5icc4bhja2nunn8",
+      "ifp6t5iczjpcdcnpej7",
+      "ifp6t5ibczstwq9120jz",
+      "ifp6t5ic1nhh7ab4sj0x",
+      "ifp6t5idd5wl4heqkeow",
+      "ifp6t5icevow7t57j59f",
+      "ifp6t5ib8vfe4xeikfxh",
+      "ifp6t5ib4a7rde441qn1",
+      "ifp6t5ic7u5y2xduoo3"
+    ],
+    "sensors": [
+      "90:a2:da:fc:0e:1a",
+      "90:a2:da:fc:0a:15",
+      "90:a2:da:f8:24:da",
+      "90:a2:da:f8:08:7f",
+      "90:a2:da:f8:23:fe",
+      "90:a2:da:f8:41:2d",
+      "90:a2:da:f8:08:4b"
+    ],
+    "scenes": [
+      "ifp6t5ka92j0k1ahe9p2",
+      "ifp6t5kaacazhg9hk5zi",
+      "ifp6t5kacv4v4x4nmyjj",
+      "ifp6t5kavshabcx888q",
+      "ifp6t5ka18ffwb8puq7i",
+      "ifp6t5ka1wb981aiyit1",
+      "ifp6t5ka9nx98a5jf60v"
+    ]
+  },
+  {
+    "name": "ana planta alta",
+    "id": "ieh41mu75v9jme3czcmd",
+    "lights": [
+      "ieh41mud6gup1va24k4a",
+      "ieh41mue7jhayf5djwaf",
+      "ieh41mue7rf6s5ehh1vq",
+      "ieh41mud52k42v28bhz7",
+      "ieh41mueev4lsd1e9jku",
+      "ieh41mud2rjgv1dr759h",
+      "ieh41muebn8vkp3356as"
+    ],
+    "sensors": [
+      "90:a2:da:fc:09:df",
+      "90:a2:da:f8:41:00",
+      "90:a2:da:f8:41:2e",
+      "90:a2:da:fc:0a:47",
+      "90:a2:da:f8:24:81"
+    ],
+    "scenes": [
+      "ieh41mx139gbyzdmai8o",
+      "ieh41mx1sw2ptb70sgh",
+      "ieh41mx18yebr917e9nv",
+      "ieh41mx1dggozoe7ynau",
+      "ieh41mx1evjao4a7a0kp",
+      "ieh41mx113gb5yermuws"
+    ]
+  },
+  {
+    "name": "salón",
+    "id": "ifmxszamdw7q1k81i01v",
+    "lights": [
+      "ifmxszb948yyy8yli7u",
+      "ifmxszbe9mdo3vd77ubs",
+      "ifmxszbd25jrn41yi9bq",
+      "ifmxszbabugo3v1jpmed",
+      "ifmxszb8erh0kdf8nvz4",
+      "ifmxszbb2kec85dhyqis",
+      "ifmxszbc5z01t4cdr951",
+      "ifmxszbd35mkuo4jh2q8",
+      "ifmxszbd4dt0el33c9el",
+      "ifmxszbcef2a7q1gmazc",
+      "ifmxszbb34ak4g69gzte",
+      "ifmxszb9kq9zf40flww",
+      "ifmxszb9cfbfuqd67gvs",
+      "ifmxszbe2mqapz8kx2s9",
+      "ifmxszb98rx2zoejy8su",
+      "ifmxszbdgcdcy7zm46e",
+      "ifmxszbad8m7scfqujvo",
+      "ifmxszbc4ttzte2r2acv",
+      "ifmxszbd3gsy8u4mll5l",
+      "ifmxszba8fjuip6vfip3",
+      "ifmxszbc68a2k264sawh",
+      "ifmxszbbexlrasczw8kq",
+      "ifmxszbb8jlgthajbroc",
+      "ifmxszbccvc3p08xzcvx",
+      "ifmxszb9drvc69yuu2d",
+      "ifmxszbafo68ms4egj1i",
+      "ifmxszbbep5p4rek8k76",
+      "ifmxszb98vi2m83itwpb",
+      "ifmxszbdzulwo4tani5"
+    ],
+    "sensors": [
+      "90:a2:da:f8:24:21",
+      "90:a2:da:fc:0f:14",
+      "90:a2:da:fc:09:f3",
+      "90:a2:da:f8:24:d9",
+      "90:a2:da:fc:0e:4e",
+      "90:a2:da:fc:08:e5",
+      "90:a2:da:fc:08:b8"
+    ],
+    "scenes": [
+      "ifmxszja4pgsnr49n50z",
+      "ifmxszjab4lb9rdch7zo",
+      "ifmxszj987y8n240wzsa",
+      "ifmxszj9avomb64mdgr9",
+      "ifmxszja5jkm2343uo7t",
+      "ifmxszja92ha7l2q2wee"
+    ]
+  },
+  {
+    "name": "priam",
+    "id": "iffo8joncwz1v9daa4ng",
+    "lights": [
+      "iffo8jovdani3laqppbd",
+      "iffo8jow1w5gdr8ab0ra",
+      "iffo8jovagied49qth2c",
+      "iffo8jov6s07a1eu9hcf",
+      "iffo8jovf77f2h9k96nm",
+      "iffo8jou5pvy88gsx75",
+      "iffo8jovc1qgbustjw3",
+      "iffo8joudl07lj7tbam4",
+      "iffo8joudl915ff983p9",
+      "iffo8jou929xyid3vqrj",
+      "iffo8jov3xtsmoelzi5c",
+      "iffo8jov7pkcph2kia7m"
+    ],
+    "sensors": [
+      "90:a2:da:f8:08:6d",
+      "90:a2:da:fc:0e:0e",
+      "90:a2:da:f8:24:db",
+      "90:a2:da:f8:40:e7",
+      "90:a2:da:f8:24:32"
+    ],
+    "scenes": [
+      "iffo8jr5b42m6uejoay9",
+      "iffo8jr67id11zdy02po",
+      "iffo8jr63g4uoi18zaim",
+      "iffo8jr667aoue7dvnbz",
+      "iffo8jr6c1mi7tdfhpqk",
+      "iffo8jr62pb5sya19so9",
+      "iffo8jr574f9h9sv2l7",
+      "iffo8jr68in0xy2os3sk",
+      "iffo8jr6flq29xg26qdo"
+    ]
+  },
+  {
+    "name": "adrian",
+    "id": "ieh1fuif31jtqk4106j4",
+    "lights": [
+      "ieh1fuijf5erta8fdtxx",
+      "ieh1fuijfhr0dp2hoqzs",
+      "ieh1fuijdef91z2f1u2n"
+    ],
+    "sensors": [
+      "90:a2:da:f8:24:5c",
+      "90:a2:da:f8:23:9a",
+      "90:a2:da:fc:0a:17",
+      "90:a2:da:f8:23:af",
+      "90:a2:da:fc:0a:03"
+    ],
+    "scenes": [
+      "ieh1fuj331ky012ww8yd",
+      "ieh1fuj3akbds884232o",
+      "ieh1fuj3f8agze64n6j",
+      "ieh1fuj38i0zn295j4ja",
+      "ieh1fuj35taep8572vsh",
+      "ieh1fuj47yhkm6dwgg82",
+      "ieh1fuj4dcnsho2gsych",
+      "ieh1fuj4c1l3s37qe9rb"
+    ]
+  },
+  {
+    "name": "saloncito",
+    "id": "if9g3wlnd3gppbe6hah1",
+    "lights": [
+      "if9g3wls6zdeycg0050w",
+      "if9g3wls6e2tpv801x3h",
+      "if9g3wlsctssjt53y3ss",
+      "if9g3wls1i8l8kbabcpy"
+    ],
+    "sensors": [
+      "90:a2:da:fc:09:be",
+      "90:a2:da:f8:24:e4",
+      "90:a2:da:f8:07:e1",
+      "90:a2:da:f8:24:a5",
+      "90:a2:da:f8:40:fa",
+      "90:a2:da:fc:09:bb"
+    ],
+    "scenes": [
+      "if9g3wmh9y4zbmw2wwe",
+      "if9g3wmhbhmyj42dn6qx",
+      "if9g3wmhfulxsw32qok4",
+      "if9g3wmhb0mgjqfet1pq"
+    ]
+  },
+  {
+    "name": "mirta",
+    "id": "ieh1fjdf8q9l245dxx91",
+    "lights": [
+      "ieh1fjdkc6c2sb18fcab",
+      "ieh1fjdk7orb09630aju",
+      "ieh1fjdlc8qxsa31ui2j",
+      "ieh1fjdld3lk3phpil7",
+      "ieh1fjdlatbq5aa4d3c",
+      "ieh1fjdl63cikx2oq3pl",
+      "ieh1fjdlaq4s8he74mc0"
+    ],
+    "sensors": [
+      "90:a2:da:f8:24:0c",
+      "90:a2:da:fc:0f:0c",
+      "90:a2:da:f9:0a:c3",
+      "90:a2:da:fc:0a:06",
+      "90:a2:da:f8:24:c2",
+      "90:a2:da:fc:0e:30"
+    ],
+    "scenes": [
+      "ieh1fjg6774y9r5sdv6i",
+      "ieh1fjg68ygvgrumqin",
+      "ieh1fjg6cy3wt6bshrdx",
+      "ieh1fjg6b5n2kal17sh",
+      "ieh1fjg6drbc9cehmu0b"
+    ]
+  },
+  {
+    "name": "cocina",
+    "id": "ifmxjp3w8zbu779s72y5",
+    "lights": [
+      "ifmxjp493m5jz58uokl7",
+      "ifmxjp4815zr2bzo78t",
+      "ifmxjp494qm9ph7znw7c",
+      "ifmxjp474pxwkmc4c294",
+      "ifmxjp49cjie5db8ynq1",
+      "ifmxjp48828d96a5kx93",
+      "ifmxjp48d83dwz1oomd2",
+      "ifmxjp47e8jpiad1ignr",
+      "ifmxjp47ffj9qe371vec",
+      "ifmxjp4728pgy378z77",
+      "ifmxjp485x970n3i7uet",
+      "ifmxjp49bsmbll6ye07h",
+      "ifmxjp4785frpj3hhzo4",
+      "ifmxjp47debz4o6741bv",
+      "ifmxjp48bqy4ug23zd70",
+      "ifmxjp4911t4wn67ox7h",
+      "ifmxjp49f9ga3nbhl2j3",
+      "ifmxjp474b1phj6sut4l",
+      "ifmxjp489u2rsi5zey3w"
+    ],
+    "sensors": [
+      "90:a2:da:f8:24:3d",
+      "90:a2:da:f8:07:ee",
+      "90:a2:da:fc:09:ce",
+      "90:a2:da:f8:24:77",
+      "90:a2:da:f8:23:c7",
+      "90:a2:da:f8:06:fc",
+      "90:a2:da:f8:0b:0b"
+    ],
+    "scenes": [
+      "ifmxjp7w9vy0sa5h174m",
+      "ifmxjp7w68hpkwqh9fj",
+      "ifmxjp7w4xnxezcrcv6y",
+      "ifmxjp7w5vrkzo9cakxn",
+      "ifmxjp7w470tf21pxmku",
+      "ifmxjp7wdfzzqfaq513t"
+    ]
+  },
+  {
+    "name": "piano",
+    "id": "iffo87bqbodnyi2e8exe",
+    "lights": [
+      "iffo87bx7v36oi8p4pl5",
+      "iffo87bxd3bfwa8l2xjw",
+      "iffo87bx883nlmg1dkmn",
+      "iffo87bx61t7mafnl758",
+      "iffo87bx5uxz2v2lvn86",
+      "iffo87bx32jbpe85zffp"
+    ],
+    "sensors": [
+      "90:a2:da:f8:24:a0",
+      "90:a2:da:fc:0e:43",
+      "90:a2:da:f8:41:05",
+      "90:a2:da:fc:09:d3"
+    ],
+    "scenes": [
+      "iffo87d4g84mkweg0z8r",
+      "iffo87d4bpu14deeuv33",
+      "iffo87d4cr42b8dyk2pz",
+      "iffo87d4azgxjtbz4aun",
+      "iffo87d4c5pq403ejddq"
+    ]
+  },
+  {
+    "name": "entrada",
+    "id": "if6uzfxz55i9kh5r84lp",
+    "lights": [
+      "if6uzfy788kfwgfcg7ox",
+      "if6uzfy7fprkzc217b1o",
+      "if6uzfy75ra4njc2ih5h",
+      "if6uzfy76irb9w512g5f",
+      "if6uzfy730fd9rcv9nnr",
+      "if6uzfy884sew41vxied",
+      "if6uzfy7bihety59fgau",
+      "if6uzfy7fxevaj4et0s",
+      "if6uzfy8cdrz0iam5z2e"
+    ],
+    "sensors": [
+      "90:a2:da:f8:08:9f",
+      "90:a2:da:f8:0b:11",
+      "90:a2:da:f8:07:24",
+      "90:a2:da:f8:0b:23",
+      "90:a2:da:f8:08:be",
+      "90:a2:da:f8:06:e7",
+      "90:a2:da:f8:0b:1e",
+      "90:a2:da:f8:08:93"
+    ],
+    "scenes": [
+      "if6uzfzsebht4t6dabjf",
+      "if6uzfzs2yh1zvggh4ro",
+      "if6uzfzsdnwzkfcg2w1f",
+      "if6uzfzs39rs4a8a9vig",
+      "if6uzfzs6m2r02ghxd7d",
+      "if6uzfzs89htwnanfjgx",
+      "if6uzfzs15hw4d83lflx",
+      "if6uzfzs73703j4xrf0n"
+    ]
+  },
+  {
+    "name": "sofia",
+    "id": "ife44cd3dndczlf35uyg",
+    "lights": [
+      "ife44cda9s9uirbey1hm",
+      "ife44cda7zmysmkidc7",
+      "ife44cdagcsxxk5bsdo5",
+      "ife44cd98kwbira5sjr0",
+      "ife44cda7a1x74bb0r46",
+      "ife44cdabpoe82z9pm6",
+      "ife44cd92smbzf2pp5dw"
+    ],
+    "sensors": [
+      "90:a2:da:f8:41:07",
+      "90:a2:da:fc:0e:4d",
+      "90:a2:da:fc:0e:4b",
+      "90:a2:da:f8:41:13",
+      "90:a2:da:fc:08:ec",
+      "90:a2:da:fc:0b:0c",
+      "90:a2:da:fc:09:c5",
+      "90:a2:da:f8:08:2f"
+    ],
+    "scenes": [
+      "ife44cet60ttwpdiponm",
+      "ife44cetf6v1ka1fy4ft",
+      "ife44cet4jxwxx7mma5g",
+      "ife44ces1dv8cw8nq7oc",
+      "ife44cetdrocdve5wvw",
+      "ife44cet52b6et514twy",
+      "ife44cet1h93rz6ut1y0"
+    ]
+  },
+  {
+    "name": "laura",
+    "id": "if6vueecci4ol05u78mi",
+    "lights": [
+      "if6vuef74m2qgq1kcm1o",
+      "if6vuef8fqyc14naolf",
+      "if6vuef8dnegcyn6plp",
+      "if6vuef76gslir9r1q13",
+      "if6vuef892n0r1f2guxb",
+      "if6vuef81xs3qzd53orx",
+      "if6vuef72c8rzkbjkhbr",
+      "if6vuef7dgiyv7ff2xo",
+      "if6vuef84oehc28tbn1s",
+      "if6vuef85oec904p8ede",
+      "if6vuef7f458x2dwugar",
+      "if6vuef811vn45ajz4n2"
+    ],
+    "sensors": [
+      "90:a2:da:fc:0e:5b",
+      "90:a2:da:fc:0e:4f",
+      "90:a2:da:fc:09:e2",
+      "90:a2:da:fc:08:d0",
+      "90:a2:da:fc:0f:0b",
+      "90:a2:da:f8:08:30",
+      "90:a2:da:f8:0b:1c",
+      "90:a2:da:f8:24:d8"
+    ],
+    "scenes": [
+      "if6vueh6mt9c938jagh",
+      "if6vueh63xuli0d6j4o3",
+      "if6vueh62i81023o4eub",
+      "if6vueh63lfk5r99177n",
+      "if6vueh680ayvu8r9rte",
+      "if6vueh62mrjtg98yv7n",
+      "if6vueh632drvsebgfj1"
+    ]
+  }
+]

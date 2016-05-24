@@ -1,0 +1,2759 @@
+[
+    {
+        "name": "galeria 9",
+        "numChannels": 4,
+        "toggleOnly": false,
+        "id": "ifmxszbabugo3v1jpmed",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 1,
+                "hue": 0.03,
+                "toggle": false,
+                "id": "ifmxszejfn5sgf8alzam"
+            }
+        ],
+        "dmx": [
+            93,
+            94,
+            95,
+            96
+        ]
+    },
+    {
+        "name": "focos pared",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "if6vuef7dgiyv7ff2xo",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "if6vuefzca41lg2yq4vp"
+            }
+        ],
+        "dmx": [
+            161
+        ]
+    },
+    {
+        "name": "ventana entreplanta",
+        "numChannels": 4,
+        "toggleOnly": false,
+        "id": "ieh41muebn8vkp3356as",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 1,
+                "hue": 0.9,
+                "toggle": false,
+                "id": "ieh41muz8rv8mpbl83j4"
+            }
+        ],
+        "dmx": [
+            201,
+            202,
+            203,
+            204
+        ]
+    },
+    {
+        "name": "dos focos pasillo",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "if9g3wlsctssjt53y3ss",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "if9g3wm39or95qf5ao3m"
+            }
+        ],
+        "dmx": [
+            174
+        ]
+    },
+    {
+        "name": "foco ducha",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "i9b92c0n112fbwavusx5",
+        "state": [],
+        "dmx": []
+    },
+    {
+        "name": "pared roja 2 focos",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifmxjp49cjie5db8ynq1",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifmxjp5i5cnxto1du36m"
+            }
+        ],
+        "dmx": [
+            69
+        ]
+    },
+    {
+        "name": "galeria 1",
+        "numChannels": 4,
+        "toggleOnly": false,
+        "id": "ifmxszb8erh0kdf8nvz4",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 1,
+                "hue": 0.03,
+                "toggle": false,
+                "id": "ifmxszeg1u2ufmevo3cl"
+            }
+        ],
+        "dmx": [
+            109,
+            110,
+            111,
+            112
+        ]
+    },
+    {
+        "name": "piano small 2",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifmxszbd3gsy8u4mll5l",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifmxszemb0w86m49rzrk"
+            }
+        ],
+        "dmx": [
+            131
+        ]
+    },
+    {
+        "name": "nicho bajo esacalera",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "if6vuef892n0r1f2guxb",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "if6vueg08lsx8r6lljbb"
+            }
+        ],
+        "dmx": [
+            162
+        ]
+    },
+    {
+        "name": "luz puerta",
+        "numChannels": 4,
+        "toggleOnly": false,
+        "id": "ifp6t5ib4a7rde441qn1",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 1,
+                "hue": 0.75,
+                "toggle": false,
+                "id": "ifp6t5j4edhqy4eylsjf"
+            }
+        ],
+        "dmx": [
+            33,
+            34,
+            35,
+            36
+        ]
+    },
+    {
+        "name": "foco grande baño",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "iffo8joudl07lj7tbam4",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "iffo8jpkcxq23ne8sns6"
+            }
+        ],
+        "dmx": [
+            192
+        ]
+    },
+    {
+        "name": "bodega tinto",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifmxjp4911t4wn67ox7h",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifmxjp5i79ekqrewcr1x"
+            }
+        ],
+        "dmx": [
+            65
+        ]
+    },
+    {
+        "name": "luz puerta",
+        "numChannels": 4,
+        "toggleOnly": false,
+        "id": "ieh1fjdlc8qxsa31ui2j",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 1,
+                "hue": 0.5,
+                "toggle": false,
+                "id": "ieh1fjfi92cygkad03x4"
+            }
+        ],
+        "dmx": [
+            37,
+            38,
+            39,
+            40
+        ]
+    },
+    {
+        "name": "ventana",
+        "numChannels": 4,
+        "toggleOnly": false,
+        "id": "i9acbv7qabhd2iazog2k",
+        "state": [],
+        "dmx": []
+    },
+    {
+        "name": "focos techo 1",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ieh41mud2rjgv1dr759h",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ieh41muwdwkcbkfpr0p8"
+            }
+        ],
+        "dmx": [
+            226
+        ]
+    },
+    {
+        "name": "globos 1",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "if6vuef76gslir9r1q13",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "if6vuefz93yrya9rwcxn"
+            }
+        ],
+        "dmx": [
+            159
+        ]
+    },
+    {
+        "name": "grande 5",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifmxszbdzulwo4tani5",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifmxszen8ghl0h1cf8es"
+            }
+        ],
+        "dmx": [
+            141
+        ]
+    },
+    {
+        "name": "galeria 4",
+        "numChannels": 4,
+        "toggleOnly": false,
+        "id": "ifmxszb9kq9zf40flww",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 1,
+                "hue": 0.05,
+                "toggle": false,
+                "id": "ifmxszeh794kq844wokg"
+            }
+        ],
+        "dmx": [
+            73,
+            74,
+            75,
+            76
+        ]
+    },
+    {
+        "name": "ventana",
+        "numChannels": 4,
+        "toggleOnly": false,
+        "id": "i960xh9h1hru4p62nk8l",
+        "state": [],
+        "dmx": []
+    },
+    {
+        "name": "galeria 3",
+        "numChannels": 4,
+        "toggleOnly": false,
+        "id": "ifmxszb98rx2zoejy8su",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 1,
+                "hue": 0.05,
+                "toggle": false,
+                "id": "ifmxszehf203coyevcx"
+            }
+        ],
+        "dmx": [
+            77,
+            78,
+            79,
+            80
+        ]
+    },
+    {
+        "name": "focos pequeños 3",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "iffo8jovdani3laqppbd",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "iffo8jpl4hgtsyb8gvi3"
+            }
+        ],
+        "dmx": [
+            179
+        ]
+    },
+    {
+        "name": "ventana alto",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "i9acbv7q5jx43bfbfpuo",
+        "state": [],
+        "dmx": []
+    },
+    {
+        "name": "galeria 2",
+        "numChannels": 4,
+        "toggleOnly": false,
+        "id": "ifmxszb98vi2m83itwpb",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 1,
+                "hue": 0.05,
+                "toggle": false,
+                "id": "ifmxszeh5bk9028rwz7x"
+            }
+        ],
+        "dmx": [
+            81,
+            82,
+            83,
+            84
+        ]
+    },
+    {
+        "name": "cristal ducha",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "iffo8jovf77f2h9k96nm",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "iffo8jpleeog2w1beklv"
+            }
+        ],
+        "dmx": [
+            182
+        ]
+    },
+    {
+        "name": "grande techo",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "i936vp2vfs2dhh1dit6t",
+        "state": [],
+        "dmx": []
+    },
+    {
+        "name": "foco grande",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "i960xh9hcj3aefdldrns",
+        "state": [],
+        "dmx": []
+    },
+    {
+        "name": "mesa2",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifmxjp485x970n3i7uet",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifmxjp5hb7xti39b8y08"
+            }
+        ],
+        "dmx": [
+            61
+        ]
+    },
+    {
+        "name": "focos salón Ana",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ieh2ysqde3r0th9c0v6y",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ieh2yssscz3fwwf88dde"
+            }
+        ],
+        "dmx": [
+            214
+        ]
+    },
+    {
+        "name": "cristal ducha",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ieh41mueev4lsd1e9jku",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ieh41muyfse8kyg9m0u6"
+            }
+        ],
+        "dmx": [
+            225
+        ]
+    },
+    {
+        "name": "berkel",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "i9acbv7q14ikar7me3w3",
+        "state": [],
+        "dmx": []
+    },
+    {
+        "name": "dos focos recibidor",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "if6uzfy7fxevaj4et0s",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "if6uzfyufmhf1k6i0jf4"
+            }
+        ],
+        "dmx": [
+            205
+        ]
+    },
+    {
+        "name": "pared roja 2 focos",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "i9acbv7rfu071l5nx74y",
+        "state": [],
+        "dmx": []
+    },
+    {
+        "name": "dos focos entrada",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "if6uzfy788kfwgfcg7ox",
+        "state": [
+            {
+                "brightness": 0.34,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "if6uzfyv25bkwv3ypp78"
+            }
+        ],
+        "dmx": [
+            206
+        ]
+    },
+    {
+        "name": "focos baño techo",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "iffo8jov3xtsmoelzi5c",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "iffo8jpm7g1uzid3xa6e"
+            }
+        ],
+        "dmx": [
+            180
+        ]
+    },
+    {
+        "name": "galeria 10",
+        "numChannels": 4,
+        "toggleOnly": false,
+        "id": "ifmxszbafo68ms4egj1i",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 1,
+                "hue": 0.05,
+                "toggle": false,
+                "id": "ifmxszejfaoy6va0dpcv"
+            }
+        ],
+        "dmx": [
+            101,
+            102,
+            103,
+            104
+        ]
+    },
+    {
+        "name": "foco grande bañera",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifp6t5ic87nqxq1yy7b9",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifp6t5j5g4ghv1742n7k"
+            }
+        ],
+        "dmx": [
+            14
+        ]
+    },
+    {
+        "name": "focos pequeño",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifp6t5ib8vfe4xeikfxh",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifp6t5j5fv4j1rcyf5l7"
+            }
+        ],
+        "dmx": [
+            22
+        ]
+    },
+    {
+        "name": "pequeño 1",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifmxszbccvc3p08xzcvx",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifmxszelghqdgdadph4k"
+            }
+        ],
+        "dmx": [
+            125
+        ]
+    },
+    {
+        "name": "ventana cocina",
+        "numChannels": 4,
+        "toggleOnly": false,
+        "id": "ieh2ysqe2qccxh7ku88z",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 1,
+                "hue": 0.6,
+                "toggle": false,
+                "id": "ieh2yst6a45yq6c69u2"
+            }
+        ],
+        "dmx": [
+            197,
+            198,
+            199,
+            200
+        ]
+    },
+    {
+        "name": "foco ducha",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ieh1fjdlatbq5aa4d3c",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ieh1fjff9w3bua1134r"
+            }
+        ],
+        "dmx": [
+            24
+        ]
+    },
+    {
+        "name": "mesa1",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "i9acbv7rcoxmgtm3qv5",
+        "state": [],
+        "dmx": []
+    },
+    {
+        "name": "foco water",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "i936vp2w4t4hqn8s383i",
+        "state": [],
+        "dmx": []
+    },
+    {
+        "name": "cristal y nicho ducha",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "iffo87bxd3bfwa8l2xjw",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "iffo87cf6f2flie2doy4"
+            }
+        ],
+        "dmx": [
+            134
+        ]
+    },
+    {
+        "name": "berkel",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifmxjp474pxwkmc4c294",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifmxjp5g45ec8a6cisdp"
+            }
+        ],
+        "dmx": [
+            57
+        ]
+    },
+    {
+        "name": "MESA1",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "i9acbv7q587trcfmhawg",
+        "state": [],
+        "dmx": []
+    },
+    {
+        "name": "grande 6",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifmxszbe9mdo3vd77ubs",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifmxszeo4iz5oedyd2d8"
+            }
+        ],
+        "dmx": [
+            142
+        ]
+    },
+    {
+        "name": "focos encima lavabo",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifp6t5ic7u5y2xduoo3",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifp6t5j57xn3roevjiyp"
+            }
+        ],
+        "dmx": [
+            21
+        ]
+    },
+    {
+        "name": "pequeño 5",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifmxszbcef2a7q1gmazc",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifmxszem3zwgmybqp2xd"
+            }
+        ],
+        "dmx": [
+            140
+        ]
+    },
+    {
+        "name": "nichos ducha y water",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "iffo8jovc1qgbustjw3",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "iffo8jpm2esf4naczdeo"
+            }
+        ],
+        "dmx": [
+            183
+        ]
+    },
+    {
+        "name": "led techo entrada",
+        "numChannels": 4,
+        "toggleOnly": false,
+        "id": "if6uzfy730fd9rcv9nnr",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 1,
+                "hue": 0.05,
+                "toggle": false,
+                "id": "if6uzfyt68jookfnzi50"
+            }
+        ],
+        "dmx": [
+            193,
+            194,
+            195,
+            196
+        ]
+    },
+    {
+        "name": "nicho water",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifp6t5icc4bhja2nunn8",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifp6t5j84maaq67k16ra"
+            }
+        ],
+        "dmx": [
+            17
+        ]
+    },
+    {
+        "name": "globos 3",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "if6vuef74m2qgq1kcm1o",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "if6vueg03zf7jledylw7"
+            }
+        ],
+        "dmx": [
+            189
+        ]
+    },
+    {
+        "name": "ventana alto",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifmxjp48bqy4ug23zd70",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifmxjp5ga0apnig8royv"
+            }
+        ],
+        "dmx": [
+            58
+        ]
+    },
+    {
+        "name": "foco encima lavabo chimenea",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "if6uzfy7bihety59fgau",
+        "state": [
+            {
+                "brightness": 0.4,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "if6uzfyw1bp7kjer42cj"
+            }
+        ],
+        "dmx": [
+            207
+        ]
+    },
+    {
+        "name": "focos lavabo",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "iffo8jov6s07a1eu9hcf",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "iffo8jpm341lyrfsxmg7"
+            }
+        ],
+        "dmx": [
+            181
+        ]
+    },
+    {
+        "name": "cristal y nicho ducha",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "i960xh9i9335mdv85ts",
+        "state": [],
+        "dmx": []
+    },
+    {
+        "name": "focos techo habitación",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ieh1fuijf5erta8fdtxx",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ieh1fuira2fdcg8eanby"
+            }
+        ],
+        "dmx": [
+            235
+        ]
+    },
+    {
+        "name": "lámpara colgante",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ieh2ysqe59gkvkb19co9",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ieh2ysstahuyl35eo0nc"
+            }
+        ],
+        "dmx": [
+            230
+        ]
+    },
+    {
+        "name": "focos lavabo",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "if6vuef84oehc28tbn1s",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "if6vueg13q4xwsfmwjha"
+            }
+        ],
+        "dmx": [
+            164
+        ]
+    },
+    {
+        "name": "foco lavabo",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "i936vp2w3apcsv4b34ut",
+        "state": [],
+        "dmx": []
+    },
+    {
+        "name": "nicho esquina escalera",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ieh41mud6gup1va24k4a",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ieh41muv68zm0h4w5d4d"
+            }
+        ],
+        "dmx": [
+            222
+        ]
+    },
+    {
+        "name": "MESA3",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "i9acbv7qgctztogijmju",
+        "state": [],
+        "dmx": []
+    },
+    {
+        "name": "focos pequeños",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "iffo87bx32jbpe85zffp",
+        "state": [
+            {
+                "brightness": 0.4,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "iffo87ceaolc3deiejyf"
+            }
+        ],
+        "dmx": [
+            132
+        ]
+    },
+    {
+        "name": "foco entrada",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "iffo8jov7pkcph2kia7m",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "iffo8jpowocetczx3wb"
+            }
+        ],
+        "dmx": [
+            185
+        ]
+    },
+    {
+        "name": "globos 2",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "if6vuef72c8rzkbjkhbr",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "if6vueg06jh4bi4m55kl"
+            }
+        ],
+        "dmx": [
+            160
+        ]
+    },
+    {
+        "name": "focos techo",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ife44cd98kwbira5sjr0",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ife44cdp6tvx4idt6unn"
+            }
+        ],
+        "dmx": [
+            171
+        ]
+    },
+    {
+        "name": "foco pared baño",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ife44cdabpoe82z9pm6",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ife44cdp9pg9kj7sid4b"
+            }
+        ],
+        "dmx": [
+            169
+        ]
+    },
+    {
+        "name": "luz puerta",
+        "numChannels": 4,
+        "toggleOnly": false,
+        "id": "i936vp2w23ie8c7hqami",
+        "state": [],
+        "dmx": []
+    },
+    {
+        "name": "foco water",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "i9b92c0n8pii4c6iyxip",
+        "state": [],
+        "dmx": []
+    },
+    {
+        "name": "magnetix armario",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "iffo87bx883nlmg1dkmn",
+        "state": [
+            {
+                "brightness": 0.4,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "iffo87chekn1zwfavsst"
+            }
+        ],
+        "dmx": [
+            135
+        ]
+    },
+    {
+        "name": "foco ducha",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifp6t5iczjpcdcnpej7",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifp6t5j68m7zo0446p20"
+            }
+        ],
+        "dmx": [
+            20
+        ]
+    },
+    {
+        "name": "foco water",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "if6uzfy8cdrz0iam5z2e",
+        "state": [
+            {
+                "brightness": 0.6,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "if6uzfyxfyh8ig8z3b72"
+            }
+        ],
+        "dmx": [
+            233
+        ]
+    },
+    {
+        "name": "armario laura",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "if6vuef8dnegcyn6plp",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "if6vueg78rn1qg7tu8j9"
+            }
+        ],
+        "dmx": [
+            187
+        ]
+    },
+    {
+        "name": "GRANDE 3",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifmxszbb2kec85dhyqis",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifmxszek6gp0fwbo557a"
+            }
+        ],
+        "dmx": [
+            123
+        ]
+    },
+    {
+        "name": "magnetix 1",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifmxszbd25jrn41yi9bq",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifmxszendugiro9ktc23"
+            }
+        ],
+        "dmx": [
+            137
+        ]
+    },
+    {
+        "name": "foco entrada",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ife44cdagcsxxk5bsdo5",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ife44ce81n61u2dkieha"
+            }
+        ],
+        "dmx": [
+            170
+        ]
+    },
+    {
+        "name": "galeria 8",
+        "numChannels": 4,
+        "toggleOnly": false,
+        "id": "ifmxszbad8m7scfqujvo",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 1,
+                "hue": 0.05,
+                "toggle": false,
+                "id": "ifmxszei86xj5vcieycb"
+            }
+        ],
+        "dmx": [
+            97,
+            98,
+            99,
+            100
+        ]
+    },
+    {
+        "name": "GRANDE 4",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifmxszbbep5p4rek8k76",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifmxszelehcpqv5mfjv4"
+            }
+        ],
+        "dmx": [
+            124
+        ]
+    },
+    {
+        "name": "ventana piano",
+        "numChannels": 4,
+        "toggleOnly": false,
+        "id": "ifmxszba8fjuip6vfip3",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 1,
+                "hue": 0.05,
+                "toggle": false,
+                "id": "ifmxszejf8ilw8gglgc6"
+            }
+        ],
+        "dmx": [
+            45,
+            46,
+            47,
+            48
+        ]
+    },
+    {
+        "name": "3 lámparas barra",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "i9acbv7q6zlf8cg56fzq",
+        "state": [],
+        "dmx": []
+    },
+    {
+        "name": "GRANDE 2",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifmxszbb8jlgthajbroc",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifmxszek5d8ma8bafzi6"
+            }
+        ],
+        "dmx": [
+            122
+        ]
+    },
+    {
+        "name": "foco grande",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "if9g3wls1i8l8kbabcpy",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "if9g3wm13tp8q2301mvz"
+            }
+        ],
+        "dmx": [
+            191
+        ]
+    },
+    {
+        "name": "focos frigo",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifmxjp48d83dwz1oomd2",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifmxjp5h5qkyqv5i0k3d"
+            }
+        ],
+        "dmx": [
+            62
+        ]
+    },
+    {
+        "name": "magnetix 2",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifmxszbdgcdcy7zm46e",
+        "state": [
+            {
+                "brightness": 0,
+                "toggle": false,
+                "id": "ifmxszengf25vsbwr5tx"
+            }
+        ],
+        "dmx": [
+            138
+        ]
+    },
+    {
+        "name": "LED nicho water",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "if6uzfy7fprkzc217b1o",
+        "state": [
+            {
+                "brightness": 1,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "if6uzfywaak7ev3809mt"
+            }
+        ],
+        "dmx": [
+            208
+        ]
+    },
+    {
+        "name": "mesa2",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "i9acbv7r9spwya5q996d",
+        "state": [],
+        "dmx": []
+    },
+    {
+        "name": "ventana center",
+        "numChannels": 4,
+        "toggleOnly": false,
+        "id": "ifmxjp47ffj9qe371vec",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 1,
+                "hue": 0.07,
+                "toggle": false,
+                "id": "ifmxjp5g2lfg1r7g4o56"
+            }
+        ],
+        "dmx": [
+            49,
+            50,
+            51,
+            52
+        ]
+    },
+    {
+        "name": "galeria 7",
+        "numChannels": 4,
+        "toggleOnly": false,
+        "id": "ifmxszb9drvc69yuu2d",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 1,
+                "hue": 0.05,
+                "toggle": false,
+                "id": "ifmxszeid1cjct14ie7r"
+            }
+        ],
+        "dmx": [
+            105,
+            106,
+            107,
+            108
+        ]
+    },
+    {
+        "name": "foco water",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifp6t5icevow7t57j59f",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifp6t5j86kef2h8jctsg"
+            }
+        ],
+        "dmx": [
+            19
+        ]
+    },
+    {
+        "name": "foco lavabo",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ieh1fjdlaq4s8he74mc0",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ieh1fjfg1x5gnc6dst4w"
+            }
+        ],
+        "dmx": [
+            26
+        ]
+    },
+    {
+        "name": "lavanderia focos",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifmxjp494qm9ph7znw7c",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifmxjp5ibuiiht3xhawx"
+            }
+        ],
+        "dmx": [
+            64
+        ]
+    },
+    {
+        "name": "armario",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "iffo8jow1w5gdr8ab0ra",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "iffo8jpq1xg4pk92o0kk"
+            }
+        ],
+        "dmx": [
+            186
+        ]
+    },
+    {
+        "name": "MESA2",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifmxjp47e8jpiad1ignr",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifmxjp5f6s5yerde8x1f"
+            }
+        ],
+        "dmx": [
+            55
+        ]
+    },
+    {
+        "name": "3 lámparas barra",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifmxjp4785frpj3hhzo4",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifmxjp5fb4vhxa82xmti"
+            }
+        ],
+        "dmx": [
+            53
+        ]
+    },
+    {
+        "name": "lavanderia fluorescentes",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifmxjp48828d96a5kx93",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifmxjp5i5naan3wwjlf"
+            }
+        ],
+        "dmx": [
+            63
+        ]
+    },
+    {
+        "name": "foco ducha",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "i936vp2w92yq3yfmsq4d",
+        "state": [],
+        "dmx": []
+    },
+    {
+        "name": "focos techo 2",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ieh41mue7jhayf5djwaf",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ieh41muwgdbnin4sbj94"
+            }
+        ],
+        "dmx": [
+            227
+        ]
+    },
+    {
+        "name": "ventana i/d",
+        "numChannels": 4,
+        "toggleOnly": false,
+        "id": "ifmxjp474b1phj6sut4l",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 1,
+                "hue": 0.1,
+                "toggle": false,
+                "id": "ifmxjp5g1diuk11j7637"
+            }
+        ],
+        "dmx": [
+            41,
+            42,
+            43,
+            44
+        ]
+    },
+    {
+        "name": "grande baño",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "if6uzfy75ra4njc2ih5h",
+        "state": [
+            {
+                "brightness": 0.34,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "if6uzfyuaqdrued95"
+            }
+        ],
+        "dmx": [
+            238
+        ]
+    },
+    {
+        "name": "ventana salón",
+        "numChannels": 4,
+        "toggleOnly": false,
+        "id": "ifmxszbb34ak4g69gzte",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 1,
+                "hue": 0.05,
+                "toggle": false,
+                "id": "ifmxszekfhqgx1dr1ak6"
+            }
+        ],
+        "dmx": [
+            117,
+            118,
+            119,
+            120
+        ]
+    },
+    {
+        "name": "bodega tinto",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "i9acbv7rcctmha71zo29",
+        "state": [],
+        "dmx": []
+    },
+    {
+        "name": "grande techo",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ieh1fjdk7orb09630aju",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ieh1fjfe7ku8ybd9e9d9"
+            }
+        ],
+        "dmx": [
+            16
+        ]
+    },
+    {
+        "name": "focos espejo",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ife44cda7zmysmkidc7",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ife44cdpdybmtz43hf6s"
+            }
+        ],
+        "dmx": [
+            168
+        ]
+    },
+    {
+        "name": "foco urinario",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "if6uzfy884sew41vxied",
+        "state": [
+            {
+                "brightness": 0.64,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "if6uzfyx5yneqdf97ye5"
+            }
+        ],
+        "dmx": [
+            234
+        ]
+    },
+    {
+        "name": "focos cocina 2",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ieh2ysqe65f0l0b9th5g",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ieh2ysswytn8lg4gl8t"
+            }
+        ],
+        "dmx": [
+            229
+        ]
+    },
+    {
+        "name": "esquina armario",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifmxjp4815zr2bzo78t",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifmxjp5h8b5kinazmfsh"
+            }
+        ],
+        "dmx": [
+            59
+        ]
+    },
+    {
+        "name": "piano small 1",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifmxszbd35mkuo4jh2q8",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifmxszem31b6413wk09"
+            }
+        ],
+        "dmx": [
+            130
+        ]
+    },
+    {
+        "name": "armario",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifp6t5idd5wl4heqkeow",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifp6t5j92yrb1t9p6pif"
+            }
+        ],
+        "dmx": [
+            28
+        ]
+    },
+    {
+        "name": "grande entrada",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "if6uzfy76irb9w512g5f",
+        "state": [
+            {
+                "brightness": 0.34,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "if6uzfyu83ongi7msr6x"
+            }
+        ],
+        "dmx": [
+            237
+        ]
+    },
+    {
+        "name": "foco lavabo",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "i960xh9i7sacye4rjjtg",
+        "state": [],
+        "dmx": []
+    },
+    {
+        "name": "campana grande",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "i9acbv7s97ycj61n6rps",
+        "state": [],
+        "dmx": []
+    },
+    {
+        "name": "focos frigo",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "i9acbv7r50gkj9at4tws",
+        "state": [],
+        "dmx": []
+    },
+    {
+        "name": "foco espejo baño",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ieh41mue7rf6s5ehh1vq",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ieh41muw42bkrbtoh9x"
+            }
+        ],
+        "dmx": [
+            224
+        ]
+    },
+    {
+        "name": "aplique",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ieh41mud52k42v28bhz7",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ieh41muw3nlnjw22bcru"
+            }
+        ],
+        "dmx": [
+            223
+        ]
+    },
+    {
+        "name": "grande 7",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifmxszbe2mqapz8kx2s9",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifmxszeu718wjo92yko3"
+            }
+        ],
+        "dmx": [
+            143
+        ]
+    },
+    {
+        "name": "nicho water y ducha",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "i9b92c0nf392743dd4sa",
+        "state": [],
+        "dmx": []
+    },
+    {
+        "name": "pasarela patio",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifmxszbd4dt0el33c9el",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifmxszen63ekr4191pwk"
+            }
+        ],
+        "dmx": [
+            136
+        ]
+    },
+    {
+        "name": "foco grande salón",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifp6t5ibczstwq9120jz",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifp6t5j4ef7vrgef3jbo"
+            }
+        ],
+        "dmx": [
+            15
+        ]
+    },
+    {
+        "name": "MESA3",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifmxjp4728pgy378z77",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifmxjp5gf8a7mida2ptd"
+            }
+        ],
+        "dmx": [
+            56
+        ]
+    },
+    {
+        "name": "foco ducha",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ife44cda9s9uirbey1hm",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ife44cdp6qrlxve9f9zp"
+            }
+        ],
+        "dmx": [
+            167
+        ]
+    },
+    {
+        "name": "nichos water y ducha",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "if6vuef811vn45ajz4n2",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "if6vueg54d0ffn119bjh"
+            }
+        ],
+        "dmx": [
+            163
+        ]
+    },
+    {
+        "name": "focos pequeño techo",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "i936vp2we6kzap8s0jb6",
+        "state": [],
+        "dmx": []
+    },
+    {
+        "name": "bodega blanco",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifmxjp493m5jz58uokl7",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifmxjp5j9ziflj2ftj8o"
+            }
+        ],
+        "dmx": [
+            66
+        ]
+    },
+    {
+        "name": "MESA1",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifmxjp47debz4o6741bv",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifmxjp5f40jzdv8b7z1i"
+            }
+        ],
+        "dmx": [
+            54
+        ]
+    },
+    {
+        "name": "foco ducha",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ieh1fuijdef91z2f1u2n",
+        "state": [
+            {
+                "brightness": 0.44,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ieh1fuir5jg1xl6gou3j"
+            }
+        ],
+        "dmx": [
+            236
+        ]
+    },
+    {
+        "name": "focos pequeños 1",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "iffo8jou5pvy88gsx75",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "iffo8jplbqa879ddtzzn"
+            }
+        ],
+        "dmx": [
+            177
+        ]
+    },
+    {
+        "name": "focos pequeños",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "i960xh9iesl520gilwj3",
+        "state": [],
+        "dmx": []
+    },
+    {
+        "name": "ponedero",
+        "numChannels": 4,
+        "toggleOnly": false,
+        "id": "if6vuef7f458x2dwugar",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 1,
+                "hue": 0.6,
+                "toggle": false,
+                "id": "if6vuefzayy5sbcu8b8c"
+            }
+        ],
+        "dmx": [
+            145,
+            146,
+            147,
+            148
+        ]
+    },
+    {
+        "name": "nicho water",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ife44cda7a1x74bb0r46",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ife44cdpaxxxnwbpeaw7"
+            }
+        ],
+        "dmx": [
+            166
+        ]
+    },
+    {
+        "name": "pequeño 4",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifmxszbc5z01t4cdr951",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifmxszem3q5lhg8b8su6"
+            }
+        ],
+        "dmx": [
+            128
+        ]
+    },
+    {
+        "name": "focos cocina 1",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ieh2ysqe88l0p8b2mfy9",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ieh2ysstdgx3rdef4sz7"
+            }
+        ],
+        "dmx": [
+            228
+        ]
+    },
+    {
+        "name": "foco espejo baño",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ieh1fuijfhr0dp2hoqzs",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ieh1fuiqgiw7o65gdkas"
+            }
+        ],
+        "dmx": [
+            213
+        ]
+    },
+    {
+        "name": "grande techo",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ife44cd92smbzf2pp5dw",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ife44cdo11cvd8b6xaou"
+            }
+        ],
+        "dmx": [
+            190
+        ]
+    },
+    {
+        "name": "focos water y ducha",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "if6vuef81xs3qzd53orx",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "if6vueg14fa5h2el91gt"
+            }
+        ],
+        "dmx": [
+            165
+        ]
+    },
+    {
+        "name": "focos pequeños",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "if9g3wls6zdeycg0050w",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "if9g3wm11xem98gb1rz6"
+            }
+        ],
+        "dmx": [
+            175
+        ]
+    },
+    {
+        "name": "bodega blanco",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "i9acbv7r9cqes62avql",
+        "state": [],
+        "dmx": []
+    },
+    {
+        "name": "campana pequeña",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifmxjp49f9ga3nbhl2j3",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifmxjp5mfxtawm380anr"
+            }
+        ],
+        "dmx": [
+            67
+        ]
+    },
+    {
+        "name": "focos pequeño techo",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ieh1fjdl63cikx2oq3pl",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ieh1fjfgekyioiflzmlv"
+            }
+        ],
+        "dmx": [
+            27
+        ]
+    },
+    {
+        "name": "pequeño 2",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifmxszbc4ttzte2r2acv",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifmxszelbj3us87tsf7h"
+            }
+        ],
+        "dmx": [
+            126
+        ]
+    },
+    {
+        "name": "esquina armario",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "i9acbv7q6zmt9p2086zq",
+        "state": [],
+        "dmx": []
+    },
+    {
+        "name": "ventana",
+        "numChannels": 4,
+        "toggleOnly": false,
+        "id": "iffo8jou929xyid3vqrj",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 1,
+                "hue": 0.05,
+                "toggle": false,
+                "id": "iffo8jpkbrtlpcdyid7z"
+            }
+        ],
+        "dmx": [
+            149,
+            150,
+            151,
+            152
+        ]
+    },
+    {
+        "name": "campana pequeña",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "i9acbv7rbkular969u5r",
+        "state": [],
+        "dmx": []
+    },
+    {
+        "name": "foco ducha",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "iffo8jovagied49qth2c",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "iffo8jpm75mwu25mlug6"
+            }
+        ],
+        "dmx": [
+            184
+        ]
+    },
+    {
+        "name": "focos pequeño techo",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "i9b92c0ngif2m9ai8uuz",
+        "state": [],
+        "dmx": []
+    },
+    {
+        "name": "campana grande",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifmxjp49bsmbll6ye07h",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifmxjp5n9fns81bwzakq"
+            }
+        ],
+        "dmx": [
+            68
+        ]
+    },
+    {
+        "name": "nicho water y ducha",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ieh1fjdkc6c2sb18fcab",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 1,
+                "hue": 0.5,
+                "toggle": false,
+                "id": "ieh1fjfep8sj6d6255p"
+            }
+        ],
+        "dmx": [
+            23
+        ]
+    },
+    {
+        "name": "ventana bañera",
+        "numChannels": 4,
+        "toggleOnly": false,
+        "id": "ifp6t5ib683xnm4hnn3q",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 1,
+                "hue": 0.05,
+                "toggle": false,
+                "id": "ifp6t5j5601pjsfcsbek"
+            }
+        ],
+        "dmx": [
+            1,
+            2,
+            3,
+            4
+        ]
+    },
+    {
+        "name": "ventana",
+        "numChannels": 4,
+        "toggleOnly": false,
+        "id": "iffo87bx7v36oi8p4pl5",
+        "state": [
+            {
+                "brightness": 0.09,
+                "saturation": 1,
+                "hue": 0.05,
+                "toggle": false,
+                "id": "iffo87ce6j4brq2d8sn5"
+            }
+        ],
+        "dmx": [
+            113,
+            114,
+            115,
+            116
+        ]
+    },
+    {
+        "name": "nicho water y ducha",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "i936vp2w28ao7i4ft44n",
+        "state": [],
+        "dmx": []
+    },
+    {
+        "name": "grande 1",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifmxszbbexlrasczw8kq",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifmxszekas14125w39zt"
+            }
+        ],
+        "dmx": [
+            121
+        ]
+    },
+    {
+        "name": "foco lavabo",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "iffo87bx61t7mafnl758",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "iffo87cf7sdldd4xxxfr"
+            }
+        ],
+        "dmx": [
+            133
+        ]
+    },
+    {
+        "name": "nicho ducha",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifp6t5ic1nhh7ab4sj0x",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifp6t5j6ohxrecvi2l8"
+            }
+        ],
+        "dmx": [
+            18
+        ]
+    },
+    {
+        "name": "foco water",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ieh1fjdld3lk3phpil7",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ieh1fjffb57cxc6xqdnp"
+            }
+        ],
+        "dmx": [
+            25
+        ]
+    },
+    {
+        "name": "focos techo",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "if6vuef85oec904p8ede",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "if6vueg0fdv7n04wgh3l"
+            }
+        ],
+        "dmx": [
+            157
+        ]
+    },
+    {
+        "name": "tres nichos",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "if9g3wls6e2tpv801x3h",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "if9g3wm36b5h6d8pwyhz"
+            }
+        ],
+        "dmx": [
+            173
+        ]
+    },
+    {
+        "name": "galeria 6",
+        "numChannels": 4,
+        "toggleOnly": false,
+        "id": "ifmxszb948yyy8yli7u",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 1,
+                "hue": 0.05,
+                "toggle": false,
+                "id": "ifmxszei7l4jwnbclzck"
+            }
+        ],
+        "dmx": [
+            89,
+            90,
+            91,
+            92
+        ]
+    },
+    {
+        "name": "focos pequeños 2",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "iffo8joudl915ff983p9",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "iffo8jpl2y8ajo8heouq"
+            }
+        ],
+        "dmx": [
+            178
+        ]
+    },
+    {
+        "name": "foco grande",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "iffo87bx5uxz2v2lvn86",
+        "state": [
+            {
+                "brightness": 0.34,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "iffo87ce574yol8t0jnw"
+            }
+        ],
+        "dmx": [
+            144
+        ]
+    },
+    {
+        "name": "lavanderia fluorescentes",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "i9acbv7r3q7grag0flqi",
+        "state": [],
+        "dmx": []
+    },
+    {
+        "name": "foco lavabo",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "i9b92c0nap6afdbb30m5",
+        "state": [],
+        "dmx": []
+    },
+    {
+        "name": "nichos entreplanta",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "if6vuef8fqyc14naolf",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "if6vueg0e538vtdgfwoe"
+            }
+        ],
+        "dmx": [
+            158
+        ]
+    },
+    {
+        "name": "pequeño 3",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifmxszbc68a2k264sawh",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifmxszelcg43mc6kjqo0"
+            }
+        ],
+        "dmx": [
+            127
+        ]
+    },
+    {
+        "name": "galeria 5",
+        "numChannels": 4,
+        "toggleOnly": false,
+        "id": "ifmxszb9cfbfuqd67gvs",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 1,
+                "hue": 0.03,
+                "toggle": false,
+                "id": "ifmxszei5cxkjf7h1qc3"
+            }
+        ],
+        "dmx": [
+            85,
+            86,
+            87,
+            88
+        ]
+    },
+    {
+        "name": "mesa1",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ifmxjp489u2rsi5zey3w",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ifmxjp5h5z2be2cxs9b6"
+            }
+        ],
+        "dmx": [
+            60
+        ]
+    },
+    {
+        "name": "MESA2",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "i9acbv7q7q0t1g1td36s",
+        "state": [],
+        "dmx": []
+    },
+    {
+        "name": "grande salón Ana",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ieh2ysqd3bao4b5vz4uh",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ieh2ysss1fc8bnbex3yp"
+            }
+        ],
+        "dmx": [
+            239
+        ]
+    },
+    {
+        "name": "lavanderia focos",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "i9acbv7rbtr9zm5s9ftr",
+        "state": [],
+        "dmx": []
+    },
+    {
+        "name": "nicho salón Ana",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "ieh2ysqd1kxd1f4fccm2",
+        "state": [
+            {
+                "brightness": 0,
+                "saturation": 0,
+                "hue": 0,
+                "toggle": false,
+                "id": "ieh2ysss217279c8w75j"
+            }
+        ],
+        "dmx": [
+            215
+        ]
+    },
+    {
+        "name": "luz puerta",
+        "numChannels": 4,
+        "toggleOnly": false,
+        "id": "i9b92c0n1t6am47ljwq1",
+        "state": [],
+        "dmx": []
+    },
+    {
+        "name": "grande techo",
+        "numChannels": 1,
+        "toggleOnly": false,
+        "id": "i9b92c0meonpa95n43ke",
+        "state": [],
+        "dmx": []
+    }
+]

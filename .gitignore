@@ -1,3 +1,4 @@
+.DS_Store
 pom.xml
 pom.xml.asc
 *jar
@@ -10,3 +11,10 @@ pom.xml.asc
 .lein-plugins/
 .lein-failures
 .nrepl-port
+
+# assets
+/assets/.bundle
+/assets/build
+/assets/.sass-cache
+/assets/.cache
+
