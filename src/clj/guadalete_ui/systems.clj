@@ -1,6 +1,7 @@
 (ns guadalete-ui.systems
     (:require
-      [guadalete-ui.handler :refer [ring-handler site sente-handler]]
+      [guadalete-ui.handlers.http :refer [ring-handler site]]
+      [guadalete-ui.handlers.socket :refer [sente-handler]]
       [guadalete-ui.middleware
        [not-found :refer [wrap-not-found]]]
       [com.stuartsierra.component :as component]
@@ -8,7 +9,7 @@
       [taoensso.sente.server-adapters.immutant :refer (sente-web-server-adapter)]
       (system.components
         [immutant-web :refer [new-web-server]]
-        [sente :refer [new-channel-sockets sente-routes]]
+        [sente :refer [new-channel-socket-server sente-routes]]
         [h2 :refer [new-h2-database DEFAULT-MEM-SPEC DEFAULT-DB-SPEC]]
         [repl-server :refer [new-repl-server]]
         [endpoint :refer [new-endpoint]]
@@ -22,7 +23,7 @@
       (component/system-map
         :db (new-h2-database DEFAULT-MEM-SPEC)
         :sente (component/using
-                 (new-channel-sockets sente-handler sente-web-server-adapter {:wrap-component? true})
+                 (new-channel-socket-server sente-handler sente-web-server-adapter {:wrap-component? true})
                  [:db])
         :sente-endpoint (component/using
                           (new-endpoint sente-routes)

@@ -14,7 +14,7 @@
                   [ring/ring-core "1.4.0"]
                   [ring/ring-defaults "0.2.0"]
                   [ring-middleware-format "0.7.0"]
-
+                  [danlentz/clj-uuid "0.1.6"]
                   [clj-time "0.11.0"]
                   [compojure "1.5.0"]
                   [environ "1.0.2"]
@@ -26,17 +26,13 @@
                   [boot-environ "1.0.2"]
                   [hiccup "1.0.5"]
                   [org.danielsz/cljs-utils "0.1.0-SNAPSHOT"]
+                  [expiring-map "0.1.7"]                    ;maps with ttl used for session storage
 
                   [yesql "0.5.2"]
                   [com.novemberain/monger "3.0.2"]
                   [org.clojure/java.jdbc "0.4.2"]
                   [com.h2database/h2 "1.4.191"]
 
-                  ; om
-                  [org.omcljs/om "0.9.0"]
-                  [org.danielsz/om-flash-bootstrap "0.1.0-SNAPSHOT"]
-                  [org.danielsz/om-header-bootstrap "0.1.0-SNAPSHOT"]
-                  [ankha "0.1.5.1-64423e"]
 
                   ; ---- frontend ----------------
                   [cljsjs/react "0.14.0-0"]
@@ -73,5 +69,6 @@
            (reload)
            (cljs-repl)
            (cljs :source-map true :optimizations :none)
+           ;(repl :server true)
            (target "target")))
 

@@ -1,6 +1,5 @@
-(ns guadalete-ui.handler
+(ns guadalete-ui.handlers.http
     (:require
-      [guadalete-ui.html :as html]
       [guadalete-ui.helpers.session :as helper]
       [compojure.core :refer [routes GET POST ANY]]
       [compojure.route :as route]
@@ -22,22 +21,11 @@
             (POST "/signin" req (let [session (assoc (:session req) :uid "John Doe")]
                                      (-> (util/response "John Doe")
                                          (assoc :session session))))
-            (GET "/status" req (helper/status req))
-            (GET "/logout" req (helper/logout req)))
+            ;(GET "/status" req (helper/status req))
+            ;(GET "/logout" req (helper/logout req))
+            )
           wrap-restful-format))
 
 (def site
   (-> site-defaults
       (assoc-in [:static :resources] "/")))
-
-(defn sente-handler [{db :db}]
-      (fn [{:as ev-msg :keys [event id ?data ring-req ?reply-fn send-fn]}]
-          (let [session (:session ring-req)
-                headers (:headers ring-req)
-                uid (:uid session)
-                [id data :as ev] event]
-
-               (log/debug "Session:" session)
-               (log/debug "ev-msg:" ev-msg)
-               (match [id data]
-                      :else nil))))

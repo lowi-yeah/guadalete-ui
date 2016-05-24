@@ -156,11 +156,6 @@
 ;//
 
 
-;//              _
-;//   ______ _ _| |_ ___
-;//  (_-< -_) ' \  _/ -_)
-;//  /__\___|_||_\__\___|
-;//
 ;;; Add this: --->
 ;(let [{:keys [chsk ch-recv send-fn state]}
 ;      (sente/make-channel-socket! "/chsk"                   ; Note the same path as before
@@ -205,7 +200,6 @@
       (mount-root)
       ;(swallow-backspace)
       (socket/event-loop)
-      (js/setTimeout socket/test-session 1000)
       )
 
 (init)
