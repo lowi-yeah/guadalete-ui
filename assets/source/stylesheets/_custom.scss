@@ -1,0 +1,51 @@
+
+html, body, #main, #root {
+  // height: 100%;
+  min-height: 100vh;
+}
+
+body {
+  background-color: $primary-color-very-dark;
+  font-family: $font-stack;
+  font-weight: 300;
+}
+body > .grid {
+  height: 100%;
+}
+
+
+//   __         _
+//  / _|___ _ _| |_ ___
+// |  _/ _ \ ' \  _(_-<
+// |_| \___/_||_\__/__/
+h1, h2, h3, h4, h5, h6, p, blockquote, a {
+  font-family: $font-stack;
+  font-weight: 100;
+}
+
+pre, code, input{
+  font-family: "Monofur";
+  // font-family: "AvenirNext";
+}
+
+
+//  _           _
+// | |___  __ _(_)_ _
+// | / _ \/ _` | | ' \
+// |_\___/\__, |_|_||_|
+//        |___/
+#login {
+
+  #login-bg {
+    position:fixed;
+    top:0;
+    left:0;
+    height: 100%;
+    width: 100%;
+    background-image: linear-gradient(to top, $primary-color-very-dark, $primary-color-very-dark, $secondary-color);
+  }
+  .column {
+    margin-top:12%;
+    max-width: 450px;
+  }
+}
