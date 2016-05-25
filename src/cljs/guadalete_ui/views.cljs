@@ -6,7 +6,8 @@
 
     ; ---- mine ----
     ;[guadalete-ui.console :as c]
-    ;[guadalete-ui.views.login :refer [login-form]]
+    [guadalete-ui.views.login :refer [login-panel]]
+    [guadalete-ui.views.admin :refer [root-panel]]
     ;[guadalete-ui.views.admin :as admin]
     ;[guadalete-ui.views.user :as user]
     ;[guadalete-ui.views.sensor :as sensor]
@@ -17,21 +18,13 @@
     ;[guadalete-ui.socket :as socket]
     ))
 
-(defn blank-panel [] [:div#blank])
-
-;(defn root-panel
-;      "the panel for the root url '/'"
-;      []
-;      (let [role (re-frame/subscribe [:user/role])]
-;           (fn []
-;               (condp = @role
-;                      :none [blank-panel]
-;                      :anonymous [login-form]
-;                      :user [user/root-panel]
-;                      :admin [admin/r00t-panel]))))
+(defn blank-panel [] [:div#blank
+                      [:h1 "blank"]])
 
 (defmulti panels identity)
-(defmethod panels :root-panel [] [blank-panel])
+(defmethod panels :blank-panel [] [blank-panel])
+(defmethod panels :root-panel [] [root-panel])
+(defmethod panels :login-panel [] [login-panel])
 ;(defmethod panels :room-panel [] [room-panel])
 ;(defmethod panels :room-switches-panel [] [room-switches-panel])
 ;(defmethod panels :room-lights-panel [] [room-lights-panel])
@@ -49,28 +42,5 @@
 ;//
 (defn main-panel []
       (let [active-panel (re-frame/subscribe [:active-panel])]
-           (fn []  (panels @active-panel))))
-
-
-;(defn input
-;      []
-;      [:input {:type        "text"
-;               :placeholder "Write here."
-;               :on-change   #(re-frame/dispatch [:test/send (-> % .-target .-value)])}])
-;
-;(defn message
-;      []
-;      (let [message (re-frame/subscribe [:message])]
-;           [:div
-;            [:span "> "]
-;            [:span @message]]))
-;
-;(defn main-panel []
-;      (let [name (re-frame/subscribe [:name])]
-;           (reagent/create-class
-;             {:component-will-mount socket/event-loop
-;              :reagent-render       (fn []
-;                                        [:div
-;                                         [:div "Hello from " @name]
-;                                         [input]
-;                                         [message]])})))
+           (log/debug "active-panel" @active-panel)
+           (fn [] (panels @active-panel))))

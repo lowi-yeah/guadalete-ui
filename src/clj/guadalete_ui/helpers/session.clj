@@ -63,3 +63,13 @@
       "Convenient to extract the UID that Sente needs from the request."
       [ring-req]
       (:session/key ring-req))
+
+(defn session-role
+      "Convenient to extract the users role from a ring-request."
+      [ring-req]
+      (let [friend-identity (get-in ring-req [:session :cemerick.friend/identity] nil)
+            current (if friend-identity (:current friend-identity) nil)
+            roles (if current (get-in friend-identity [:authentications current :roles] nil))
+            role (if roles (first roles) "anonymous")]
+           role)
+      )

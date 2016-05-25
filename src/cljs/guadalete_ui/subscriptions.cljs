@@ -36,7 +36,6 @@
 
 
 
-
 (defn- items
        "Generic function for retrieving items form the db.
        An optional room-id may be given, which filters the items belonging to that room only."

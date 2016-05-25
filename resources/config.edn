@@ -1,0 +1,9 @@
+{
+ :http      {:port 3042}
+ :rethinkdb {:host     "127.0.0.1"
+             :port     28015
+             :auth-key ""
+             :db       "guadalete"}
+
+
+ }

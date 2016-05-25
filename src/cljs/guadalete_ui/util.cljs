@@ -20,15 +20,6 @@
       "Generic convenience function for converting a collection into a map.
        As the key for the map, the given mak-key is being used.
        Returns a transducer when no collection is provided."
-      ;([map-key]
-      ; (fn [rf]
-      ;   (fn
-      ;     ([] (rf))
-      ;     ([result] (rf result))
-      ;     ([result input]
-      ;      (rf result (f input)))
-      ;     ([result input & inputs]
-      ;      (rf result (apply f input inputs))))))
       [map-key coll]
       (into {} (map (fn [x] {(get x map-key) x}) coll))
       )
@@ -56,3 +47,9 @@
        "Helper for getting an element inside an array based on the :id key"
        (get-by-key coll :id val)
        )
+
+(defn pretty
+      "returns a prettyrinted string representation of whatever you throw at it. ok, just json for now…"
+      [something]
+      (.stringify js/JSON (clj->js something) nil 2)
+      )

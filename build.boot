@@ -19,7 +19,6 @@
                   [compojure "1.5.0"]
                   [environ "1.0.2"]
                   [org.clojure/core.async "0.2.374"]
-                  [cljs-ajax "0.5.4"]
                   [adzerk/boot-cljs-repl "0.3.0" :scope "test"]
                   [com.cemerick/piggieback "0.2.1" :scope "test"]
                   [weasel "0.7.0" :scope "test"]
@@ -27,6 +26,13 @@
                   [hiccup "1.0.5"]
                   [org.danielsz/cljs-utils "0.1.0-SNAPSHOT"]
                   [expiring-map "0.1.7"]                    ;maps with ttl used for session storage
+                  [com.apa512/rethinkdb "0.15.23"]
+
+                  ; ---- workaround for 'No namespace: clojure.core.memoize' error
+                  ; ---- @see https://github.com/cemerick/friend/issues/116
+                  [org.clojure/core.cache "0.6.4"]
+                  [org.clojure/core.memoize "0.5.6" :exclusions [org.clojure/core.cache]]
+                  [com.cemerick/friend "0.2.1"]
 
                   [yesql "0.5.2"]
                   [com.novemberain/monger "3.0.2"]
@@ -42,9 +48,7 @@
                   [re-frame "0.7.0"]
                   [secretary "1.2.3"]
                   [prismatic/schema "1.1.1"]
-                  [cljs-ajax "0.5.4"]
-
-
+                  [com.taoensso/encore "2.53.0"]
                   [com.joshuadavey/boot-middleman "0.0.7" :scope "test"]
                   ])
 
@@ -61,7 +65,8 @@
          "Run a restartable system in the Repl"
          []
          (comp
-           (environ :env {:http-port "3041"})
+           (environ :env {:http-port "3041"
+                          :config-file "resources/config.edn"})
            (watch :verbose true)
            (speak)
            (middleman)
