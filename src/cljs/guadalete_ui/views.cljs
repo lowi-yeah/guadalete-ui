@@ -18,21 +18,12 @@
     ;[guadalete-ui.socket :as socket]
     ))
 
-(defn blank-panel [] [:div#blank
-                      [:h1 "blank"]])
+(defn blank-panel [] [:div#blank])
 
 (defmulti panels identity)
 (defmethod panels :blank-panel [] [blank-panel])
 (defmethod panels :root-panel [] [root-panel])
 (defmethod panels :login-panel [] [login-panel])
-;(defmethod panels :room-panel [] [room-panel])
-;(defmethod panels :room-switches-panel [] [room-switches-panel])
-;(defmethod panels :room-lights-panel [] [room-lights-panel])
-;(defmethod panels :room-scene-panel [] [room-scene-panel])
-;(defmethod panels :user-panel [] [user-panel])
-;(defmethod panels :sensor-panel [] [sensor-panel])
-;(defmethod panels :signal-panel [] [signal-panel])
-;(defmethod panels :debug-panel [] [debug-panel])
 (defmethod panels :default [] [blank-panel])
 
 ;//              _
@@ -41,6 +32,6 @@
 ;//  |_|_|_\__,_|_|_||_|
 ;//
 (defn main-panel []
-      (let [active-panel (re-frame/subscribe [:active-panel])]
-           (log/debug "active-panel" @active-panel)
-           (fn [] (panels @active-panel))))
+      (fn []
+          (let [main-panel (re-frame/subscribe [:main-panel])]
+               (panels @main-panel))))

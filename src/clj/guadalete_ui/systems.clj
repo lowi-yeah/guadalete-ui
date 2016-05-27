@@ -1,9 +1,8 @@
 (ns guadalete-ui.systems
     (:require
-      [clojure.edn :as edn]
       [guadalete-ui.handlers.http :refer [ring-handler site]]
       [guadalete-ui.handlers.socket :as socket :refer [sente-handler]]
-      [guadalete-ui.helpers.util :refer [deep-merge]]
+      [guadalete-ui.helpers.config :refer [load-config]]
       [guadalete-ui.middleware
        [not-found :refer [wrap-not-found]]]
       [com.stuartsierra.component :as component]
@@ -14,7 +13,6 @@
       (system.components
         [immutant-web :refer [new-web-server]]
         [sente :refer [new-channel-socket-server sente-routes]]
-        [h2 :refer [new-h2-database DEFAULT-MEM-SPEC DEFAULT-DB-SPEC]]
         [repl-server :refer [new-repl-server]]
         [endpoint :refer [new-endpoint]]
         [handler :refer [new-handler]]
@@ -24,16 +22,6 @@
       (guadalete-ui.components
         [rethinkdb :refer [new-rethink-db]])
       ))
-
-;//                __ _                    _   _
-;//   __ ___ _ _  / _(_)__ _ _  _ _ _ __ _| |_(_)___ _ _
-;//  / _/ _ \ ' \|  _| / _` | || | '_/ _` |  _| / _ \ ' \
-;//  \__\___/_||_|_| |_\__, |\_,_|_| \__,_|\__|_\___/_||_|
-;//                    |___/
-(defn- load-config
-       [& filenames]
-       (reduce deep-merge (map (comp edn/read-string slurp)
-                               filenames)))
 
 ;//                __ _                     _               _
 ;//   __ ___ _ _  / _(_)__ _ _  _ _ _ ___  | |___ __ _ __ _(_)_ _  __ _
@@ -54,7 +42,7 @@
 (defn dev-system
       "Assembles and returns components for a base application"
       []
-      (let [config (load-config (:config-file env))]
+      (let [config (load-config)]
            (component/system-map
              :db (new-rethink-db (:rethinkdb config))
              :sente (component/using

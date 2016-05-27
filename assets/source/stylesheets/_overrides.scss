@@ -46,8 +46,154 @@ body {
   }
 }
 
-/*--------------------
-        Focus
----------------------*/
+//                _           _   _
+//  _ _  __ ___ _(_)__ _ __ _| |_(_)___ _ _
+// | ' \/ _` \ V / / _` / _` |  _| / _ \ ' \
+// |_||_\__,_|\_/|_\__, \__,_|\__|_\___/_||_|
+//                 |___/
+.ui.vertical.menu {
+  .item {
+    height: 3rem;
+    & > i.icon {
+      float: left;
+      margin: 0;
+    }
+  }
+}
 
 
+//  _ __  ___ _ _ _  _
+// | '  \/ -_) ' \ || |
+// |_|_|_\___|_||_\_,_| Inverted
+
+.ui.inverted.menu {
+  border: 0px solid transparent;
+  background: $menu-bg-color;
+}
+
+/* Menu Item */
+.ui.inverted.menu .item,
+.ui.inverted.menu .item > a:not(.ui) {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.9);
+}
+.ui.inverted.menu .item.menu {
+  background: transparent;
+}
+
+/*--- Border ---*/
+
+.ui.inverted.menu .item:before {
+  background: rgba(255, 255, 255, 0.08);
+}
+.ui.vertical.inverted.menu .item:before {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Sub Menu */
+.ui.vertical.inverted.menu .menu .item,
+.ui.vertical.inverted.menu .menu .item a:not(.ui) {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Header */
+.ui.inverted.menu .header.item {
+  margin: 0em;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* Disabled */
+.ui.inverted.menu .item.disabled,
+.ui.inverted.menu .item.disabled:hover {
+  color: rgba(225, 225, 225, 0.3);
+}
+
+/*--- Hover ---*/
+
+.ui.link.inverted.menu .item:hover,
+.ui.inverted.menu .dropdown.item:hover,
+.ui.inverted.menu .link.item:hover,
+.ui.inverted.menu a.item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: $grey-1;
+}
+.ui.vertical.inverted.menu .item .menu a.item:hover,
+.ui.vertical.inverted.menu .item .menu .link.item:hover {
+  background: transparent;
+  color: $grey-1;
+}
+
+/*--- Pressed ---*/
+
+.ui.inverted.menu a.item:active,
+.ui.inverted.menu .link.item:active,
+.ui.inverted.menu a.item:active {
+  background: rgba(255, 255, 255, 0.08);
+  color: $grey-1;
+}
+
+/*--- Active ---*/
+
+.ui.inverted.menu .active.item {
+  background: $yellow;
+  color: $grey-0 !important;
+}
+.ui.inverted.vertical.menu .item .menu .active.item {
+  background: transparent;
+  color: $grey-0;
+}
+.ui.inverted.pointing.menu .active.item:after {
+  background: $yellow !important;
+  margin: 0em !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/*--- Active Hover ---*/
+
+.ui.inverted.menu .active.item:hover {
+  background: $yellow;
+  color: $grey-0 !important;
+}
+.ui.inverted.pointing.menu .active.item:hover:after {
+  background: $yellow !important;
+}
+
+//  _        _    _
+// | |_ __ _| |__| |___
+// |  _/ _` | '_ \ / -_)
+//  \__\__,_|_.__/_\___|
+
+
+/* Text Color */
+.ui.inverted.table {
+  background: $grey-0;
+  color: $grey-1;
+  border: none;
+}
+.ui.inverted.table th {
+  background-color: rgba(0, 0, 0, 0.15);
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: rgba(255, 255, 255, 0.9);
+}
+.ui.inverted.table tr td {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+.ui.inverted.table tr.disabled td,
+.ui.inverted.table tr td.disabled,
+.ui.inverted.table tr.disabled:hover td,
+.ui.inverted.table tr:hover td.disabled {
+  pointer-events: none;
+  color: rgba(225, 225, 225, 0.3);
+}
+
+/* Definition */
+.ui.inverted.definition.table tfoot:not(.full-width) th:first-child,
+.ui.inverted.definition.table thead:not(.full-width) th:first-child {
+  background: #ffffff;
+}
+.ui.inverted.definition.table tr td:first-child {
+  background: rgba(255, 255, 255, 0.02);
+  color: #ffffff;
+}

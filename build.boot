@@ -27,6 +27,7 @@
                   [org.danielsz/cljs-utils "0.1.0-SNAPSHOT"]
                   [expiring-map "0.1.7"]                    ;maps with ttl used for session storage
                   [com.apa512/rethinkdb "0.15.23"]
+                  [cheshire "5.6.1"]
 
                   ; ---- workaround for 'No namespace: clojure.core.memoize' error
                   ; ---- @see https://github.com/cemerick/friend/issues/116
@@ -34,11 +35,10 @@
                   [org.clojure/core.memoize "0.5.6" :exclusions [org.clojure/core.cache]]
                   [com.cemerick/friend "0.2.1"]
 
-                  [yesql "0.5.2"]
-                  [com.novemberain/monger "3.0.2"]
-                  [org.clojure/java.jdbc "0.4.2"]
-                  [com.h2database/h2 "1.4.191"]
-
+                  ;[yesql "0.5.2"]
+                  ;[com.novemberain/monger "3.0.2"]
+                  ;[org.clojure/java.jdbc "0.4.2"]
+                  ;[com.h2database/h2 "1.4.191"]
 
                   ; ---- frontend ----------------
                   [cljsjs/react "0.14.0-0"]
@@ -50,6 +50,10 @@
                   [prismatic/schema "1.1.1"]
                   [com.taoensso/encore "2.53.0"]
                   [com.joshuadavey/boot-middleman "0.0.7" :scope "test"]
+
+                  [thi.ng/geom "0.0.908"]
+                  [thi.ng/math "0.1.4"]
+                  [thi.ng/tweeny "0.1.0-SNAPSHOT"]
                   ])
 
 (require

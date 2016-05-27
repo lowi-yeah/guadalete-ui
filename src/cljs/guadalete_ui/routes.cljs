@@ -35,28 +35,28 @@
                 (re-frame/dispatch [:set-root-panel]))
 
       (defroute "/room/:id" [id]
-                (re-frame/dispatch [:set-room-panel id]))
-
-      (defroute "/room/:id/switch" [id]
-                (re-frame/dispatch [:set-room-switches-panel id]))
-
-      (defroute "/room/:id/light" [id]
-                (re-frame/dispatch [:set-room-lights-panel id]))
+                (re-frame/dispatch [:view/room [id :current]]))
 
       (defroute "/room/:id/scene" [id]
-                (re-frame/dispatch [:set-room-scene-panel {:room-id id}]))
+                (re-frame/dispatch [:view/room [id :scene]]))
+      (defroute "/room/:id/light" [id]
+                (re-frame/dispatch [:view/room [id :light]]))
+      (defroute "/room/:id/switch" [id]
+                (re-frame/dispatch [:view/room [id :switch]]))
 
-      (defroute "/room/:room-id/scene/:scene-id" {:as params}
-                (re-frame/dispatch [:set-room-scene-panel params]))
 
-      (defroute "/sensor/:id" [id]
-                (re-frame/dispatch [:set-sensor-panel id]))
 
-      (defroute "/signals/" []
-                (re-frame/dispatch [:set-signal-panel]))
+      ;(defroute "/room/:room-id/scene/:scene-id" {:as params}
+      ;          (re-frame/dispatch [:set-room-scene-panel params]))
+      ;
+      ;(defroute "/sensor/:id" [id]
+      ;          (re-frame/dispatch [:set-sensor-panel id]))
+      ;
+      ;(defroute "/signals/" []
+      ;          (re-frame/dispatch [:set-signal-panel]))
 
       (defroute "/debug/" []
-                (re-frame/dispatch [:set-debug-panel]))
+                (re-frame/dispatch [:view/debug]))
 
       ;//   _ _ _ _ _ _ _ _
       ;//  (_)_)_)_)_)_)_)_)

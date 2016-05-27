@@ -33,6 +33,8 @@
 
 
 (defn get-rooms [connection] (get-all connection :room))
+(defn get-lights [connection] (get-all connection :light))
+(defn get-scenes [connection] (get-all connection :scene))
 
 ;//   _   _                 _        _          _        _
 ;//  | |_| |_  ___  __ __ __ |_  ___| |___   ___ |_  ___| |__ __ _ _ _  __ _
@@ -43,5 +45,11 @@
       "get the complete db"
       [connection]
       (let [rooms (get-rooms connection)
+            lights (get-lights connection)
+            scenes (get-scenes connection)
             ]
-           {:room rooms}))
+           (log/debug "DB everything!")
+           (log/debug "scenes" scenes)
+           {:room  rooms
+            :light lights
+            :scene scenes}))
