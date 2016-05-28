@@ -11,6 +11,7 @@
     [re-frame.core :as re-frame]
 
     [guadalete-ui.handlers]
+    [guadalete-ui.pd.handlers]
     [guadalete-ui.socket :as socket]
     [guadalete-ui.subscriptions]
     [guadalete-ui.views :as views]

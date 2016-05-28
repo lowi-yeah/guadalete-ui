@@ -13,7 +13,7 @@
     [goog.dom.dataset]
 
     [thi.ng.geom.core :as g]
-    [thi.ng.geom.core.vector :as v :refer [vec2 vec3]]
+    [thi.ng.geom.core.vector :refer [vec2]]
     [thi.ng.geom.core.matrix :as mx]
     [thi.ng.geom.types]
     [thi.ng.geom.circle :as c]
@@ -24,7 +24,7 @@
     [guadalete-ui.pd.palette :refer [palette]]
 
     [guadalete-ui.console :as log]
-    [guadalete-ui.util :refer [pretty target-id target-type]]))
+    [guadalete-ui.util :refer [pretty target-id target-type css-matrix-string]]))
 
 
 ;//
@@ -33,45 +33,48 @@
 ;//  |_|_|_\___/\_,_/__\___|
 ;//
 ;(defn- ->offset [ev]
-;       (v/vec2 (.-offsetX ev) (.-offsetY ev)))
+;       (vec2 (.-offsetX ev) (.-offsetY ev)))
 ;(defn- ->page [ev]
-;       (v/vec2 (.-pageX ev) (.-pageY ev)))
+;       (vec2 (.-pageX ev) (.-pageY ev)))
 (defn- ->screen [ev]
-       (v/vec2 (.-screenX ev) (.-screenY ev)))
+       (vec2 (.-screenX ev) (.-screenY ev)))
 
 (defn- dispatch-mouse
-       [msg ev]
+       [msg ev scene-id layout]
        (.preventDefault ev)
-       (let [editor-dom (goog.dom/$ "pd-svg")
-             layout-id (goog.dom.dataset/get editor-dom "layout-id")
-             id (target-id (.-target ev))
+       (let [id (target-id (.-target ev))
              type (keyword (target-type (.-target ev)))
-             data {:layout-id layout-id
-                   :node-id   id
-                   :type      type
-                   :position  (->screen ev)}]
+             data {:scene-id scene-id
+                   :node-id  id
+                   :type     type
+                   :position (->screen ev)
+                   :layout   layout}]
             (dispatch [msg data])))
 
 
 (defn- pd-dimensions []
        (let [jq-svg (goog.dom/$ "pd-svg")]
             (if jq-svg
-              (let [width (.-offsetWidth jq-svg)
-                    height (.-offsetHeight jq-svg)
+              (let [bounding-box (.getBoundingClientRect jq-svg)
+
+                    width (.-width bounding-box )
+                    height (.-height bounding-box )
                     ; subtract the bottom padding
                     ; (workaround for strange layout/css behaviour)
                     height* (- height 48)]
-                   (reaction (v/vec2 width height*))
-                   )
-              (reaction (v/vec2))
-              )))
+                   (reaction (vec2 width height*)))
+              (reaction (vec2)))))
+
+(def default-layout
+  {:translation (vec2)
+   :nodes       {}
+   :mode        :none})
 
 (defn- is-line?
        "checks whether a form represents a grid line.
        used in grid @see below."
        [x]
-       (if (vector? x) (= :line (first x)) false)
-       )
+       (if (vector? x) (= :line (first x)) false))
 
 (defn grid
       "the background grid"
@@ -101,100 +104,55 @@
                                                           (with-meta y {:key (str (random-uuid))})
                                                           y))
                                                     (doall (for [y y-range]
-                                                                (svg/line [start-x y] [stop-x y])))))))
-
-          ;(let [dim-rctn (subscribe [:pd/editor-dimensions])
-          ;      start-x (* -1 (:w @dim-rctn))
-          ;      stop-x (* 2 (:w @dim-rctn))
-          ;      start-y (* -1 (:h @dim-rctn))
-          ;      stop-y (* 2 (:h @dim-rctn))
-          ;      step 24
-          ;      x-range (range start-x stop-x step)
-          ;      y-range (range start-y stop-y step)]
-          ;     ;as react needs unique keys for each element in a collection,
-          ;     ;postwalk is used to attach a :meta key to each svg/line (ie. to all forms in doall)
-          ;     (svg/group {:class "grid"}
-          ;                (svg/group {:class "x-grid"}
-          ;                           (walk/postwalk (fn [x]
-          ;                                              (if (is-line? x)
-          ;                                                (with-meta x {:key (str (random-uuid))})
-          ;                                                x))
-          ;                                          (doall (for [x x-range]
-          ;                                                      (svg/line [x start-y] [x stop-y])))))
-          ;                (svg/group {:class "y-grid"}
-          ;                           (walk/postwalk (fn [y]
-          ;                                              (if (is-line? y)
-          ;                                                (with-meta y {:key (str (random-uuid))})
-          ;                                                y))
-          ;                                          (doall (for [y y-range]
-          ;                                                      (svg/line [start-x y] [stop-x y])))))))
-          ))
+                                                                (svg/line [start-x y] [stop-x y])))))))))
 
 
 (defn artboard []
       (fn []
-          ;(let [dim-rctn (subscribe [:pd/editor-dimensions])
-          ;      offset (v/vec2 8 8)
-          ;      size (g/- (vec2 (:w @dim-rctn) (:h @dim-rctn)) (g/* offset 2))]
-          ;     (svg/rect offset (:x size) (:y size) {:id "artboard"})
-          ;     )
-          ))
-
-
-
+          (let [dim-rctn (pd-dimensions)
+                offset (vec2 8 8)
+                size (g/- (vec2 (:x @dim-rctn) (:y @dim-rctn)) (g/* offset 2))
+                size* (vec2 (max 0 (:x size)) (max 0 (:y size)))
+                ]
+               (svg/rect offset (:x size*) (:y size*) {:id "artboard"}))))
 
 (defn pd []
       "A PDish editor for wiring up scenes"
       (fn [scene]
-          (let [layout (or (:layout scene) {})]
+          (let [layout (or (:layout scene) default-layout)
+                css-matrix (css-matrix-string layout)]
                [:div#pd
                 ;[:button#reset.btn-floating
                 ; {:on-click #(dispatch [:pd/reset-view])}
                 ; [:i.mdi-device-gps-fixed]]
                 ;[(editor-wrapper layout-id)
 
+                ^{:key "svg"}
                 [svg/svg
                  {
-                  :id        "pd-svg"
-                  :data-type "pd"
-                  ;:width          (:w @dim-rctn)
-                  ;:height         (:h @dim-rctn)
-                  ;:data-type      "pd"
-                  ;:data-layout-id layout-id
+                  :id            "pd-svg"
+                  :data-type     "pd"
                   ;:on-drop        #(dr0p %)
                   ;:on-drag-over   #(allow-drop %)
-                  ;:on-mouse-down  #(mouse-dispatch :pd/mouse-down %)
-                  ;:on-mouse-move  #(mouse-dispatch :pd/mouse-move %)
-                  ;:on-mouse-up    #(mouse-dispatch :pd/mouse-up %)
+                  :on-mouse-down #(dispatch-mouse :pd/mouse-down % (:id scene) layout)
+                  :on-mouse-move #(dispatch-mouse :pd/mouse-move % (:id scene) layout)
+                  :on-mouse-up   #(dispatch-mouse :pd/mouse-up % (:id scene) layout)
 
                   }
 
-                 ^{:key "grid"}
-                 [grid]
+                 ^{:key "pan-group"}
+                 [svg/group {:id    "pan-group"
+                             :style {:transform css-matrix}
+                             ;:class (if (= :none (:mode @editor-rctn)) "transition")
+                             }
 
-                 ^{:key "artboard"}
-                 [artboard]
+                  ^{:key "grid"} [grid]
+                  ^{:key "artboard"} [artboard]
 
-                 ;^{:key "bg"}
-                 ;[svg/rect (vec2) 0 0 {:id "bg"}]
-
-                 ;^{:key "zoom-group"}
-                 ;[svg/group {:id    "zoom-group"
-                 ;            :style {:transform css-matrix}
-                 ;            :class (if (= :none (:mode @editor-rctn)) "transition")
-                 ;            }
-                 ;
-                 ; ^{:key "grid"}
-                 ; [grid]
-                 ;
-                 ; ^{:key "artboard"}
-                 ; [artboard]
-                 ;
-                 ; ^{:key "nodes"}
-                 ; [nodes (:id @room-rctn) scene-layout-rctn]
-                 ; ]
-                 ]
-                ;[palette]
+                  ; ^{:key "nodes"}
+                  ; [nodes (:id @room-rctn) scene-layout-rctn]
+                  ]]
+                [palette]
 
                 ;[:pre.code
                 ; (pretty layout)]

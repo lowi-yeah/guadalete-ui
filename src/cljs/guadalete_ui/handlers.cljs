@@ -165,5 +165,13 @@
            (assoc db
                   :room rooms-map
                   :light lights-map
-                  :scene scenes-map
-                  ))))
+                  :scene scenes-map))))
+
+
+;//           _
+;//   _ __ __| |
+;//  | '_ \ _` |
+;//  | .__\__,_|
+;//  |_|
+
+;// => see pd.handlers

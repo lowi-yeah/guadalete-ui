@@ -3,6 +3,9 @@
                    [cljs.core :refer [or]])
 
   (:require [cljs.core.async :as async :refer [<! >! chan close! put! to-chan timeout]]
+            [thi.ng.geom.core :as g]
+            [thi.ng.geom.core.matrix :refer [matrix32]]
+            [thi.ng.geom.core.vector :refer [vec2 vec3]]
             [guadalete-ui.console :as log]))
 
 (defn debounce [in ms]
@@ -67,3 +70,11 @@
             (if (nil? type)
               (target-type (.parent (js/$ target)))
               type)))
+
+(defn- css-matrix-string
+       "Converts a thin.ng/Matrix32 to its css-transform representation"
+       [layout]
+       (let [translation (if (nil? (:translation layout)) (vec2) (:translation layout))
+             matrix (-> (matrix32)
+                        (g/translate translation))]
+            (str "matrix(" (clojure.string/join ", " (g/transpose matrix)) ")")))
