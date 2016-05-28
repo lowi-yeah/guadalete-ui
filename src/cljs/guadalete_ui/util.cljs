@@ -53,3 +53,17 @@
       [something]
       (.stringify js/JSON (clj->js something) nil 2)
       )
+
+(defn target-id [target]
+      "Return the targets id, or – in case it has none - recursively walk up the dom to find the first ancestor with an id."
+      (let [id (.attr (js/$ target) "id")]
+           (if (nil? id)
+             (target-id (.parent (js/$ target)))
+             id)))
+
+(defn target-type [target]
+       "Return the targets data-type, or – in case it has none - recursively walk up the dom to find the first ancestor with an data-type."
+       (let [type (.attr (js/$ target) "data-type")]
+            (if (nil? type)
+              (target-type (.parent (js/$ target)))
+              type)))

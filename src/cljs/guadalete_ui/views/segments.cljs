@@ -53,7 +53,7 @@
 (defmethod segment :light
            [_ room-rctn]
            (let [lights (:light @room-rctn)]
-                [:div.ui.segment
+                [:div.side-margins
                  [:table.ui.celled.table.inverted
                   [:thead
                    [:tr
@@ -72,4 +72,5 @@
 
 (defmethod segment :switch
            [_ room-rctn]
-           [:h1 ":switch"])
+           [:div.side-margins
+            [:h1 ":switch"]])
