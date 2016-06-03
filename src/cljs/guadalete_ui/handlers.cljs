@@ -3,6 +3,7 @@
   (:require [re-frame.core :refer [dispatch register-handler path trim-v after]]
             [taoensso.sente :as sente]
             [taoensso.encore :refer [ajax-lite]]
+            [differ.core :as differ]
             [guadalete-ui.console :as log]
             [guadalete-ui.socket :refer [chsk-send! chsk-state chsk-reconnect!]]
             [guadalete-ui.util :refer [pretty mappify]]
@@ -117,8 +118,6 @@
 (register-handler
   :view/room
   (fn [db [_ [room-id segment]]]
-      (log/debug ":view/room" room-id (str segment))
-
       (if (= segment :current)
         (-> db
             (assoc :current/view :room)
@@ -141,10 +140,12 @@
       (log/debug ":modal/new-room")
       db))
 
-;//      _      _        _
-;//   __| |__ _| |_ __ _| |__ __ _ ______
-;//  / _` / _` |  _/ _` | '_ \ _` (_-< -_)
-;//  \__,_\__,_|\__\__,_|_.__\__,_/__\___|
+
+
+;//      _        _
+;//   ___ |_ __ _| |_ ___
+;//  (_-<  _/ _` |  _/ -_)
+;//  /__/\__\__,_|\__\___|
 ;//
 (register-handler
   :sync/state
@@ -167,6 +168,23 @@
                   :light lights-map
                   :scene scenes-map))))
 
+;//
+;//   _____ ___ _ _  ___
+;//  (_-< _/ -_) ' \/ -_)
+;//  /__\__\___|_||_\___|
+;//
+(register-handler
+  :scene/update
+  (fn [db [_ update]]
+      (let [id (:id update)
+            original (get-in db [:scene id])
+            patch (differ/diff original update)]
+
+           ;if the patch is empty, send the whole scene and a replace-flag
+           (if (and (empty? (first patch)) (empty? (second patch)))
+             (chsk-send! [:scene/update [id original :replace]])
+             (chsk-send! [:scene/update [id patch]]))
+           (assoc-in db [:scene id] update))))
 
 ;//           _
 ;//   _ __ __| |

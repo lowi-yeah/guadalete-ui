@@ -44,6 +44,12 @@ body {
       color: $primary-color-light !important;
     }
   }
+
+  select {
+    background: $grey-0;
+    border: 1px solid rgba($grey-1, 0.6);
+    color: rgba($grey-1, 0.87);
+  }
 }
 
 //                _           _   _
@@ -196,4 +202,70 @@ body {
 .ui.inverted.definition.table tr td:first-child {
   background: rgba(255, 255, 255, 0.02);
   color: #ffffff;
+}
+
+
+//  _         _   _
+// | |__ _  _| |_| |_ ___ _ _
+// | '_ \ || |  _|  _/ _ \ ' \
+// |_.__/\_,_|\__|\__\___/_||_|
+
+.ui.button {
+  &.icon {
+    padding: 0.5rem;
+  }
+
+  &.circular {
+    .icon {
+      width:1.5rem;
+      height:1.5rem;
+    }
+  }
+
+  &.deny {
+    background: $re-red;
+    color: $grey-0;      
+    border: 2px solid $re-red;
+    &:hover {
+      background: transparent;
+      color: $re-red;  
+    }
+  }
+
+  &.approve {
+    background: $re-green;
+    color: $grey-0;      
+    border: 2px solid $re-green;
+    &:hover {
+      background: transparent;  
+      color: $re-green;
+    }
+  }
+}
+
+
+//  _ _    _
+// | (_)__| |_ ___
+// | | (_-<  _(_-<
+// |_|_/__/\__/__/
+
+.ui.list {
+  .item {
+    padding-top:0;
+    padding-bottom:0.5rem;
+    // &:first-child {}
+  }
+} 
+
+//                _      _
+//  _ __  ___  __| |__ _| |
+// | '  \/ _ \/ _` / _` | |
+// |_|_|_\___/\__,_\__,_|_|
+.ui.modal { 
+  top: 0;
+  margin-top: 8% !important;
+
+  .content {
+    padding-top: 0;
+  }
 }

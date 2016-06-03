@@ -3,9 +3,6 @@
                    [cljs.core :refer [or]])
 
   (:require [cljs.core.async :as async :refer [<! >! chan close! put! to-chan timeout]]
-            [thi.ng.geom.core :as g]
-            [thi.ng.geom.core.matrix :refer [matrix32]]
-            [thi.ng.geom.core.vector :refer [vec2 vec3]]
             [guadalete-ui.console :as log]))
 
 (defn debounce [in ms]
@@ -54,27 +51,15 @@
 (defn pretty
       "returns a prettyrinted string representation of whatever you throw at it. ok, just json for now…"
       [something]
-      (.stringify js/JSON (clj->js something) nil 2)
-      )
+      (.stringify js/JSON (clj->js something) nil 2))
 
-(defn target-id [target]
-      "Return the targets id, or – in case it has none - recursively walk up the dom to find the first ancestor with an id."
-      (let [id (.attr (js/$ target) "id")]
-           (if (nil? id)
-             (target-id (.parent (js/$ target)))
-             id)))
+(defn map-value
+      "Map a value v from domain(vec2) to range(vec2)"
+      [value domain range]
 
-(defn target-type [target]
-       "Return the targets data-type, or – in case it has none - recursively walk up the dom to find the first ancestor with an data-type."
-       (let [type (.attr (js/$ target) "data-type")]
-            (if (nil? type)
-              (target-type (.parent (js/$ target)))
-              type)))
-
-(defn- css-matrix-string
-       "Converts a thin.ng/Matrix32 to its css-transform representation"
-       [layout]
-       (let [translation (if (nil? (:translation layout)) (vec2) (:translation layout))
-             matrix (-> (matrix32)
-                        (g/translate translation))]
-            (str "matrix(" (clojure.string/join ", " (g/transpose matrix)) ")")))
+      (-> value
+          (- (:x domain))
+          (/ (- (:y domain) (:x domain)))
+          (* (- (:y range) (:x range)))
+          (+ (:x range))
+          ))

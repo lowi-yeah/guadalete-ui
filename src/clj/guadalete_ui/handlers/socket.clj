@@ -5,13 +5,10 @@
       [guadalete-ui.helpers.session :refer [session-role session-uid]]
       [guadalete-ui.handlers.database :as db]))
 
-
-
 ; custom sente functions
 (def handshake-data-fn
   "Attach the user role to the handshake. can be one of [:admin :user :anonymous]"
   (fn [ring-req]
-      (log/debug "handshake-data-fn" (session-role ring-req))
       (session-role ring-req)))
 
 (def user-id-fn
@@ -54,6 +51,28 @@
            (when-let [role (session-role ring-req)]
                      (when ?reply-fn
                            (?reply-fn {:role role}))))
+
+; SCENES
+; ****************
+(defmethod event-handler :scene/create
+           [{:keys [?data]}]
+           (let [[room-id scene] ?data]
+                ;(db/make-scene room-id scene)
+                ))
+
+(defmethod event-handler :scene/update
+           [{:keys [?data db]}]
+           (let [[id diff flag] ?data
+                 flag (or flag :patch)]
+                (log/debug ":scene/update" db)
+                (db/update-scene (:conn db) id diff flag)))
+
+(defmethod event-handler :scene/trash
+           [{:keys [?data]}]
+           (let [scene-id ?data]
+                ;(db/trash-scene scene-id)
+                ))
+
 
 ; DEFAULT
 ; ****************

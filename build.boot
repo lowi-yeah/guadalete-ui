@@ -35,10 +35,7 @@
                   [org.clojure/core.memoize "0.5.6" :exclusions [org.clojure/core.cache]]
                   [com.cemerick/friend "0.2.1"]
 
-                  ;[yesql "0.5.2"]
-                  ;[com.novemberain/monger "3.0.2"]
-                  ;[org.clojure/java.jdbc "0.4.2"]
-                  ;[com.h2database/h2 "1.4.191"]
+                  [differ "0.3.1"]
 
                   ; ---- frontend ----------------
                   [cljsjs/react "0.14.0-0"]
@@ -50,10 +47,11 @@
                   [prismatic/schema "1.1.1"]
                   [com.taoensso/encore "2.53.0"]
                   [com.joshuadavey/boot-middleman "0.0.7" :scope "test"]
-
+                  [com.cognitect/transit-cljs "0.8.237"]
                   [thi.ng/geom "0.0.908"]
-                  [thi.ng/math "0.1.4"]
+                  [thi.ng/math "0.2.1"]
                   [thi.ng/tweeny "0.1.0-SNAPSHOT"]
+                  [thi.ng/color "1.2.0"]
                   ])
 
 (require

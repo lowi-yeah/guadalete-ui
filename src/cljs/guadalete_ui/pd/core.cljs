@@ -5,7 +5,7 @@
     [reagent.ratom :refer [reaction]])
   (:require
     [clojure.walk :as walk]
-    [re-frame.core :refer [dispatch]]
+    [re-frame.core :refer [dispatch subscribe]]
     [clojure.string :as string]
     [reagent.core :as reagent]
 
@@ -21,10 +21,18 @@
     [thi.ng.math.core :as math :refer [PI HALF_PI TWO_PI]]
     [thi.ng.geom.svg.core :as svg]
 
-    [guadalete-ui.pd.palette :refer [palette]]
+    [guadalete-ui.pd.palette :refer [palette drop* allow-drop]]
+    [guadalete-ui.pd.nodes :refer [nodes]]
 
     [guadalete-ui.console :as log]
-    [guadalete-ui.util :refer [pretty target-id target-type css-matrix-string]]))
+    [guadalete-ui.util :refer [pretty]]
+    [guadalete-ui.pd.util
+     :refer
+     [pd-dimensions
+      target-id
+      target-type
+      is-line?
+      css-matrix-string]]))
 
 
 ;//
@@ -40,41 +48,16 @@
        (vec2 (.-screenX ev) (.-screenY ev)))
 
 (defn- dispatch-mouse
-       [msg ev scene-id layout]
-       (.preventDefault ev)
+       [msg ev room-id scene-id layout]
        (let [id (target-id (.-target ev))
              type (keyword (target-type (.-target ev)))
-             data {:scene-id scene-id
+             data {:room-id  room-id
+                   :scene-id scene-id
                    :node-id  id
                    :type     type
                    :position (->screen ev)
                    :layout   layout}]
             (dispatch [msg data])))
-
-
-(defn- pd-dimensions []
-       (let [jq-svg (goog.dom/$ "pd-svg")]
-            (if jq-svg
-              (let [bounding-box (.getBoundingClientRect jq-svg)
-
-                    width (.-width bounding-box )
-                    height (.-height bounding-box )
-                    ; subtract the bottom padding
-                    ; (workaround for strange layout/css behaviour)
-                    height* (- height 48)]
-                   (reaction (vec2 width height*)))
-              (reaction (vec2)))))
-
-(def default-layout
-  {:translation (vec2)
-   :nodes       {}
-   :mode        :none})
-
-(defn- is-line?
-       "checks whether a form represents a grid line.
-       used in grid @see below."
-       [x]
-       (if (vector? x) (= :line (first x)) false))
 
 (defn grid
       "the background grid"
@@ -106,20 +89,10 @@
                                                     (doall (for [y y-range]
                                                                 (svg/line [start-x y] [stop-x y])))))))))
 
-
-(defn artboard []
-      (fn []
-          (let [dim-rctn (pd-dimensions)
-                offset (vec2 8 8)
-                size (g/- (vec2 (:x @dim-rctn) (:y @dim-rctn)) (g/* offset 2))
-                size* (vec2 (max 0 (:x size)) (max 0 (:y size)))
-                ]
-               (svg/rect offset (:x size*) (:y size*) {:id "artboard"}))))
-
 (defn pd []
       "A PDish editor for wiring up scenes"
-      (fn [scene]
-          (let [layout (or (:layout scene) default-layout)
+      (fn [room-rctn scene]
+          (let [layout (:layout scene)
                 css-matrix (css-matrix-string layout)]
                [:div#pd
                 ;[:button#reset.btn-floating
@@ -130,14 +103,19 @@
                 ^{:key "svg"}
                 [svg/svg
                  {
-                  :id            "pd-svg"
-                  :data-type     "pd"
-                  ;:on-drop        #(dr0p %)
-                  ;:on-drag-over   #(allow-drop %)
-                  :on-mouse-down #(dispatch-mouse :pd/mouse-down % (:id scene) layout)
-                  :on-mouse-move #(dispatch-mouse :pd/mouse-move % (:id scene) layout)
-                  :on-mouse-up   #(dispatch-mouse :pd/mouse-up % (:id scene) layout)
+                  :id              "pd-svg"
+                  :data-type       "pd"
+                  :on-drop         #(drop* %)
+                  :on-drag-over    #(allow-drop %)
+                  :on-double-click #(dispatch-mouse :pd/double-click % (:id @room-rctn) (:id scene) layout)
+                  :on-click        #(dispatch-mouse :pd/click % (:id @room-rctn) (:id scene) layout)
+                  :on-mouse-down   #(dispatch-mouse :pd/mouse-down % (:id @room-rctn) (:id scene) layout)
+                  :on-mouse-move   #(dispatch-mouse :pd/mouse-move % (:id @room-rctn) (:id scene) layout)
 
+                  ; obacht: weird behaviour
+                  ; if on-mouse-up is being registered without ther timeout, the :on-double-click
+                  ; only works on the (background) 'pd', but not on nodes.
+                  :on-mouse-up     #(js/setTimeout (fn [_] (dispatch-mouse :pd/mouse-up % (:id @room-rctn) (:id scene) layout)) 200)
                   }
 
                  ^{:key "pan-group"}
@@ -147,13 +125,10 @@
                              }
 
                   ^{:key "grid"} [grid]
-                  ^{:key "artboard"} [artboard]
-
-                  ; ^{:key "nodes"}
-                  ; [nodes (:id @room-rctn) scene-layout-rctn]
+                  ^{:key "nodes"} [nodes (:id @room-rctn) scene layout]
                   ]]
-                [palette]
+                [palette (:id @room-rctn) (:id scene)]
 
-                ;[:pre.code
-                ; (pretty layout)]
+
+                ;[:pre.code (pretty scene)]
                 ])))

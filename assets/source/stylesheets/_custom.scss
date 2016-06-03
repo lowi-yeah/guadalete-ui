@@ -2,6 +2,7 @@
 html, body, #main, #root {
   height: unset;
   min-height: 100vh;
+  user-select: none !important;
 }
 
 body {
@@ -38,6 +39,7 @@ pre, code, input{
   width: calc(100% - 150px);
   // padding: 1.5rem 1rem;
   min-height: 100vh;
+  margin-left:150px;
 }
 
 .full-height {
@@ -76,7 +78,43 @@ pre, code, input{
 }
 
 
+//  _
+// (_)__ ___ _ _  ___
+// | / _/ _ \ ' \(_-<
+// |_\__\___/_||_/__/
 
+i.icon {
+  &.gdlt { 
+    // width: $button-floating-size * 0.75;
+    // height: $button-floating-size * 0.75;
+    // background-size: $button-floating-size * 0.75 $button-floating-size * 0.75;
+    // background-repeat: no-repeat;
+    // background-position: center;
+
+    &:before {
+      content: "" !important;
+    }
+    
+    &.bulb {
+      background-image: url(#{$image-path}/bulb-on.svg);
+    }
+
+    &.signal {
+      background-image: url(#{$image-path}/signal-icon.svg);
+    }
+
+    &.color {
+      background-image: url(#{$image-path}/color-wheel-spectrum.svg);
+    }
+  }
+} 
+
+
+
+//      _   _
+//  ___| |_| |_  ___ _ _
+// / _ \  _| ' \/ -_) '_|
+// \___/\__|_||_\___|_|
 .margins {
   margin-left: 1rem;
   margin-right:1rem;

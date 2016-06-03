@@ -47,7 +47,7 @@
                  ;        (let [scene-link (str "#/room/" (:id @room-rctn) "/scene/" (:id scene))]
                  ;             ^{:key (str "s-" (:id scene))}
                  ;             [:a.item {:href scene-link} (:name scene)])))]
-                 [pd scene]
+                 [pd room-rctn scene]
                  ]))
 
 (defmethod segment :light
@@ -73,4 +73,6 @@
 (defmethod segment :switch
            [_ room-rctn]
            [:div.side-margins
-            [:h1 ":switch"]])
+            [:h1 "debug"]
+            [:pre.code (pretty @room-rctn)]
+            ])

@@ -1,11 +1,11 @@
 (ns guadalete-ui.views.admin
   "The login screen."
   (:require
-    [re-frame.core :as re-frame]
+    [re-frame.core :refer [subscribe]]
     [reagent.core :as reagent]
     [guadalete-ui.console :as log]
     [guadalete-ui.util :refer [pretty]]
-    [guadalete-ui.views.modal :refer [new-room-modal]]
+    [guadalete-ui.views.modal :refer [modals]]
     [guadalete-ui.views.segments :refer [segment]]
     ))
 
@@ -28,14 +28,14 @@
 
 (defn room-view []
       (fn []
-          (let [room-rctn (re-frame/subscribe [:current/room {:assemble true}])
-                segment-rctn (re-frame/subscribe [:current/segment])
-                db-rctn (re-frame/subscribe [:db])
+          (let [room-rctn (subscribe [:current/room {:assemble true}])
+                segment-rctn (subscribe [:current/segment])
+                db-rctn (subscribe [:db])
                 scene-link (str "#/room/" (:id @room-rctn) "/scene") ; OBACHT the '#' ist important, since without it the whole page gets relaoded
                 light-link (str "#/room/" (:id @room-rctn) "/light")
                 switch-link (str "#/room/" (:id @room-rctn) "/switch")]
                [:div.room.flex-container.full-height
-                [:div.margins
+                [:div#header.margins
                  [:h3 (:name @room-rctn)]
                  [:div.ui.pointing.menu.inverted
                   [:a.item {:href scene-link :class (active-segment? @segment-rctn :scene)} "scenes"]
@@ -57,16 +57,18 @@
       "root component for :role/admin"
       []
       (fn []
-          (let [view-rctn (re-frame/subscribe [:current/view])
-                rooms-rctn (re-frame/subscribe [:rooms])]
+          (let [view-rctn (subscribe [:current/view])
+                rooms-rctn (subscribe [:rooms])
+                ]
                [(with-meta identity
                            {:component-did-mount (fn [this]
                                                      (.sidebar (js/$ "#nav")
                                                                (js-obj "context" (js/$ "#root")
                                                                        "closable" false
                                                                        "dimPage" false))
+                                                     (.sidebar (js/$ "#nav") "setting" "transition" "overlay")
                                                      (.sidebar (js/$ "#nav") "push page"))})
-                [:div#root
+                [:div#root.pushable
                  [:div#nav.ui.visible.thin.sidebar.inverted.vertical.menu
                   (doall
                     (for [room @rooms-rctn]
@@ -79,6 +81,7 @@
                    [:i.large.add.circle.icon]]]
                  [:div#view.pusher
                   (view @view-rctn)]
-                 [:div#modals
-                  [new-room-modal]]
+
+                 [modals]
+
                  ]])))
