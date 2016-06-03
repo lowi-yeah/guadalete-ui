@@ -91,6 +91,8 @@
        []
        (fn [room-id scene layout node item]
            (let [node-size 36
+                 outlet-size (vec2 18 8)
+                 outlet-position (vec2 9 34)
                  id (:id node)
                  position (:position node)
 
@@ -116,7 +118,13 @@
 
                  [svg/rect (vec2 0 0) node-size node-size
                   {:rx    2
-                   :class "click-target"}]])))
+                   :class "click-target"}]
+
+
+                 [svg/rect outlet-position (:x outlet-size) (:y outlet-size)
+                  {:class     "outlet"
+                   :data-type "outlet"}]
+                 ])))
 
 (defn node
       [room-id scene layout n item]

@@ -33,13 +33,7 @@
        (let [offset (g/+ (:pos-0 n) δ)]
             [id (assoc n :pos {:x (:x offset) :y (:y offset)})]))
 
-;//                              _
-;//   _ __  ___ _  _ ______   __| |_____ __ ___ _
-;//  | '  \/ _ \ || (_-< -_) / _` / _ \ V  V / ' \
-;//  |_|_|_\___/\_,_/__\___| \__,_\___/\_/\_/|_||_|
-;//
-
-(defn- mouse-down** [scene-id node-id position layout db]
+(defn- move-node-start [scene-id node-id position layout db]
        (let [scene (get-in db [:scene scene-id])
              nodes (:nodes layout)
              node (->> nodes
@@ -61,7 +55,37 @@
              scene-0 (assoc scene :layout layout-0)]
             (assoc-in db [:scene scene-id] scene-0)))
 
+(defn- make-link-start [scene-id node-id position layout db]
+       (log/debug "make-link-start")
+       (let [scene (get-in db [:scene scene-id])
+             nodes (:nodes layout)
+             node (->> nodes
+                       (filter #(= (:id %) node-id))
+                       (first))
+             ;node-0 (assoc node
+             ;              :selected true
+             ;              :pos-0 (:position node))
+             ;
+             ;nodes-0 (->> nodes
+             ;             (unselect-all)
+             ;             (remove #(= (:id %) node-id)))
+             ;nodes-1 (conj nodes-0 node-0)
+             ;
+             layout-0 (assoc layout
+                             :mode :link
+                             :pos-0 position)
+             scene-0 (assoc scene :layout layout-0)
 
+             ]
+            (log/debug "scene-0" (pretty scene-0))
+
+            (assoc-in db [:scene scene-id] scene-0)))
+
+;//                              _
+;//   _ __  ___ _  _ ______   __| |_____ __ ___ _
+;//  | '  \/ _ \ || (_-< -_) / _` / _ \ V  V / ' \
+;//  |_|_|_\___/\_,_/__\___| \__,_\___/\_/\_/|_||_|
+;//
 (defmulti mouse-down*
           (fn [type scene-id node-id position layout db] type))
 
@@ -77,13 +101,16 @@
                 (assoc-in db [:scene scene-id] scene-0)))
 
 (defmethod mouse-down* :light [_type scene-id node-id position layout db]
-           (mouse-down** scene-id node-id position layout db))
+           (move-node-start scene-id node-id position layout db))
 
 (defmethod mouse-down* :color [_type scene-id node-id position layout db]
-           (mouse-down** scene-id node-id position layout db))
+           (move-node-start scene-id node-id position layout db))
+
+(defmethod mouse-down* :outlet [_type scene-id node-id position layout db]
+           (make-link-start scene-id node-id position layout db))
 
 (defmethod mouse-down* :default [type _ _ _ _ db]
-           (log/error (str "I don't know the type: " type))
+           (log/error (str "mouse-down: I don't know the type: " type))
            db)
 
 (defn down [{:keys [type scene-id node-id position layout] :as data} db]
@@ -138,7 +165,7 @@
                 (assoc editor :translation (g/+ pos-1 δ))))
 
 (defmethod mouse-move* :default [params]
-           (log/error (str "I don't know the type: " (:mode params)))
+           (log/error (str "mouse-move: I don't know the type: " (:mode params)))
            (:editor params))
 
 (defn mouse-move [type id pos editor]
