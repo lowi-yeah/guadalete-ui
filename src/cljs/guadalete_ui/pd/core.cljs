@@ -51,12 +51,14 @@
        [msg ev room-id scene-id layout]
        (let [id (target-id (.-target ev))
              type (keyword (target-type (.-target ev)))
+             buttons (.-buttons ev)
              data {:room-id  room-id
                    :scene-id scene-id
                    :node-id  id
                    :type     type
                    :position (->screen ev)
-                   :layout   layout}]
+                   :layout   layout
+                   :buttons  buttons}]
             (dispatch [msg data])))
 
 (defn grid
@@ -111,11 +113,8 @@
                   :on-click        #(dispatch-mouse :pd/click % (:id @room-rctn) (:id scene) layout)
                   :on-mouse-down   #(dispatch-mouse :pd/mouse-down % (:id @room-rctn) (:id scene) layout)
                   :on-mouse-move   #(dispatch-mouse :pd/mouse-move % (:id @room-rctn) (:id scene) layout)
-
-                  ; obacht: weird behaviour
-                  ; if on-mouse-up is being registered without ther timeout, the :on-double-click
-                  ; only works on the (background) 'pd', but not on nodes.
-                  :on-mouse-up     #(js/setTimeout (fn [_] (dispatch-mouse :pd/mouse-up % (:id @room-rctn) (:id scene) layout)) 200)
+                  :on-mouse-up     #(dispatch-mouse :pd/mouse-up % (:id @room-rctn) (:id scene) layout)
+                  :on-mouse-enter  #(dispatch-mouse :pd/mouse-enter % (:id @room-rctn) (:id scene) layout)
                   }
 
                  ^{:key "pan-group"}

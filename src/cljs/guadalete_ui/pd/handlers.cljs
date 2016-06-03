@@ -55,6 +55,15 @@
   (fn [db [_ data]]
       (mouse/up data db)))
 
+
+(register-handler
+  :pd/mouse-enter
+  (fn [db [_ data]]
+      (if (= 0 (:buttons data))
+        (mouse/up data db)
+        db)))
+
+
 (register-handler
   :pd/click
   (fn [db [_ data]]
@@ -118,7 +127,7 @@
               item (get-in db [node-type item-id])
               scene-items (get scene node-type)
               node* (assoc node :item-id item-id)           ; set the item id in the pd node
-              nodes* (remove #(= (:id node) (:id %)) nodes)    ; update the nodes
+              nodes* (remove #(= (:id node) (:id %)) nodes) ; update the nodes
               nodes* (conj nodes* node*)
               layout* (assoc layout :nodes nodes*)          ; update the layout
               scene* (assoc scene :layout layout*)          ; update the scene
