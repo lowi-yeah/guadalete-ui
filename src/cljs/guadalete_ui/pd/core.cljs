@@ -23,6 +23,7 @@
 
     [guadalete-ui.pd.palette :refer [palette drop* allow-drop]]
     [guadalete-ui.pd.nodes :refer [nodes]]
+    [guadalete-ui.pd.links :refer [links]]
 
     [guadalete-ui.console :as log]
     [guadalete-ui.util :refer [pretty]]
@@ -32,7 +33,8 @@
       target-id
       target-type
       is-line?
-      css-matrix-string]]))
+      css-matrix-string
+      pd-screen-offset]]))
 
 
 ;//
@@ -40,12 +42,14 @@
 ;//  | '  \/ _ \ || (_-< -_)
 ;//  |_|_|_\___/\_,_/__\___|
 ;//
-;(defn- ->offset [ev]
-;       (vec2 (.-offsetX ev) (.-offsetY ev)))
-;(defn- ->page [ev]
-;       (vec2 (.-pageX ev) (.-pageY ev)))
-(defn- ->screen [ev]
-       (vec2 (.-screenX ev) (.-screenY ev)))
+(defn- ->page [ev]
+       (vec2 (.-pageX ev) (.-pageY ev)))
+
+(defn- ->position [ev]
+       (let [ev* (.-nativeEvent ev)
+             pos (vec2 (.-x ev*) (.-y ev*))
+             offset (pd-screen-offset)]
+            (g/- pos offset)))
 
 (defn- dispatch-mouse
        [msg ev room-id scene-id layout]
@@ -56,7 +60,7 @@
                    :scene-id scene-id
                    :node-id  id
                    :type     type
-                   :position (->screen ev)
+                   :position (->position ev)
                    :layout   layout
                    :buttons  buttons}]
             (dispatch [msg data])))
@@ -122,12 +126,9 @@
                              :style {:transform css-matrix}
                              ;:class (if (= :none (:mode @editor-rctn)) "transition")
                              }
-
                   ^{:key "grid"} [grid]
-                  ^{:key "nodes"} [nodes (:id @room-rctn) scene layout]
+                  ^{:key "links"} [links (:id @room-rctn) scene]
+                  ^{:key "nodes"} [nodes (:id @room-rctn) scene]
                   ]]
                 [palette (:id @room-rctn) (:id scene)]
-
-
-                ;[:pre.code (pretty scene)]
                 ])))

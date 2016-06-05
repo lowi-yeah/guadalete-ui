@@ -1,4 +1,6 @@
-(ns guadalete-ui.helpers.util)
+(ns guadalete-ui.helpers.util
+    (:require
+      [schema.core :as s]))
 
 (defn deep-merge
       "Deep merge two maps"
@@ -14,3 +16,11 @@
       [map-key coll]
       (into {} (map (fn [x] {(get x map-key) x}) coll))
       )
+
+
+; this is here due to a weird behaviour when loading the schema definition (@see cljc/redonaira/schema)
+; since there seems to be no Vec2 in the thin/ng clojure (ie. not the clojure) implementation,
+; one needs to be defined so that the compiler won't complain.
+(def Vec2
+  {:x s/Num
+   :y s/Num})

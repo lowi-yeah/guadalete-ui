@@ -8,7 +8,7 @@
 
     [thi.ng.geom.core :as g]
     [thi.ng.geom.core.matrix :refer [matrix32]]
-    [thi.ng.geom.core.vector :refer [vec2 vec3]]
+    [thi.ng.geom.core.vector :refer [vec2]]
     [guadalete-ui.console :as log]))
 
 
@@ -100,3 +100,8 @@
            {:type :sgnl
             :id   "nil-signal"
             :name "signal"})
+
+(defn pd-screen-offset []
+      (let [jq-svg (js/$ "#pd-svg")
+            offset (.offset jq-svg)]
+           (vec2 (.-left offset) (.-top offset))))

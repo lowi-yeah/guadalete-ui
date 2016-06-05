@@ -42,7 +42,7 @@
            (let [id (:id node)
                  position (:position node)
                  type (keyword (:type node))
-                 ]
+                 inlet-position (vec2 9 -6)]
                 [(with-meta identity
                             {:component-did-mount
                              (fn [this]
@@ -79,6 +79,10 @@
                                :y          7}]
                    [svg/text (vec2 32 21) (str (:name item))
                     {:class "node-text"}]]
+
+                  [svg/rect inlet-position 0 0
+                   {:class     "inlet"
+                    :data-type "inlet/color"}]
 
                   [svg/rect (vec2 0 0) 32 32
                    {:rx    2
@@ -137,14 +141,15 @@
 (defn nodes
       "Renders all nodes into the editor"
       []
-      (fn [room-id scene layout]
-          [svg/group
-           {:id "nodes"}
-           (doall (for [n (:nodes layout)]
-                       (let [type (keyword (:type n))
-                             item-rctn (subscribe [:pd/node-item {:type type :id (:item-id n)}])]
-                            ^{:key (str "n-" (:id n))}
-                            [node room-id scene layout n @item-rctn])))]))
+      (fn [room-id scene]
+          (let [layout (:layout scene)]
+               [svg/group
+                {:id "nodes"}
+                (doall (for [n (:nodes layout)]
+                            (let [type (keyword (:type n))
+                                  item-rctn (subscribe [:pd/node-item {:type type :id (:item-id n)}])]
+                                 ^{:key (str "n-" (:id n))}
+                                 [node room-id scene layout n @item-rctn])))])))
 
 
 ;//              _

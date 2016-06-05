@@ -5,6 +5,7 @@
     [thi.ng.geom.core.vector :refer [vec2]]
     [guadalete-ui.pd.mouse :as mouse]
     [guadalete-ui.pd.nodes :refer [make-node]]
+    [guadalete-ui.pd.links :refer [link-mouse]]
     [guadalete-ui.console :as log]
     [guadalete-ui.util :refer [pretty]]
     [guadalete-ui.views.modal :as modal]
@@ -42,10 +43,11 @@
 
 (register-handler
   :pd/mouse-move
-  (fn [db [_ {:keys [scene-id node-id layout position]}]]
+  (fn [db [_ {:keys [scene-id node-id layout position type]}]]
       (condp = (:mode layout)
              :move (move-node db scene-id node-id layout position)
              :pan (pan-canvas db scene-id layout position)
+             :link (link-mouse db scene-id layout position node-id type)
              ; if :none, do nothing
              :none db
              db)))

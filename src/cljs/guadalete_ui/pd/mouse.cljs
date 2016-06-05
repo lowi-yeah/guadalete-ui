@@ -34,6 +34,7 @@
             [id (assoc n :pos {:x (:x offset) :y (:y offset)})]))
 
 (defn- move-node-start [scene-id node-id position layout db]
+       (log/debug "move-node-start" (pretty position))
        (let [scene (get-in db [:scene scene-id])
              nodes (:nodes layout)
              node (->> nodes
@@ -58,27 +59,11 @@
 (defn- make-link-start [scene-id node-id position layout db]
        (log/debug "make-link-start")
        (let [scene (get-in db [:scene scene-id])
-             nodes (:nodes layout)
-             node (->> nodes
-                       (filter #(= (:id %) node-id))
-                       (first))
-             ;node-0 (assoc node
-             ;              :selected true
-             ;              :pos-0 (:position node))
-             ;
-             ;nodes-0 (->> nodes
-             ;             (unselect-all)
-             ;             (remove #(= (:id %) node-id)))
-             ;nodes-1 (conj nodes-0 node-0)
-             ;
              layout-0 (assoc layout
                              :mode :link
-                             :pos-0 position)
-             scene-0 (assoc scene :layout layout-0)
-
-             ]
-            (log/debug "scene-0" (pretty scene-0))
-
+                             :link {:from node-id :to :mouse}
+                             :mouse {:x (:x position) :y (:y position)})
+             scene-0 (assoc scene :layout layout-0)]
             (assoc-in db [:scene scene-id] scene-0)))
 
 ;//                              _
@@ -121,15 +106,62 @@
 ;//  | '  \/ _ \ || (_-< -_) | || | '_ \
 ;//  |_|_|_\___/\_,_/__\___|  \_,_| .__/
 ;//                               |_|
+
+(defn- default-up*
+       "This is the standard behaviour upon mouse up.
+       Canceles everything that might have been going on during move.
+       Called by modes [:none :pd :move]"
+       [type scene-id node-id position layout db]
+       (let [scene (get-in db [:scene scene-id])
+             layout-0 (assoc layout :mode :none)
+             nodes-0 (unselect-all (:nodes layout-0))
+             layout-1 (assoc layout-0 :nodes nodes-0)
+             layout-2 (dissoc layout-1 :pos-0 :pos-1 :link)
+             scene-0 (assoc scene :layout layout-2)]
+            (dispatch [:scene/update scene-0])
+            (assoc-in db [:scene scene-id] scene-0)))
+
+(defn- inlet-up*
+       [type scene-id node-id position layout db]
+       (log/debug "inlet-up*:" type)
+       (let [scene (get-in db [:scene scene-id])
+             layout-0 (assoc layout :mode :none)
+             nodes-0 (unselect-all (:nodes layout-0))
+             layout-1 (assoc layout-0 :nodes nodes-0)
+             layout-2 (dissoc layout-1 :pos-0 :pos-1 :link)
+             scene-0 (assoc scene :layout layout-2)]
+            (dispatch [:scene/update scene-0])
+            (assoc-in db [:scene scene-id] scene-0)))
+
+(defn- outlet-up*
+       [type scene-id node-id position layout db]
+       (log/debug "outlet-up*:" type)
+       (default-up* type scene-id node-id position layout db))
+
+(defmulti up*
+          (fn [type scene-id node-id position layout db] type))
+
+(defmethod up* :pd [_ scene-id node-id position layout db]
+           (default-up* :pd scene-id node-id position layout db))
+
+(defmethod up* :light [_ scene-id node-id position layout db]
+           (default-up* :light scene-id node-id position layout db))
+
+(defmethod up* :color [_ scene-id node-id position layout db]
+           (default-up* :color scene-id node-id position layout db))
+
+(defmethod up* :outlet [_ scene-id node-id position layout db]
+           (outlet-up* :outlet scene-id node-id position layout db))
+
+(defmethod up* :inlet/color [_ scene-id node-id position layout db]
+           (inlet-up* :inlet/color scene-id node-id position layout db))
+
+(defmethod up* :default [type _ _ _ _ db]
+           (log/error (str "mouse-down: I don't know the type: " type))
+           db)
+
 (defn up [{:keys [type scene-id node-id position layout] :as data} db]
-      (let [scene (get-in db [:scene scene-id])
-            layout-0 (assoc layout :mode :none)
-            nodes-0 (unselect-all (:nodes layout-0))
-            layout-1 (assoc layout-0 :nodes nodes-0)
-            layout-2 (dissoc layout-1 :pos-0 :pos-1)
-            scene-0 (assoc scene :layout layout-2)]
-           (dispatch [:scene/update scene-0])
-           (assoc-in db [:scene scene-id] scene-0)))
+      (up* type scene-id node-id position layout db))
 
 ;//
 ;//   _ __  ___ _  _ ______   _ __  _____ _____

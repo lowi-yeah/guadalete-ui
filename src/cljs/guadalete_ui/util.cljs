@@ -63,3 +63,9 @@
           (* (- (:y range) (:x range)))
           (+ (:x range))
           ))
+
+(defn abs "(abs n) is the absolute value of n" [n]
+      (cond
+        (not (number? n)) (log/error "abs requires a number")
+        (neg? n) (- n)
+        :else n))

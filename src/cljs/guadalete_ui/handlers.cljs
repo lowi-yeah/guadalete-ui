@@ -2,8 +2,10 @@
   ;(:require-macros [reagent.ratom :refer [reaction]])
   (:require [re-frame.core :refer [dispatch register-handler path trim-v after]]
             [taoensso.sente :as sente]
+            [schema.core :as s]
             [taoensso.encore :refer [ajax-lite]]
             [differ.core :as differ]
+            [guadalete-ui.schema.core :as schema]
             [guadalete-ui.console :as log]
             [guadalete-ui.socket :refer [chsk-send! chsk-state chsk-reconnect!]]
             [guadalete-ui.util :refer [pretty mappify]]
@@ -20,13 +22,33 @@
     ;[guadalete-ui.toaster :refer [toast]]
             ))
 
-; ____ ___ ____ ____ ___ _  _ ___
-; [__   |  |__| |__/  |  |  | |__]
-; ___]  |  |  | |  \  |  |__| |
 
+
+;//         _    _    _ _
+;//   _ __ (_)__| |__| | |_____ __ ____ _ _ _ ___
+;//  | '  \| / _` / _` | / -_) V  V / _` | '_/ -_)
+;//  |_|_|_|_\__,_\__,_|_\___|\_/\_/\__,_|_| \___|
+;//
+
+(defn check-and-throw
+      "throw an exception if db doesn't match the schema."
+      [a-schema db]
+      (if-let [problems (s/check a-schema db)]
+              (throw (js/Error. (str "schema check failed: " problems)))))
+
+;; after an event handler has run, this middleware can check that
+;; it the value in app-db still correctly matches the schema.
+(def check-schema-mw (after (partial check-and-throw schema/frontend-db)))
+
+
+;//          _
+;//   ______| |_ _  _ _ __
+;//  (_-< -_)  _| || | '_ \
+;//  /__\___|\__|\_,_| .__/
+;//                  |_|
 (register-handler
   :initialize-db
-  ;check-schema-mw
+  check-schema-mw
   (fn [_db _]
       (dispatch [:sync/role])
       ;return default db
@@ -40,11 +62,6 @@
        :current/segment :scene
        }))
 
-;//          _
-;//   ______| |_ _  _ _ __
-;//  (_-< -_)  _| || | '_ \
-;//  /__\___|\__|\_,_| .__/
-;//                  |_|
 (register-handler
   :ws/handshake
   ;check-schema-mw

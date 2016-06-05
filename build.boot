@@ -1,5 +1,5 @@
 (set-env!
-  :source-paths #{"src/clj" "src/cljs"}
+  :source-paths #{"src/clj" "src/cljs" "src/cljc"}
   :resource-paths #{"resources"}
   :dependencies '[[adzerk/boot-cljs "1.7.48-5" :scope "test"]
                   [adzerk/boot-reload "0.4.7" :scope "test"]
