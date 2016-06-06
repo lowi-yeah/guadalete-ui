@@ -5,58 +5,26 @@
     [thi.ng.geom.core.vector :refer [vec2]]
     [guadalete-ui.pd.mouse :as mouse]
     [guadalete-ui.pd.nodes :refer [make-node]]
-    [guadalete-ui.pd.links :refer [link-mouse]]
+
     [guadalete-ui.console :as log]
     [guadalete-ui.util :refer [pretty]]
     [guadalete-ui.views.modal :as modal]
     [guadalete-ui.pd.util :refer [modal-room modal-scene modal-node]]))
 
-(defn- move-node [db scene-id node-id layout position]
-       (let [scene (get-in db [:scene scene-id])
-             δ (g/- (vec2 position) (vec2 (:pos-0 layout)))
-             nodes (:nodes layout)
-             node (->> nodes
-                       (filter #(:selected %))
-                       (first))
-             node-position (vec2 (:pos-0 node))
-             node-position-0 (g/+ node-position δ)
-             node-0 (assoc node :position {:x (:x node-position-0) :y (:y node-position-0)})
-             nodes-0 (remove #(= (:id %) (:id node-0)) nodes)
-             nodes-1 (conj nodes-0 node-0)
-             layout-0 (assoc layout :nodes nodes-1)
-             scene-0 (assoc scene :layout layout-0)]
-            (assoc-in db [:scene scene-id] scene-0)))
-
-(defn- pan-canvas [db scene-id layout position]
-       (let [scene (get-in db [:scene scene-id])
-             δ (g/- (vec2 position) (vec2 (:pos-0 layout)))
-             translation-0 (g/+ (vec2 (:pos-1 layout)) δ)
-             layout-0 (assoc layout :translation translation-0)
-             scene-0 (assoc scene :layout layout-0)]
-            (assoc-in db [:scene scene-id] scene-0)))
-
+(register-handler
+  :pd/mouse-move
+  (fn [db [_ data]]
+      (mouse/move data db)))
 
 (register-handler
   :pd/mouse-down
-  (fn [db [_ {:keys [type scene-id node-id position layout] :as data}]]
+  (fn [db [_ data]]
       (mouse/down data db)))
-
-(register-handler
-  :pd/mouse-move
-  (fn [db [_ {:keys [scene-id node-id layout position type]}]]
-      (condp = (:mode layout)
-             :move (move-node db scene-id node-id layout position)
-             :pan (pan-canvas db scene-id layout position)
-             :link (link-mouse db scene-id layout position node-id type)
-             ; if :none, do nothing
-             :none db
-             db)))
 
 (register-handler
   :pd/mouse-up
   (fn [db [_ data]]
       (mouse/up data db)))
-
 
 (register-handler
   :pd/mouse-enter
@@ -64,7 +32,6 @@
       (if (= 0 (:buttons data))
         (mouse/up data db)
         db)))
-
 
 (register-handler
   :pd/click
@@ -113,7 +80,6 @@
            (dispatch [:scene/update scene-0])
            ;(assoc-in db [:scene scene-id] scene-0)
            db)))
-
 
 (register-handler
   :pd/link-modal-node

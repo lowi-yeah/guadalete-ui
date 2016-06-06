@@ -62,7 +62,7 @@
                   {:id        id
                    :class     (if (:selected node) "light node selected" "light node")
                    :transform (str "translate(" (:x position) " " (:y position) ")")
-                   :data-type "light"}
+                   :data-type "node/light"}
 
                   [svg/rect (vec2 0 0) 32 32
                    {
@@ -110,7 +110,7 @@
                  {:id        id
                   :class     (if (:selected node) "light node selected" "light node")
                   :transform (str "translate(" (:x position) " " (:y position) ")")
-                  :data-type "color"}
+                  :data-type "node/color"}
 
                  [svg/rect (vec2 0 0) node-size node-size
                   {:class "bg"
@@ -120,14 +120,13 @@
                   {:class "color"
                    :fill  @(color/as-css hacked-color)}]
 
+                 [svg/rect outlet-position (:x outlet-size) (:y outlet-size)
+                  {:class     "outlet"
+                   :data-type "outlet/color"}]
+
                  [svg/rect (vec2 0 0) node-size node-size
                   {:rx    2
                    :class "click-target"}]
-
-
-                 [svg/rect outlet-position (:x outlet-size) (:y outlet-size)
-                  {:class     "outlet"
-                   :data-type "outlet"}]
                  ])))
 
 (defn node

@@ -86,3 +86,21 @@
    ;(s/optional-key :current/scene-id)  s/Str
    ;(s/optional-key :edit)              [s/Str]
    })
+
+
+;//                                           _
+;//   _ __  ___ _  _ ______   _____ _____ _ _| |_ ___
+;//  | '  \/ _ \ || (_-< -_) / -_) V / -_) ' \  _(_-<
+;//  |_|_|_\___/\_,_/__\___| \___|\_/\___|_||_\__/__/
+;//
+(def MouseEventData
+  {:room-id  s/Str
+   :scene-id s/Str
+   :node-id  s/Str
+   :type     (s/enum :pd :outlet/color :inlet/color :node/light :node/color)
+   :position Vec2
+   :layout   s/Any
+   :buttons  s/Int
+   })
+
+

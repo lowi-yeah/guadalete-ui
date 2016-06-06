@@ -5,9 +5,10 @@
     [cljs.core.async :refer [<! >! put! chan close!]]
     [reagent.core :refer [dom-node]]
     [re-frame.core :refer [dispatch subscribe]]
+    [thi.ng.color.core :refer [as-css]]
     [guadalete-ui.util :refer [pretty]]
     [guadalete-ui.console :as log]
-    [guadalete-ui.pd.color :as color :refer [color-widget]]))
+    [guadalete-ui.pd.color :as color :refer [color-widget render-color]]))
 
 
 (defn- approve-modal [_]
@@ -69,12 +70,6 @@
 (defmulti pd-node-modal* (fn [type node-rctn item-rctn] type))
 
 
-;(let [item-id (.-value (r/dom-node this))]
-;         (log/debug "CHANGE from" (:id @item-rctn) " to " item-id)
-;         (dispatch [:pd/link-node {:node-id (:id @node-rctn)
-;                                   :item-id item-id}])
-;         (close)))
-
 (defmethod pd-node-modal* :light
            [_ node-rctn]
            (log/debug "pd-node-modal* :light")
@@ -117,9 +112,14 @@
       (fn []
           (let [node-rctn (subscribe [:pd/modal-node])
                 item-rctn (subscribe [:pd/modal-item])
-                channel (chan)]
+                channel (chan)
+                color (if @item-rctn
+                        @(as-css (render-color @item-rctn))
+                        "#3B3F44")]
                [:div#pd-color-node.ui.basic.modal.small
-                [:div.header "Color"]
+                [:div.header
+                 [:div.color-indicator
+                  {:style {:background-color color}}]]
                 [:div.content
                  [:div.ui.form
                   [:select.ui.dropdown

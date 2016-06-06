@@ -41,8 +41,7 @@
            (when (and (session-uid ring-req) ?reply-fn)
                  (let [state (db/everything (:conn db))]
                       (log/debug "sync/state" state)
-                      (?reply-fn state)
-                      )))
+                      (?reply-fn state))))
 
 ; ROLE
 ; ****************
@@ -64,7 +63,6 @@
            [{:keys [?data db]}]
            (let [[id diff flag] ?data
                  flag (or flag :patch)]
-                (log/debug ":scene/update" db)
                 (db/update-scene (:conn db) id diff flag)))
 
 (defmethod event-handler :scene/trash
