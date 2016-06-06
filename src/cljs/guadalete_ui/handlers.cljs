@@ -5,7 +5,7 @@
             [schema.core :as s]
             [taoensso.encore :refer [ajax-lite]]
             [differ.core :as differ]
-            [guadalete-ui.schema.core :as schema]
+            [guadalete-ui.schema.core :refer [DB]]
             [guadalete-ui.console :as log]
             [guadalete-ui.socket :refer [chsk-send! chsk-state chsk-reconnect!]]
             [guadalete-ui.util :refer [pretty mappify]]
@@ -38,7 +38,7 @@
 
 ;; after an event handler has run, this middleware can check that
 ;; it the value in app-db still correctly matches the schema.
-(def check-schema-mw (after (partial check-and-throw schema/frontend-db)))
+(def check-schema-mw (after (partial check-and-throw DB)))
 
 
 ;//          _

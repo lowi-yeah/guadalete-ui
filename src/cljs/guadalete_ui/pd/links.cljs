@@ -69,7 +69,8 @@
       (log/debug "link-mouse" (str type) node-id)
       (let [scene (get-in db [:scene scene-id])
             layout (:layout scene)
-            layout* (assoc layout :mouse {:x (:x position) :y (:y position)})
+            position* (g/- position (:translation layout))
+            layout* (assoc layout :mouse {:x (:x position*) :y (:y position*)})
             scene* (assoc scene :layout layout*)]
            (assoc-in db [:scene scene-id] scene*)))
 

@@ -51,7 +51,7 @@
   {s/Str Scene})
 
 
-(def frontend-db
+(def DB
   {:ws/connected?          s/Bool                           ;flag indicating that the sente (websocket) connection has been established
    :loading?               s/Bool                           ; flag indicating that data is being loaded
    :user/role              (s/enum :anonymous :user :admin :none)
