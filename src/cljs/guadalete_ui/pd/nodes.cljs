@@ -10,7 +10,7 @@
     [thi.ng.geom.core.vector :refer [vec2]]
     [thi.ng.color.core :as color]
     [guadalete-ui.console :as log]
-    [guadalete-ui.util :refer [pretty]]
+    [guadalete-ui.util :refer [pretty vec-map]]
     [guadalete-ui.pd.util :refer [target-id target-type]]
     [guadalete-ui.pd.color :refer [render-color]]
     ))
@@ -157,12 +157,10 @@
 ;//  |_|_|_\__,_|_\_\___|
 ;//
 (defn- position [pos layout]
-       (let [pos* (vec2 (first pos) (second pos))
+       (let [pos* (vec2 pos)
              translation (vec2 (:translation layout))
              result (g/- pos* translation)]
-            ; this looks akward but unfortunately it is necessary,
-            ; as the serialisation (via sente) cannot handle vec2 objects
-            {:x (:x result) :y (:y result)}))
+            (vec-map result)))
 
 (defmulti make-node
           (fn [type pos layout] type))

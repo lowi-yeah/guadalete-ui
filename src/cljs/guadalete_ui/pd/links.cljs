@@ -8,7 +8,7 @@
     [thi.ng.geom.svg.core :as svg]
     [thi.ng.geom.core.vector :refer [vec2]]
     [guadalete-ui.console :as log]
-    [guadalete-ui.util :refer [pretty abs]]
+    [guadalete-ui.util :refer [pretty abs vec-map]]
     [guadalete-ui.pd.util :refer [target-id target-type]]
     [thi.ng.math.core :as math :refer [PI HALF_PI TWO_PI]]))
 
@@ -66,18 +66,16 @@
                              :d     bezier-string}]))])))
 
 (defn link-mouse [db scene-id layout position node-id type]
-      (log/debug "link-mouse" (str type) node-id)
       (let [scene (get-in db [:scene scene-id])
             layout (:layout scene)
-            position* (g/- position (:translation layout))
-            layout* (assoc layout :mouse {:x (:x position*) :y (:y position*)})
+            position* (g/- position (vec2 (:translation layout)))
+            layout* (assoc layout :mouse (vec-map position*))
             scene* (assoc scene :layout layout*)]
            (assoc-in db [:scene scene-id] scene*)))
 
 (defn make-link [db scene-id layout position node-id type]
-      (log/debug "make-link" (str type) node-id)
       (let [scene (get-in db [:scene scene-id])
             layout (:layout scene)
-            layout* (assoc layout :mouse {:x (:x position) :y (:y position)})
+            layout* (assoc layout :mouse (vec-map position))
             scene* (assoc scene :layout layout*)]
            (assoc-in db [:scene scene-id] scene*)))

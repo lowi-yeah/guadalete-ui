@@ -87,6 +87,11 @@
       [something]
       (.stringify js/JSON (clj->js* something) nil 2))
 
+(defn vec-map
+      "returns a {:x :y } map for the given Vec2"
+      [vec]
+      {:x (:x vec) :y (:y vec)})
+
 (defn map-value
       "Map a value v from domain(vec2) to range(vec2)"
       [value domain range]

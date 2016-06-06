@@ -30,7 +30,7 @@
 (defn css-matrix-string
       "Converts a thin.ng/Matrix32 to its css-transform representation"
       [layout]
-      (let [translation (if (nil? (:translation layout)) (vec2) (:translation layout))
+      (let [translation (if (nil? (:translation layout)) (vec2) (vec2 (:translation layout)))
             matrix (-> (matrix32)
                        (g/translate translation))]
            (str "matrix(" (clojure.string/join ", " (g/transpose matrix)) ")")))

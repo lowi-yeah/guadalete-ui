@@ -7,7 +7,7 @@
             [thi.ng.geom.core :as g]
             [thi.ng.geom.core.vector :refer [vec2]]
             [guadalete-ui.schema.core :refer [DB MouseEventData]]
-            [guadalete-ui.util :refer [pretty]]
+            [guadalete-ui.util :refer [pretty vec-map]]
             [guadalete-ui.pd.links :refer [link-mouse]]
             [guadalete-ui.console :as log]))
 
@@ -35,42 +35,41 @@
 (defn- move-node [[id n] δ]
        "Move a node by the specified centre."
        (let [offset (g/+ (:pos-0 n) δ)]
-            [id (assoc n :pos {:x (:x offset) :y (:y offset)})]))
+            [id (assoc n :pos (vec-map offset))]))
 
 (defn- move-node-start [scene-id node-id position layout db]
-       (log/debug "move-node-start" (pretty position))
        (let [scene (get-in db [:scene scene-id])
              nodes (:nodes layout)
              node (->> nodes
                        (filter #(= (:id %) node-id))
                        (first))
-             node-0 (assoc node
-                           :selected true
-                           :pos-0 (:position node))
+             node* (assoc node
+                          :selected true
+                          :pos-0 (vec-map (:position node)))
 
-             nodes-0 (->> nodes
-                          (unselect-all)
-                          (remove #(= (:id %) node-id)))
-             nodes-1 (conj nodes-0 node-0)
+             nodes* (->> nodes
+                         (unselect-all)
+                         (remove #(= (:id %) node-id)))
+             nodes* (conj nodes* node*)
 
-             layout-0 (assoc layout
-                             :mode :move
-                             :pos-0 position
-                             :nodes nodes-1)
-             scene-0 (assoc scene :layout layout-0)]
-            (assoc-in db [:scene scene-id] scene-0)))
+             layout* (assoc layout
+                            :mode :move
+                            :pos-0 (vec-map position)
+                            :nodes nodes*)
+             scene* (assoc scene :layout layout*)]
+
+            (assoc-in db [:scene scene-id] scene*)))
 
 (defn- make-link-start [scene-id node-id position layout db anchor]
-       (log/debug "make-link-start" anchor)
        (let [scene (get-in db [:scene scene-id])
              link (if (= anchor :from)
                     {:from node-id :to :mouse}
                     {:from :mouse :to node-id})
-             position* (g/- position (:translation layout))
+             position* (g/- position (vec2 (:translation layout)))
              layout-0 (assoc layout
                              :mode :link
                              :link link
-                             :mouse {:x (:x position*) :y (:y position*)})
+                             :mouse (vec-map position*))
              scene-0 (assoc scene :layout layout-0)]
             (assoc-in db [:scene scene-id] scene-0)))
 
@@ -84,14 +83,14 @@
 
 (defmethod mouse-down* :pd [_ {:keys [scene-id node-id position layout db]}]
            (let [scene (get-in db [:scene scene-id])
-                 nodes-0 (unselect-all (:nodes layout))
-                 layout-0 (assoc layout
-                                 :mode :pan
-                                 :pos-0 position
-                                 :pos-1 (:translation layout)
-                                 :nodes nodes-0)
-                 scene-0 (assoc scene :layout layout-0)]
-                (assoc-in db [:scene scene-id] scene-0)))
+                 nodes* (unselect-all (:nodes layout))
+                 layout* (assoc layout
+                                :mode :pan
+                                :pos-0 (vec-map position)
+                                :pos-1 (vec-map (:translation layout))
+                                :nodes nodes*)
+                 scene* (assoc scene :layout layout*)]
+                (assoc-in db [:scene scene-id] scene*)))
 
 (defmethod mouse-down* :node/light [_ {:keys [scene-id node-id position layout db]}]
            (move-node-start scene-id node-id position layout db))
@@ -109,7 +108,7 @@
            (log/error (str "mouse-down: I don't know the type: " type))
            db)
 
-(s/defn down :- DB
+(s/defn down :- s/Any
         [{:keys [type] :as data} :- MouseEventData
          db :- DB]
         (mouse-down* type (assoc data :db db)))
@@ -201,7 +200,7 @@
                            (first))
                  node-position (vec2 (:pos-0 node))
                  node-position* (g/+ node-position δ)
-                 node* (assoc node :position {:x (:x node-position*) :y (:y node-position*)})
+                 node* (assoc node :position (vec-map node-position*))
                  nodes* (remove #(= (:id %) (:id node*)) nodes)
                  nodes* (conj nodes* node*)
                  layout* (assoc layout :nodes nodes*)
@@ -212,28 +211,22 @@
            (let [scene (get-in db [:scene scene-id])
                  δ (g/- (vec2 position) (vec2 (:pos-0 layout)))
                  translation* (g/+ (vec2 (:pos-1 layout)) δ)
-                 layout* (assoc layout :translation [(:x translation*) (:y translation*)])
+                 layout* (assoc layout :translation (vec-map translation*))
                  scene* (assoc scene :layout layout*)]
                 (assoc-in db [:scene scene-id] scene*)))
 
-(defmethod move* :link [_ {:keys [scene-id node-id position layout db]}]
+(defmethod move* :link [_ {:keys [scene-id node-id position layout db type]}]
            (link-mouse db scene-id layout position node-id type))
 
 (defmethod move* :none [_ {:keys [db]}] db)
 
 (defmethod move* :default [_ {:keys [db]}] db)
 
-;(s/defn move :- DB
-;        [data :- MouseEventData
-;         db :- DB]
-;        (let [mode (get-in data [:layout :mode])]
-;             (move* mode (assoc data :db db))))
-
-(s/defn move :- s/Any
+(s/defn move :- DB
         [data :- MouseEventData
-         db :- s/Any]
-        ;(pretty db)
-        (log/debug (pretty db))
+         ;db :- DB
+         db :- s/Any
+         ]
         (let [mode (get-in data [:layout :mode])]
              (move* mode (assoc data :db db))))
 
