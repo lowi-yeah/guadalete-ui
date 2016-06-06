@@ -172,10 +172,17 @@
            (log/error (str "mouse UP: I don't know the type: " type))
            db)
 
-(s/defn up :- DB
-        [{:keys [type] :as data} :- MouseEventData
-         db :- DB]
+;(s/defn up :- DB
+;        [{:keys [type] :as data} :- MouseEventData
+;         db :- DB]
+;        (up* type (assoc data :db db)))
+
+(s/defn up :- s/Any
+        [{:keys [type] :as data} :- s/Any
+         db :- s/Any]
         (up* type (assoc data :db db)))
+
+
 ;//
 ;//   _ __  ___ _  _ ______   _ __  _____ _____
 ;//  | '  \/ _ \ || (_-< -_) | '  \/ _ \ V / -_)
@@ -216,8 +223,17 @@
 
 (defmethod move* :default [_ {:keys [db]}] db)
 
-(s/defn move :- DB
+;(s/defn move :- DB
+;        [data :- MouseEventData
+;         db :- DB]
+;        (let [mode (get-in data [:layout :mode])]
+;             (move* mode (assoc data :db db))))
+
+(s/defn move :- s/Any
         [data :- MouseEventData
-         db :- DB]
+         db :- s/Any]
+        ;(pretty db)
+        (log/debug (pretty db))
         (let [mode (get-in data [:layout :mode])]
              (move* mode (assoc data :db db))))
+

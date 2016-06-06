@@ -2,6 +2,7 @@
   (:require
     [clojure.string :as s]
     [taoensso.sente :as sente]
+    [schema.core :as schema]
     [system.components.sente :refer [new-channel-socket-client]]
     [com.stuartsierra.component :as component]
     [cljs-utils.core :as utils :refer [by-id]]
@@ -55,6 +56,7 @@
        (reagent/render [views/main-panel] (by-id "main")))
 
 (defn ^:export init []
+      (schema/set-fn-validation! true)
       (re-frame/dispatch-sync [:initialize-db])
       (routes/app-routes)
       (mount-root)
