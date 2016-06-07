@@ -11,7 +11,6 @@
     [thi.ng.color.core :as color]
     [guadalete-ui.console :as log]
     [guadalete-ui.util :refer [pretty vec-map]]
-    [guadalete-ui.pd.util :refer [target-id target-type]]
     [guadalete-ui.pd.color :refer [render-color]]
     [guadalete-ui.pd.links :refer [link-state]]))
 
@@ -89,7 +88,8 @@
                                inlet-position (g/+ inlet-offset (vec2 8 -8))]
                               ^{:key (str "in-" (:name inlet))}
                               [svg/rect inlet-position 0 0
-                               {:class     "inlet"
+                               {:id        (:id inlet)
+                                :class     "inlet"
                                 :data-type (str "inlet/" (:name inlet))}])))
 
                   [svg/rect (vec2 0 0) 32 32
@@ -101,6 +101,7 @@
        []
        (fn [room-id scene layout node item]
            (let [node-size 36
+                 outlet (first (:outlets node))
                  outlet-size (vec2 18 8)
                  outlet-position (vec2 9 34)
                  id (:id node)
@@ -127,7 +128,8 @@
                    :fill  @(color/as-css hacked-color)}]
 
                  [svg/rect outlet-position (:x outlet-size) (:y outlet-size)
-                  {:class      "outlet"
+                  {:id         (:id outlet)
+                   :class      "outlet"
                    :data-type  "outlet/color"
                    :data-state (link-state node)}]
 
@@ -177,7 +179,8 @@
            {:id       (str (random-uuid))
             :type     "light"
             :position (position pos layout)
-            :inlets   [{:unit "color"
+            :inlets   [{:id   (str (random-uuid))
+                        :unit "color"
                         :name "color"}]})
 
 (defmethod make-node :color
@@ -186,13 +189,15 @@
             :type     "color"
             :position (position pos layout)
             :item-id  "rgb 0.8 0.9 0.9"
-            :outlets  [{:unit "color"
+            :outlets  [{:id   (str (random-uuid))
+                        :unit "color"
                         :name "color"}]
             })
 
-(defmethod make-node :sgnl
+(defmethod make-node :signal
            [_type pos layout]
            {:id       (str (random-uuid))
             :type     "signal"
             :position (position pos layout)
-            :outlets  [{:unit "01"}]})
+            :outlets  [{:id   (str (random-uuid))
+                        :unit "01"}]})

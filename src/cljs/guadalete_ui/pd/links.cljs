@@ -9,7 +9,6 @@
     [thi.ng.geom.core.vector :refer [vec2]]
     [guadalete-ui.console :as log]
     [guadalete-ui.util :refer [pretty abs vec-map]]
-    [guadalete-ui.pd.util :refer [target-id target-type]]
     [thi.ng.math.core :as math :refer [PI HALF_PI TWO_PI]]))
 
 
@@ -78,5 +77,4 @@
 (defn link-state
       "Returns a string describing the state of the links of a node"
       [node]
-      (log/debug "linl-state" (pretty node))
       "none")

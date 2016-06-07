@@ -14,12 +14,14 @@
    :y s/Num})
 
 (def Inlet
-  {:unit                   s/Str
+  {:id                     s/Str
+   :unit                   s/Str
    (s/optional-key :name)  s/Str
    (s/optional-key :state) (s/enum "none" "active" "invalid")})
 
 (def Outlet
-  {:unit                   s/Str
+  {:id                     s/Str
+   :unit                   s/Str
    (s/optional-key :name)  s/Str
    (s/optional-key :state) (s/enum "none" "active" "invalid")})
 

@@ -8,7 +8,8 @@
             [thi.ng.geom.core.vector :refer [vec2]]
             [guadalete-ui.schema.core :refer [DB MouseEventData]]
             [guadalete-ui.util :refer [pretty vec-map]]
-            [guadalete-ui.console :as log]))
+            [guadalete-ui.console :as log]
+            [guadalete-ui.pd.util :refer [pd-screen-offset]]))
 
 ;//   _        _
 ;//  | |_  ___| |_ __ ___ _ _ ___
@@ -36,8 +37,9 @@
        (let [offset (g/+ (:pos-0 n) δ)]
             [id (assoc n :pos (vec-map offset))]))
 
-(defn- move-node-start [scene-id node-id position layout db]
+(defn- move-node-start [scene-id node-id position db]
        (let [scene (get-in db [:scene scene-id])
+             layout (:layout scene)
              nodes (:nodes layout)
              node (->> nodes
                        (filter #(= (:id %) node-id))
@@ -59,8 +61,9 @@
 
             (assoc-in db [:scene scene-id] scene*)))
 
-(defn- make-link-start [scene-id node-id position layout db anchor]
+(defn- make-link-start [scene-id node-id position db anchor]
        (let [scene (get-in db [:scene scene-id])
+             layout (:layout scene)
              link (if (= anchor :from)
                     {:from node-id :to :mouse}
                     {:from :mouse :to node-id})
@@ -72,7 +75,7 @@
              scene-0 (assoc scene :layout layout-0)]
             (assoc-in db [:scene scene-id] scene-0)))
 
-(defn link-mouse [db scene-id layout position node-id type]
+(defn link-mouse [db scene-id position node-id type]
       (let [scene (get-in db [:scene scene-id])
             layout (:layout scene)
             position* (g/- position (vec2 (:translation layout)))
@@ -88,8 +91,9 @@
 (defmulti mouse-down*
           (fn [type data] type))
 
-(defmethod mouse-down* :pd [_ {:keys [scene-id node-id position layout db]}]
+(defmethod mouse-down* :pd [_ {:keys [scene-id node-id position db] :as data}]
            (let [scene (get-in db [:scene scene-id])
+                 layout (:layout scene)
                  nodes* (unselect-all (:nodes layout))
                  layout* (assoc layout
                                 :mode :pan
@@ -97,25 +101,28 @@
                                 :pos-1 (vec-map (:translation layout))
                                 :nodes nodes*)
                  scene* (assoc scene :layout layout*)]
+
                 (assoc-in db [:scene scene-id] scene*)))
 
-(defmethod mouse-down* :node/light [_ {:keys [scene-id node-id position layout db]}]
-           (move-node-start scene-id node-id position layout db))
+(defmethod mouse-down* :node/light [_ {:keys [scene-id id position db]}]
+           (move-node-start scene-id id position db))
 
-(defmethod mouse-down* :node/color [_ {:keys [scene-id node-id position layout db]}]
-           (move-node-start scene-id node-id position layout db))
+(defmethod mouse-down* :node/color [_ {:keys [scene-id id position db]}]
+           (move-node-start scene-id id position db))
 
-(defmethod mouse-down* :outlet/color [_ {:keys [scene-id node-id position layout db]}]
-           (make-link-start scene-id node-id position layout db :from))
+(defmethod mouse-down* :outlet/color [_ {:keys [scene-id id position db] :as data}]
+           (log/debug "mouse-down* :outlet/color" (pretty data))
 
-(defmethod mouse-down* :inlet/color [_ {:keys [scene-id node-id position layout db]}]
-           (make-link-start scene-id node-id position layout db :to))
+           (make-link-start scene-id id position db :from))
+
+(defmethod mouse-down* :inlet/color [_ {:keys [scene-id id position db]}]
+           (make-link-start scene-id id position db :to))
 
 (defmethod mouse-down* :default [type {:keys [db]}]
            (log/error (str "mouse-down: I don't know the type: " type))
            db)
 
-(s/defn down :- s/Any
+(s/defn down :- DB
         [{:keys [type] :as data} :- MouseEventData
          db :- DB]
         (mouse-down* type (assoc data :db db)))
@@ -129,8 +136,9 @@
        "This is the standard behaviour upon mouse up.
        Canceles everything that might have been going on during move.
        Called by modes [:none :pd :move]"
-       [type scene-id node-id position layout db]
+       [type scene-id node-id position db]
        (let [scene (get-in db [:scene scene-id])
+             layout (:layout scene)
              layout-0 (assoc layout :mode :none)
              nodes-0 (unselect-all (:nodes layout-0))
              layout-1 (assoc layout-0 :nodes nodes-0)
@@ -140,9 +148,10 @@
             (assoc-in db [:scene scene-id] scene-0)))
 
 (defn- inlet-up*
-       [type scene-id node-id position layout db]
+       [type scene-id node-id position db]
        (log/debug "inlet-up*:" type)
        (let [scene (get-in db [:scene scene-id])
+             layout (:layout scene)
              layout-0 (assoc layout :mode :none)
              nodes-0 (unselect-all (:nodes layout-0))
              layout-1 (assoc layout-0 :nodes nodes-0)
@@ -152,27 +161,27 @@
             (assoc-in db [:scene scene-id] scene-0)))
 
 (defn- outlet-up*
-       [type scene-id node-id position layout db]
+       [type scene-id node-id position db]
        (log/debug "outlet-up*:" type)
-       (default-up* type scene-id node-id position layout db))
+       (default-up* type scene-id node-id position db))
 
 
 (defmulti up* (fn [type data] type))
 
-(defmethod up* :pd [_ {:keys [scene-id node-id position layout db]}]
-           (default-up* :pd scene-id node-id position layout db))
+(defmethod up* :pd [_ {:keys [scene-id node-id position db]}]
+           (default-up* :pd scene-id node-id position db))
 
-(defmethod up* :node/light [_ {:keys [scene-id node-id position layout db]}]
-           (default-up* :light scene-id node-id position layout db))
+(defmethod up* :node/light [_ {:keys [scene-id node-id position db]}]
+           (default-up* :light scene-id node-id position db))
 
-(defmethod up* :node/color [_ {:keys [scene-id node-id position layout db]}]
-           (default-up* :color scene-id node-id position layout db))
+(defmethod up* :node/color [_ {:keys [scene-id node-id position db]}]
+           (default-up* :color scene-id node-id position db))
 
-(defmethod up* :outlet/color [_ {:keys [scene-id node-id position layout db]}]
-           (outlet-up* :outlet scene-id node-id position layout db))
+(defmethod up* :outlet/color [_ {:keys [scene-id node-id position db]}]
+           (outlet-up* :outlet scene-id node-id position db))
 
-(defmethod up* :inlet/color [_ {:keys [scene-id node-id position layout db]}]
-           (inlet-up* :inlet/color scene-id node-id position layout db))
+(defmethod up* :inlet/color [_ {:keys [scene-id node-id position db]}]
+           (inlet-up* :inlet/color scene-id node-id position db))
 
 (defmethod up* :default [type {:keys [db]}]
            (log/error (str "mouse UP: I don't know the type: " type))
@@ -198,8 +207,9 @@
 (defmulti move*
           (fn [mode data] mode))
 
-(defmethod move* :move [_ {:keys [scene-id node-id position layout db]}]
+(defmethod move* :move [_ {:keys [scene-id node-id position db]}]
            (let [scene (get-in db [:scene scene-id])
+                 layout (:layout scene)
                  δ (g/- (vec2 position) (vec2 (:pos-0 layout)))
                  nodes (:nodes layout)
                  node (->> nodes
@@ -214,16 +224,17 @@
                  scene* (assoc scene :layout layout*)]
                 (assoc-in db [:scene scene-id] scene*)))
 
-(defmethod move* :pan [_ {:keys [scene-id node-id position layout db]}]
+(defmethod move* :pan [_ {:keys [scene-id position db]}]
            (let [scene (get-in db [:scene scene-id])
+                 layout (:layout scene)
                  δ (g/- (vec2 position) (vec2 (:pos-0 layout)))
                  translation* (g/+ (vec2 (:pos-1 layout)) δ)
                  layout* (assoc layout :translation (vec-map translation*))
                  scene* (assoc scene :layout layout*)]
                 (assoc-in db [:scene scene-id] scene*)))
 
-(defmethod move* :link [_ {:keys [scene-id node-id position layout db type]}]
-           (link-mouse db scene-id layout position node-id type))
+(defmethod move* :link [_ {:keys [scene-id node-id position db type]}]
+           (link-mouse db scene-id position node-id type))
 
 (defmethod move* :none [_ {:keys [db]}] db)
 
@@ -231,9 +242,68 @@
 
 (s/defn move :- DB
         [data :- MouseEventData
-         ;db :- DB
-         db :- s/Any
-         ]
-        (let [mode (get-in data [:layout :mode])]
+         db :- DB]
+        (let [scene (get-in db [:scene (:scene-id data)])
+              layout (:layout scene)
+              mode (:mode layout)]
              (move* mode (assoc data :db db))))
 
+
+;//                   _
+;//   _____ _____ _ _| |_
+;//  / -_) V / -_) ' \  _|
+;//  \___|\_/\___|_||_\__|
+;//
+(defn- target-type [target]
+       "Return the targets data-type, or – in case it has none - recursively walk up the dom to find the first ancestor with a data-type."
+       (let [type (.attr (js/$ target) "data-type")]
+            (if (nil? type)
+              (target-type (.parent (js/$ target)))
+              (keyword type))))
+
+(defn- target-id [target]
+       "Return the targets id, or – in case it has none - recursively walk up the dom to find the first ancestor with an id."
+       (let [id (.attr (js/$ target) "id")]
+            (if (nil? id)
+              (target-id (.parent (js/$ target)))
+              id)))
+
+
+(defn- load-node [{:keys [id type] :as data}]
+       (let [node-id* (-> (str "#" id)
+                          (js/$)
+                          (.parent)
+                          (.attr "id"))]
+            (log/debug "node-id*" node-id*)
+            (assoc data :node-id node-id*)
+            )
+       )
+
+(defn- ->page [ev]
+       (vec2 (.-pageX ev) (.-pageY ev)))
+
+(defn event-target [ev]
+      (let [target* (.-target ev)
+            type (target-type target*)
+            id (target-id target*)]
+           (condp = type
+                  :pd {:type type}
+
+                  :node/light {:type type :id id}
+                  :node/color {:type type :id id}
+                  :node/signal {:type type :id id}
+
+                  :inlet/color (load-node {:type type :id id})
+                  :outlet/color (load-node {:type type :id id})
+
+                  {:type type}
+                  )))
+
+(defn event-buttons [ev]
+      (.-buttons ev))
+
+(defn event-position [ev]
+      (let [ev* (.-nativeEvent ev)
+            pos (vec2 (.-x ev*) (.-y ev*))
+            offset (pd-screen-offset)]
+           (g/- pos offset)))

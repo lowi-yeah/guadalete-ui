@@ -27,14 +27,12 @@
 
     [guadalete-ui.console :as log]
     [guadalete-ui.util :refer [pretty]]
+    [guadalete-ui.pd.mouse :as mouse]
     [guadalete-ui.pd.util
      :refer
      [pd-dimensions
-      target-id
-      target-type
       is-line?
-      css-matrix-string
-      pd-screen-offset]]))
+      css-matrix-string]]))
 
 
 ;//
@@ -42,27 +40,14 @@
 ;//  | '  \/ _ \ || (_-< -_)
 ;//  |_|_|_\___/\_,_/__\___|
 ;//
-(defn- ->page [ev]
-       (vec2 (.-pageX ev) (.-pageY ev)))
-
-(defn- ->position [ev]
-       (let [ev* (.-nativeEvent ev)
-             pos (vec2 (.-x ev*) (.-y ev*))
-             offset (pd-screen-offset)]
-            (g/- pos offset)))
-
 (defn- dispatch-mouse
-       [msg ev room-id scene-id layout]
-       (let [id (target-id (.-target ev))
-             type (keyword (target-type (.-target ev)))
-             buttons (.-buttons ev)
-             data {:room-id  room-id
-                   :scene-id scene-id
-                   :node-id  id
-                   :type     type
-                   :position (->position ev)
-                   :layout   layout
-                   :buttons  buttons}]
+       [msg ev mouse-event-data]
+       (let [target (mouse/event-target ev)
+             buttons (mouse/event-buttons ev)
+             position (mouse/event-position ev)
+             data (merge mouse-event-data target)]
+
+            (log/debug "dipatch mouse target " (pretty target))
             (dispatch [msg data])))
 
 (defn grid
@@ -99,7 +84,9 @@
       "A PDish editor for wiring up scenes"
       (fn [room-rctn scene]
           (let [layout (:layout scene)
-                css-matrix (css-matrix-string layout)]
+                css-matrix (css-matrix-string layout)
+                mouse-event-data {:room-id  (:id @room-rctn)
+                                  :scene-id (:id scene)}]
                [:div#pd
                 ;[:button#reset.btn-floating
                 ; {:on-click #(dispatch [:pd/reset-view])}
@@ -113,12 +100,12 @@
                   :data-type       "pd"
                   :on-drop         #(drop* %)
                   :on-drag-over    #(allow-drop %)
-                  :on-double-click #(dispatch-mouse :pd/double-click % (:id @room-rctn) (:id scene) layout)
-                  :on-click        #(dispatch-mouse :pd/click % (:id @room-rctn) (:id scene) layout)
-                  :on-mouse-down   #(dispatch-mouse :pd/mouse-down % (:id @room-rctn) (:id scene) layout)
-                  :on-mouse-move   #(dispatch-mouse :pd/mouse-move % (:id @room-rctn) (:id scene) layout)
-                  :on-mouse-up     #(dispatch-mouse :pd/mouse-up % (:id @room-rctn) (:id scene) layout)
-                  :on-mouse-enter  #(dispatch-mouse :pd/mouse-enter % (:id @room-rctn) (:id scene) layout)
+                  :on-double-click #(dispatch-mouse :pd/double-click % mouse-event-data)
+                  :on-click        #(dispatch-mouse :pd/click % mouse-event-data)
+                  :on-mouse-down   #(dispatch-mouse :pd/mouse-down % mouse-event-data)
+                  :on-mouse-move   #(dispatch-mouse :pd/mouse-move % mouse-event-data)
+                  :on-mouse-up     #(dispatch-mouse :pd/mouse-up % mouse-event-data)
+                  :on-mouse-enter  #(dispatch-mouse :pd/mouse-enter % mouse-event-data)
                   }
 
                  ^{:key "pan-group"}

@@ -56,7 +56,10 @@
        (reagent/render [views/main-panel] (by-id "main")))
 
 (defn ^:export init []
-      (schema/set-fn-validation! true)
+
+      ;(schema/set-fn-validation! true)
+      (schema/set-fn-validation! false)
+
       (re-frame/dispatch-sync [:initialize-db])
       (routes/app-routes)
       (mount-root)
