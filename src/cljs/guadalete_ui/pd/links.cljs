@@ -12,10 +12,10 @@
     [thi.ng.math.core :as math :refer [PI HALF_PI TWO_PI]]))
 
 
-(defn- get-node-position [key node-id layout]
+(defn- get-node-position [key link layout]
        (let [node-position (->> layout
                                 (:nodes)
-                                (filter #(= (:id %) node-id))
+                                (filter #(= (:id %) (:node-id link)))
                                 (first)
                                 (:position)
                                 (vec2))

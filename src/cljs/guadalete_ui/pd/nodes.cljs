@@ -90,7 +90,8 @@
                               [svg/rect inlet-position 0 0
                                {:id        (:id inlet)
                                 :class     "inlet"
-                                :data-type (str "inlet/" (:name inlet))}])))
+                                :data-state     (:state inlet)
+                                :data-type (str "inlet/" (:type inlet))}])))
 
                   [svg/rect (vec2 0 0) 32 32
                    {:rx    2
@@ -130,8 +131,8 @@
                  [svg/rect outlet-position (:x outlet-size) (:y outlet-size)
                   {:id         (:id outlet)
                    :class      "outlet"
-                   :data-type  "outlet/color"
-                   :data-state (link-state node)}]
+                   :data-type  (str "outlet/" (:type outlet))
+                   :data-state (:state outlet)}]
 
                  [svg/rect (vec2 0 0) node-size node-size
                   {:rx    2
@@ -180,8 +181,8 @@
             :type     "light"
             :position (position pos layout)
             :inlets   [{:id   (str (random-uuid))
-                        :unit "color"
-                        :name "color"}]})
+                        :type "color"
+                        :state "unlinked"}]})
 
 (defmethod make-node :color
            [type pos layout]
@@ -190,8 +191,8 @@
             :position (position pos layout)
             :item-id  "rgb 0.8 0.9 0.9"
             :outlets  [{:id   (str (random-uuid))
-                        :unit "color"
-                        :name "color"}]
+                        :type "color"
+                        :state "unlinked"}]
             })
 
 (defmethod make-node :signal
@@ -200,4 +201,5 @@
             :type     "signal"
             :position (position pos layout)
             :outlets  [{:id   (str (random-uuid))
-                        :unit "01"}]})
+                        :type "signal"
+                        :state "unlinked"}]})

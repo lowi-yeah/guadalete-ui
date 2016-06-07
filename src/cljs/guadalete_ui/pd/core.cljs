@@ -45,9 +45,7 @@
        (let [target (mouse/event-target ev)
              buttons (mouse/event-buttons ev)
              position (mouse/event-position ev)
-             data (merge mouse-event-data target)]
-
-            (log/debug "dipatch mouse target " (pretty target))
+             data (merge mouse-event-data target position buttons)]
             (dispatch [msg data])))
 
 (defn grid
