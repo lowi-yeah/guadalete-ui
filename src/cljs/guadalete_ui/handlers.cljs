@@ -198,9 +198,11 @@
             patch (differ/diff original update)]
 
            ;if the patch is empty, send the whole scene and a replace-flag
-           (if (and (empty? (first patch)) (empty? (second patch)))
-             (chsk-send! [:scene/update [id original :replace]])
-             (chsk-send! [:scene/update [id patch]]))
+
+           ;(if (and (empty? (first patch)) (empty? (second patch)))
+           ;  (chsk-send! [:scene/update [id original :replace]])
+           ;  (chsk-send! [:scene/update [id patch]]))
+
            (assoc-in db [:scene id] update))))
 
 ;//           _
