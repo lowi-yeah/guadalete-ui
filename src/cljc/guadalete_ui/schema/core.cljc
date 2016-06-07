@@ -71,7 +71,6 @@
    (s/optional-key :light)           Lights
    (s/optional-key :scene)           Scenes
 
-
    ;:active-panel                       s/Keyword            ; the currenlty active ui panel
    ;:user/role                          (s/enum :anonymous :user :admin :none)
    ;:search/term                        s/Str
@@ -103,7 +102,17 @@
   {:room-id  s/Str
    :scene-id s/Str
    :node-id  s/Str
-   :type     (s/enum :pd :outlet/color :inlet/color :node/light :node/color)
+   :type     (s/enum :pd
+                     :default-node
+                     :outlet/color
+                     :node/light
+                     :node/color
+                     :node/signal
+                     :inlet/color
+                     :inlet/hue
+                     :inlet/brightness
+                     :inlet/saturation
+                     )
    :position Vec2
    :layout   s/Any
    :buttons  s/Int

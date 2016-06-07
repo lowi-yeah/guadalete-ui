@@ -8,7 +8,6 @@
             [thi.ng.geom.core.vector :refer [vec2]]
             [guadalete-ui.schema.core :refer [DB MouseEventData]]
             [guadalete-ui.util :refer [pretty vec-map]]
-            [guadalete-ui.pd.links :refer [link-mouse]]
             [guadalete-ui.console :as log]))
 
 ;//   _        _
@@ -72,6 +71,14 @@
                              :mouse (vec-map position*))
              scene-0 (assoc scene :layout layout-0)]
             (assoc-in db [:scene scene-id] scene-0)))
+
+(defn link-mouse [db scene-id layout position node-id type]
+      (let [scene (get-in db [:scene scene-id])
+            layout (:layout scene)
+            position* (g/- position (vec2 (:translation layout)))
+            layout* (assoc layout :mouse (vec-map position*))
+            scene* (assoc scene :layout layout*)]
+           (assoc-in db [:scene scene-id] scene*)))
 
 ;//                              _
 ;//   _ __  ___ _  _ ______   __| |_____ __ ___ _

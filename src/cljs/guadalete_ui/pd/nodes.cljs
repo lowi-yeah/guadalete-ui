@@ -13,7 +13,7 @@
     [guadalete-ui.util :refer [pretty vec-map]]
     [guadalete-ui.pd.util :refer [target-id target-type]]
     [guadalete-ui.pd.color :refer [render-color]]
-    ))
+    [guadalete-ui.pd.links :refer [link-state]]))
 
 ;(events/listen (r/dom-node this) "dblclick"
 ;               #(double-click % room-id (:id scene)))
@@ -41,8 +41,7 @@
        (fn [room-id scene layout node item]
            (let [id (:id node)
                  position (:position node)
-                 type (keyword (:type node))
-                 inlet-position (vec2 9 -6)]
+                 type (keyword (:type node))]
                 [(with-meta identity
                             {:component-did-mount
                              (fn [this]
@@ -80,15 +79,22 @@
                    [svg/text (vec2 32 21) (str (:name item))
                     {:class "node-text"}]]
 
-                  [svg/rect inlet-position 0 0
-                   {:class     "inlet"
-                    :data-type "inlet/color"}]
+
+                  (doall
+                    (for [i (range (count (:inlets node)))]
+                         (let [inlet (nth (:inlets node) i)
+                               inlet-width 18
+                               inlet-gap 4
+                               inlet-offset (vec2 (* i (+ inlet-width inlet-gap)) 0)
+                               inlet-position (g/+ inlet-offset (vec2 8 -8))]
+                              ^{:key (str "in-" (:name inlet))}
+                              [svg/rect inlet-position 0 0
+                               {:class     "inlet"
+                                :data-type (str "inlet/" (:name inlet))}])))
 
                   [svg/rect (vec2 0 0) 32 32
                    {:rx    2
                     :class "click-target"}]
-                  ;[svg/rect (vec2 8 -4) 8 8
-                  ; {:class "handle brightness"}]
                   ]])))
 
 (defn- color-node
@@ -121,8 +127,9 @@
                    :fill  @(color/as-css hacked-color)}]
 
                  [svg/rect outlet-position (:x outlet-size) (:y outlet-size)
-                  {:class     "outlet"
-                   :data-type "outlet/color"}]
+                  {:class      "outlet"
+                   :data-type  "outlet/color"
+                   :data-state (link-state node)}]
 
                  [svg/rect (vec2 0 0) node-size node-size
                   {:rx    2
@@ -168,20 +175,24 @@
 (defmethod make-node :light
            [type pos layout]
            {:id       (str (random-uuid))
-            :type     :light
-            :position (position pos layout)})
+            :type     "light"
+            :position (position pos layout)
+            :inlets   [{:unit "color"
+                        :name "color"}]})
 
 (defmethod make-node :color
            [type pos layout]
            {:id       (str (random-uuid))
-            :type     :color
+            :type     "color"
             :position (position pos layout)
-            ;:item-id  "w 0.125 0 1"
             :item-id  "rgb 0.8 0.9 0.9"
+            :outlets  [{:unit "color"
+                        :name "color"}]
             })
 
 (defmethod make-node :sgnl
            [_type pos layout]
            {:id       (str (random-uuid))
-            :type     :sgnl
-            :position (position pos layout)})
+            :type     "signal"
+            :position (position pos layout)
+            :outlets  [{:unit "01"}]})

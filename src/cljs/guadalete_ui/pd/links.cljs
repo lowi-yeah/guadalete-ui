@@ -65,13 +65,7 @@
                              :class "link"
                              :d     bezier-string}]))])))
 
-(defn link-mouse [db scene-id layout position node-id type]
-      (let [scene (get-in db [:scene scene-id])
-            layout (:layout scene)
-            position* (g/- position (vec2 (:translation layout)))
-            layout* (assoc layout :mouse (vec-map position*))
-            scene* (assoc scene :layout layout*)]
-           (assoc-in db [:scene scene-id] scene*)))
+
 
 (defn make-link [db scene-id layout position node-id type]
       (let [scene (get-in db [:scene scene-id])
@@ -79,3 +73,10 @@
             layout* (assoc layout :mouse (vec-map position))
             scene* (assoc scene :layout layout*)]
            (assoc-in db [:scene scene-id] scene*)))
+
+
+(defn link-state
+      "Returns a string describing the state of the links of a node"
+      [node]
+      (log/debug "linl-state" (pretty node))
+      "none")

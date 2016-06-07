@@ -13,13 +13,26 @@
   {:x s/Num
    :y s/Num})
 
+(def Inlet
+  {:unit                   s/Str
+   (s/optional-key :name)  s/Str
+   (s/optional-key :state) (s/enum "none" "active" "invalid")})
+
+(def Outlet
+  {:unit                   s/Str
+   (s/optional-key :name)  s/Str
+   (s/optional-key :state) (s/enum "none" "active" "invalid")})
+
 (def Node
   {:id                       s/Str
    (s/optional-key :item-id) s/Str
    :position                 Vec2
    (s/optional-key :pos-0)   Vec2
-   :type                     (s/enum "color" "light")
-   :selected                 s/Bool})
+   :type                     (s/enum "color" "light" "signal")
+   :selected                 s/Bool
+   (s/optional-key :inlets)  [Inlet]
+   (s/optional-key :outlets) [Outlet]
+   })
 
 
 (def Link
@@ -41,7 +54,6 @@
 
 (def Scene
   {:id     s/Str
-   ;:layout Layout
    :layout Layout
    :name   s/Str
    :on?    s/Bool})
