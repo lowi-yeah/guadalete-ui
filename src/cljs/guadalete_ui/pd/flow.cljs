@@ -1,4 +1,4 @@
-(ns guadalete-ui.pd.links
+(ns guadalete-ui.pd.flow
   (:require-macros
     [thi.ng.math.macros :as mm])
   (:require
@@ -12,25 +12,22 @@
     [thi.ng.math.core :as math :refer [PI HALF_PI TWO_PI]]))
 
 
-(defn- get-node-position [key link layout]
-       (let [node-position (->> layout
-                                (:nodes)
-                                (filter #(= (:id %) (:node-id link)))
-                                (first)
-                                (:position)
-                                (vec2))
+(defn- get-node-position [key link scene]
+       (let [
+             node (get-in scene [:nodes (:node-id link)])
+             node-position (-> node (:position) (vec2))
              offset (condp = key
                            :from (vec2 18 36)
                            :to (vec2 18 0)
                            (vec2))]
             (g/+ node-position offset)))
 
-(defn- get-position [key link layout]
+(defn- get-position [key link scene]
        (let [v (get link key)]
             (if (= :mouse v)
-              (let [mouse-pos (or (:mouse layout) [0 0])]
+              (let [mouse-pos (or (:mouse scene) [0 0])]
                    (vec2 mouse-pos))
-              (get-node-position key v layout))))
+              (get-node-position key v scene))))
 
 (defn- svg-cubic-bezier [from to]
        (let [delta-y (-> to
@@ -49,14 +46,13 @@
       "Renders the links between nodes"
       []
       (fn [room-id scene]
-          (let [layout (:layout scene)
-                link (:link layout)]
+          (let [link (:link scene)]
                ^{:key "link-group"}
                [svg/group
                 {:id "links"}
                 (when link
-                      (let [from (get-position :from link layout)
-                            to (get-position :to link layout)
+                      (let [from (get-position :from link scene)
+                            to (get-position :to link scene)
                             bezier-string (svg-cubic-bezier from to)]
                            ^{:key "mouse-link"}
                            [:path
@@ -65,16 +61,27 @@
                              :d     bezier-string}]))])))
 
 
+;//              _
+;//   _ __  __ _| |_____
+;//  | '  \/ _` | / / -_)
+;//  |_|_|_\__,_|_\_\___|
+;//
 
-(defn make-link [db scene-id layout position node-id type]
-      (let [scene (get-in db [:scene scene-id])
-            layout (:layout scene)
-            layout* (assoc layout :mouse (vec-map position))
-            scene* (assoc scene :layout layout*)]
-           (assoc-in db [:scene scene-id] scene*)))
-
-
-(defn link-state
-      "Returns a string describing the state of the links of a node"
-      [node]
-      "none")
+(defn- begin [{:keys [db] :as data}]
+       (let [
+             ;link {:from {:node-id node-id :id id} :to :mouse}
+             ]
+            (log/debug "link/begin" (pretty (dissoc data :db)))
+            db
+            ))
+;
+;(defn make-link [db scene-id position node-id type]
+;      (let [scene (get-in db [:scene scene-id])
+;            scene* (assoc scene :mouse (vec-map position))]
+;           (assoc-in db [:scene scene-id] scene*)))
+;
+;
+;(defn link-state
+;      "Returns a string describing the state of the links of a node"
+;      [node]
+;      "none")

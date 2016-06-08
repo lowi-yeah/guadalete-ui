@@ -2,6 +2,8 @@
   (:require-macros [cljs.core.async.macros :refer [go-loop]]
                    [cljs.core :refer [or]])
   (:require [cljs.core.async :as async :refer [<! >! chan close! put! to-chan timeout]]
+            [thi.ng.geom.core :as g]
+            [thi.ng.geom.core.vector :refer [vec2]]
             [guadalete-ui.console :as log]))
 
 (declare clj->js*)
@@ -108,3 +110,8 @@
         (not (number? n)) (log/error "abs requires a number")
         (neg? n) (- n)
         :else n))
+
+(defn offset-position [pos scene]
+      (let [pos* (vec2 pos)
+            translation (vec2 (:translation scene))]
+           (g/- pos* translation)))

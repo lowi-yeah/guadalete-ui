@@ -9,6 +9,8 @@
             [guadalete-ui.schema.core :refer [DB MouseEventData]]
             [guadalete-ui.util :refer [pretty vec-map]]
             [guadalete-ui.console :as log]
+            [guadalete-ui.pd.flow :as flow]
+            [guadalete-ui.pd.nodes :as node]
             [guadalete-ui.pd.util :refer [pd-screen-offset]]))
 
 ;//   _        _
@@ -21,46 +23,15 @@
        [seq elm]
        (some #(= elm %) seq))
 
-(defn- unselect-all
+(defn- reset-all
        "Sets :seleted to false for all given nodes"
        [nodes]
-       ;(into {} (map (fn [[k v]] [k (-> v (assoc :selected false) (dissoc :pos-0))])) nodes))
-       (into [] (map (fn [n] (-> n (assoc :selected false) (dissoc :pos-0)))) nodes))
-
-(defn- selected-nodes
-       "Gets all selected nodes form the editor"
-       [editor]
-       (into [] (filter (fn [[_id n]] (true? (:selected n)))) (:node editor)))
+       (into {} (map (fn [[k v]] [k (-> v (assoc :selected false) (dissoc :pos-0))])) nodes))
 
 (defn- move-node [[id n] δ]
        "Move a node by the specified centre."
        (let [offset (g/+ (:pos-0 n) δ)]
             [id (assoc n :pos (vec-map offset))]))
-
-(defn- move-node-start [scene-id node-id position db]
-       (let [scene (get-in db [:scene scene-id])
-             layout (:layout scene)
-             nodes (:nodes layout)
-             node (->> nodes
-                       (filter #(= (:id %) node-id))
-                       (first))
-             node* (assoc node
-                          :selected true
-                          :pos-0 (vec-map (:position node)))
-
-             nodes* (->> nodes
-                         (unselect-all)
-                         (remove #(= (:id %) node-id)))
-             nodes* (conj nodes* node*)
-
-             layout* (assoc layout
-                            :mode :move
-                            :pos-0 (vec-map position)
-                            :nodes nodes*)
-             scene* (assoc scene :layout layout*)]
-
-            (assoc-in db [:scene scene-id] scene*)))
-
 
 
 (defmulti check-outlet* (fn [type outlet] type))
@@ -96,10 +67,10 @@
               (log/debug "check-inlet" inlet type)
               (check-inlet* type inlet))))
 
-(defn- get-outlet [from layout]
+(defn- get-outlet [from scene]
        (if (= :mouse from)
          :mouse
-         (let [node (->> (:nodes layout)
+         (let [node (->> (:nodes scene)
                          (filter #(= (:id %) (:node-id from)))
                          (first))
                outlet (->> (:outlets node)
@@ -107,11 +78,11 @@
                            (first))]
               outlet)))
 
-(defn- set-outlet [outlet layout node-id]
+(defn- set-outlet [outlet scene node-id]
        (if (= :mouse outlet)
-         layout
+         scene
          (let [
-               nodes (:nodes layout)
+               nodes (:nodes scene)
                node (->> nodes
                          (filter #(= (:id %) node-id))
                          (first))
@@ -121,13 +92,13 @@
                node* (assoc node :outlets outlets*)
                nodes* (remove #(= (:id %) node-id) nodes)
                nodes* (conj nodes* node*)]
-              (assoc layout :nodes nodes*))))
+              (assoc scene :nodes nodes*))))
 
-(defn- set-inlet [inlet layout node-id]
+(defn- set-inlet [inlet scene node-id]
        (if (= :mouse inlet)
-         layout
+         scene
          (let [
-               nodes (:nodes layout)
+               nodes (:nodes scene)
                node (->> nodes
                          (filter #(= (:id %) node-id))
                          (first))
@@ -137,12 +108,12 @@
                node* (assoc node :inlets inlets*)
                nodes* (remove #(= (:id %) node-id) nodes)
                nodes* (conj nodes* node*)]
-              (assoc layout :nodes nodes*))))
+              (assoc scene :nodes nodes*))))
 
-(defn- get-inlet [to layout]
+(defn- get-inlet [to scene]
        (if (= :mouse to)
          :mouse
-         (let [node (->> (:nodes layout)
+         (let [node (->> (:nodes scene)
                          (filter #(= (:id %) (:node-id to)))
                          (first))
                inlet (->> (:inlets node)
@@ -170,58 +141,18 @@
             (map reset-inlets*)
             (into [])))
 
+(defn- update-link [scene node-id type id]
 
-(defn- begin-link*
-       "Internal function for staring the creation of a link.
-       Checks whether it is ok to create a link from the given outlet-inlet"
-
-       [scene-id node-id link position db]
-       (let [scene (get-in db [:scene scene-id])
-             layout (:layout scene)
-
-             from (get-outlet (:from link) layout)
-             to (get-inlet (:to link) layout)
-
-             from* (check-outlet from)
-             to* (check-inlet to)
-
-             layout* (set-outlet from* layout node-id)
-             layout* (set-inlet to* layout* node-id)
-
-             position* (g/- position (vec2 (:translation layout)))
-             layout* (assoc layout*
-                            :mode :link
-                            :link link
-                            :mouse (vec-map position*))
-             scene* (assoc scene :layout layout*)]
-
-            (assoc-in db [:scene scene-id] scene*)))
-
-(defn- begin-link [scene-id node-id id position db]
-       (let [link {:from {:node-id node-id :id id}
-                   :to   :mouse}]
-            (begin-link* scene-id node-id link position db)))
-
-(defn- begin-reverse-link [scene-id node-id id position db]
-       (let [link {:from :mouse
-                   :to   {:node-id node-id :id id}}]
-            (begin-link* scene-id node-id link position db)))
-
-(defn- update-link [layout node-id type id]
-
-       layout
+       scene
 
        )
 
 
 (defn link-mouse [db scene-id position node-id type id]
       (let [scene (get-in db [:scene scene-id])
-            layout (:layout scene)
-            position* (g/- position (vec2 (:translation layout)))
-            layout* (assoc layout :mouse (vec-map position*))
-            layout* (update-link layout* node-id type id)
-            scene* (assoc scene :layout layout*)]
-           (log/debug "link-mouse" (str type) id node-id)
+            position* (g/- position (vec2 (:translation scene)))
+            scene* (assoc scene :mouse (vec-map position*))
+            scene* (update-link scene* node-id type id)]
            (assoc-in db [:scene scene-id] scene*)))
 
 ;//                              _
@@ -234,28 +165,20 @@
 
 (defmethod mouse-down* :pd [_ {:keys [scene-id node-id position db] :as data}]
            (let [scene (get-in db [:scene scene-id])
-                 layout (:layout scene)
-                 nodes* (unselect-all (:nodes layout))
-                 layout* (assoc layout
-                                :mode :pan
-                                :pos-0 (vec-map position)
-                                :pos-1 (vec-map (:translation layout))
-                                :nodes nodes*)
-                 scene* (assoc scene :layout layout*)]
-
+                 nodes* (reset-all (:nodes scene))
+                 scene* (assoc scene
+                               :mode :pan
+                               :pos-0 (vec-map position)
+                               :pos-1 (vec-map (:translation scene))
+                               :nodes nodes*)]
                 (assoc-in db [:scene scene-id] scene*)))
 
-(defmethod mouse-down* :node/light [_ {:keys [scene-id id position db]}]
-           (move-node-start scene-id id position db))
+(defmethod mouse-down* :node [_ data]
+           (node/start-move data))
 
-(defmethod mouse-down* :node/color [_ {:keys [scene-id id position db]}]
-           (move-node-start scene-id id position db))
-
-(defmethod mouse-down* :outlet/color [_ {:keys [scene-id id node-id position db] :as data}]
-           (begin-link scene-id node-id id position db))
-
-(defmethod mouse-down* :inlet/color [_ {:keys [scene-id id node-id position db]}]
-           (begin-reverse-link scene-id node-id id position db))
+(defmethod mouse-down* :link [_ data]
+           (log/debug "link-down")
+           (flow/begin data))
 
 (defmethod mouse-down* :default [type {:keys [db]}]
            (log/error (str "mouse-down: I don't know the type: " type))
@@ -277,34 +200,13 @@
        Called by modes [:none :pd :move]"
        [type scene-id node-id position db]
        (let [scene (get-in db [:scene scene-id])
-             layout (:layout scene)
-             nodes* (unselect-all (:nodes layout))
-             nodes* (reset-outlets nodes*)
-             nodes* (reset-inlets nodes*)
-             layout* (assoc layout :mode :none)
-             layout* (assoc layout* :nodes nodes*)
-             layout* (dissoc layout* :pos-0 :pos-1 :link)
-             scene* (assoc scene :layout layout*)]
+             nodes* (reset-all (:nodes scene))
+             ;nodes* (reset-outlets nodes*)
+             ;nodes* (reset-inlets nodes*)
+             scene* (assoc scene :mode :none :nodes nodes*)
+             scene* (dissoc scene* :pos-0 :pos-1 :link)]
             (dispatch [:scene/update scene*])
             (assoc-in db [:scene scene-id] scene*)))
-
-(defn- inlet-up*
-       [type scene-id node-id position db]
-       (log/debug "inlet-up*:" type)
-       (let [scene (get-in db [:scene scene-id])
-             layout (:layout scene)
-             layout-0 (assoc layout :mode :none)
-             nodes-0 (unselect-all (:nodes layout-0))
-             layout-1 (assoc layout-0 :nodes nodes-0)
-             layout-2 (dissoc layout-1 :pos-0 :pos-1 :link)
-             scene-0 (assoc scene :layout layout-2)]
-            (dispatch [:scene/update scene-0])
-            (assoc-in db [:scene scene-id] scene-0)))
-
-(defn- outlet-up*
-       [type scene-id node-id position db]
-       (log/debug "outlet-up*:" type)
-       (default-up* type scene-id node-id position db))
 
 
 (defmulti up* (fn [type data] type))
@@ -312,17 +214,12 @@
 (defmethod up* :pd [_ {:keys [scene-id node-id position db]}]
            (default-up* :pd scene-id node-id position db))
 
-(defmethod up* :node/light [_ {:keys [scene-id node-id position db]}]
+(defmethod up* :node [_ {:keys [scene-id node-id position db]}]
            (default-up* :light scene-id node-id position db))
 
-(defmethod up* :node/color [_ {:keys [scene-id node-id position db]}]
-           (default-up* :color scene-id node-id position db))
-
-(defmethod up* :outlet/color [_ {:keys [scene-id node-id position db]}]
-           (outlet-up* :outlet scene-id node-id position db))
-
-(defmethod up* :inlet/color [_ {:keys [scene-id node-id position db]}]
-           (inlet-up* :inlet/color scene-id node-id position db))
+(defmethod up* :flow [_ data]
+           (log/debug "flow-up*" (pretty (dissoc data :db)))
+           (:db data))
 
 (defmethod up* :default [type {:keys [db]}]
            (log/error (str "mouse UP: I don't know the type: " type))
@@ -345,33 +242,23 @@
 ;//  |_|_|_\___/\_,_/__\___| |_|_|_\___/\_/\___|
 ;//
 
+(defn- selected-node
+       "Returns the first node ith a selected attribute."
+       [nodes]
+       (let [[_ node] (first (filter (fn [[k v]] (:selected v)) nodes))]
+            node))
+
 (defmulti move*
           (fn [mode data] mode))
 
-(defmethod move* :move [_ {:keys [scene-id node-id position db]}]
-           (let [scene (get-in db [:scene scene-id])
-                 layout (:layout scene)
-                 δ (g/- (vec2 position) (vec2 (:pos-0 layout)))
-                 nodes (:nodes layout)
-                 node (->> nodes
-                           (filter #(:selected %))
-                           (first))
-                 node-position (vec2 (:pos-0 node))
-                 node-position* (g/+ node-position δ)
-                 node* (assoc node :position (vec-map node-position*))
-                 nodes* (remove #(= (:id %) (:id node*)) nodes)
-                 nodes* (conj nodes* node*)
-                 layout* (assoc layout :nodes nodes*)
-                 scene* (assoc scene :layout layout*)]
-                (assoc-in db [:scene scene-id] scene*)))
+(defmethod move* :move [_ {:keys [scene-id id position db] :as data}]
+           (node/move data))
 
 (defmethod move* :pan [_ {:keys [scene-id position db]}]
            (let [scene (get-in db [:scene scene-id])
-                 layout (:layout scene)
-                 δ (g/- (vec2 position) (vec2 (:pos-0 layout)))
-                 translation* (g/+ (vec2 (:pos-1 layout)) δ)
-                 layout* (assoc layout :translation (vec-map translation*))
-                 scene* (assoc scene :layout layout*)]
+                 δ (g/- (vec2 position) (vec2 (:pos-0 scene)))
+                 translation* (g/+ (vec2 (:pos-1 scene)) δ)
+                 scene* (assoc scene :translation (vec-map translation*))]
                 (assoc-in db [:scene scene-id] scene*)))
 
 (defmethod move* :link [_ {:keys [scene-id node-id type id position db] :as data}]
@@ -385,8 +272,7 @@
         [data :- MouseEventData
          db :- DB]
         (let [scene (get-in db [:scene (:scene-id data)])
-              layout (:layout scene)
-              mode (:mode layout)]
+              mode (:mode scene)]
              (move* mode (assoc data :db db))))
 
 
@@ -410,14 +296,19 @@
               id)))
 
 
-(defn- load-node
-       "loads the node if for the given inlet/outlet"
-       [{:keys [id type] :as inlet-or-outlet}]
-       (let [node-id* (-> (str "#" id)
-                          (js/$)
-                          (.parent)
-                          (.attr "id"))]
-            (assoc inlet-or-outlet :node-id node-id*)))
+(defn- node-id* [jq flow]
+       "Recursive helper for node-id"
+       (let [type (keyword (.attr jq "data-type"))
+             id (.attr jq "id")]
+            (if (not (= type :node))
+              (node-id* (.parent jq) flow)
+              (merge flow {:node-id id}))))
+
+(defn- load-link [{:keys [id] :as link}]
+       "Return the id of the node to which the given link belongs"
+       (let [jq (js/$ (str "#" id))
+             link-type (keyword (.attr jq "data-link"))]
+            (node-id* jq (assoc link :link-type link-type))))
 
 (defn- ->page [ev]
        (vec2 (.-pageX ev) (.-pageY ev)))
@@ -428,14 +319,8 @@
             id (target-id target*)]
            (condp = type
                   :pd {:type type}
-
-                  :node/light {:type type :id id}
-                  :node/color {:type type :id id}
-                  :node/signal {:type type :id id}
-
-                  :inlet/color (load-node {:type type :id id})
-                  :outlet/color (load-node {:type type :id id})
-
+                  :node {:type type :id id}
+                  :link (load-link {:type type :id id})
                   {:type type}
                   )))
 
@@ -444,6 +329,6 @@
 
 (defn event-position [ev]
       (let [ev* (.-nativeEvent ev)
-            pos (vec2 (.-x ev*) (.-y ev*))
+            pos (vec2 (int (.-x ev*)) (int (.-y ev*)))
             offset (pd-screen-offset)]
            {:position (g/- pos offset)}))

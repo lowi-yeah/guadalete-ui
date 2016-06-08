@@ -50,11 +50,10 @@
                   (get-item-reaction db type id)))))
 
 (defn- get-scene-item-ids [scene type]
-       (let [all-nodes (get-in scene [:layout :nodes])
-             nodes (filter #(= (:type %) type) all-nodes)
+       (let [all-nodes (:nodes scene)
+             nodes (filter #(= (:type %) type) (vals all-nodes))
              ids (map #(:item-id %) nodes)]
-            (into #{} ids)
-            ))
+            (into #{} ids)))
 
 (register-sub
   :pd/modal-select-options

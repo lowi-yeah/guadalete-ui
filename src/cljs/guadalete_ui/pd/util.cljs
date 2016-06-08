@@ -14,10 +14,10 @@
 
 (defn css-matrix-string
       "Converts a thin.ng/Matrix32 to its css-transform representation"
-      [layout]
-      (let [translation (if (nil? (:translation layout)) (vec2) (vec2 (:translation layout)))
+      [translation]
+      (let [translation* (if (nil? translation) (vec2) (vec2 translation))
             matrix (-> (matrix32)
-                       (g/translate translation))]
+                       (g/translate translation*))]
            (str "matrix(" (clojure.string/join ", " (g/transpose matrix)) ")")))
 
 
@@ -43,14 +43,12 @@
        :position {:x 0 :y 0}})
 
 
-(defn- get-layout-node [node-id scene]
-       (first (filter #(= (:id %) node-id) (get-in scene [:layout :nodes]))))
 
 (defn modal-node [db]
       (let [mn (:pd/modal-node-data db)]
            (if mn
              (let [scene (get-in db [:scene (:scene mn)])
-                   node (get-layout-node (:node mn) scene)]
+                   node (get-in scene [:nodes (:node mn)])]
                   node)
              (nil-node))))
 
@@ -89,4 +87,4 @@
 (defn pd-screen-offset []
       (let [jq-svg (js/$ "#pd-svg")
             offset (.offset jq-svg)]
-           (vec2 (.-left offset) (.-top offset))))
+           (vec2 (int (.-left offset)) (int (.-top offset)))))

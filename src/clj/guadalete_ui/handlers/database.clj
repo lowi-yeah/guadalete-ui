@@ -57,9 +57,9 @@
 ; Scenes
 ; ****************
 (defn- mode-keyword [scene]
-       (let [mode (get-in scene [:layout :mode])
+       (let [mode (:mode scene)
              mode* (keyword mode)]
-            (assoc-in scene [:layout :mode] mode*)))
+            (assoc scene :mode mode*)))
 
 (defn get-scenes [connection]
       (let [scenes (get-all connection :scene)

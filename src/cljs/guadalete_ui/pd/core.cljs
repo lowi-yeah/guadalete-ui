@@ -23,7 +23,6 @@
 
     [guadalete-ui.pd.palette :refer [palette drop* allow-drop]]
     [guadalete-ui.pd.nodes :refer [nodes]]
-    [guadalete-ui.pd.links :refer [links]]
 
     [guadalete-ui.console :as log]
     [guadalete-ui.util :refer [pretty]]
@@ -46,6 +45,7 @@
              buttons (mouse/event-buttons ev)
              position (mouse/event-position ev)
              data (merge mouse-event-data target position buttons)]
+            ;(log/debug "dispatch-mouse id" (:id data))
             (dispatch [msg data])))
 
 (defn grid
@@ -81,8 +81,7 @@
 (defn pd []
       "A PDish editor for wiring up scenes"
       (fn [room-rctn scene]
-          (let [layout (:layout scene)
-                css-matrix (css-matrix-string layout)
+          (let [css-matrix (css-matrix-string (:translation scene))
                 mouse-event-data {:room-id  (:id @room-rctn)
                                   :scene-id (:id scene)}]
                [:div#pd
@@ -103,16 +102,14 @@
                   :on-mouse-down   #(dispatch-mouse :pd/mouse-down % mouse-event-data)
                   :on-mouse-move   #(dispatch-mouse :pd/mouse-move % mouse-event-data)
                   :on-mouse-up     #(dispatch-mouse :pd/mouse-up % mouse-event-data)
-                  :on-mouse-enter  #(dispatch-mouse :pd/mouse-enter % mouse-event-data)
+                  ;:on-mouse-enter  #(dispatch-mouse :pd/mouse-enter % mouse-event-data)
                   }
 
                  ^{:key "pan-group"}
                  [svg/group {:id    "pan-group"
-                             :style {:transform css-matrix}
-                             ;:class (if (= :none (:mode @editor-rctn)) "transition")
-                             }
+                             :style {:transform css-matrix}}
                   ^{:key "grid"} [grid]
-                  ^{:key "links"} [links (:id @room-rctn) scene]
+                  ;^{:key "flows"} [flows (:id @room-rctn) scene]
                   ^{:key "nodes"} [nodes (:id @room-rctn) scene]
                   ]]
                 [palette (:id @room-rctn) (:id scene)]

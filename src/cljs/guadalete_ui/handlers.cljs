@@ -180,6 +180,9 @@
       (let [rooms-map (mappify :id (:room state))
             lights-map (mappify :id (:light state))
             scenes-map (mappify :id (:scene state))]
+
+           (log/debug "got state" (:scene state))
+           (log/debug "got scenes-map" scenes-map)
            (assoc db
                   :room rooms-map
                   :light lights-map
@@ -197,11 +200,11 @@
             original (get-in db [:scene id])
             patch (differ/diff original update)]
 
-           ;if the patch is empty, send the whole scene and a replace-flag
-
-           ;(if (and (empty? (first patch)) (empty? (second patch)))
-           ;  (chsk-send! [:scene/update [id original :replace]])
-           ;  (chsk-send! [:scene/update [id patch]]))
+           ;;if the patch is empty, send the whole scene and a replace-flag
+           (if (and (empty? (first patch)) (empty? (second patch)))
+             (chsk-send! [:scene/update [id original :replace]])
+             (chsk-send! [:scene/update [id patch]]))
+           ;(log/debug "update scene" (pretty update))
 
            (assoc-in db [:scene id] update))))
 
