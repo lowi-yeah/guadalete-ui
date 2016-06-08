@@ -27,6 +27,7 @@
     [guadalete-ui.console :as log]
     [guadalete-ui.util :refer [pretty]]
     [guadalete-ui.pd.mouse :as mouse]
+    [guadalete-ui.pd.flow :refer [flows]]
     [guadalete-ui.pd.util
      :refer
      [pd-dimensions
@@ -109,7 +110,7 @@
                  [svg/group {:id    "pan-group"
                              :style {:transform css-matrix}}
                   ^{:key "grid"} [grid]
-                  ;^{:key "flows"} [flows (:id @room-rctn) scene]
+                  ^{:key "flows"} [flows (:id @room-rctn) scene]
                   ^{:key "nodes"} [nodes (:id @room-rctn) scene]
                   ]]
                 [palette (:id @room-rctn) (:id scene)]

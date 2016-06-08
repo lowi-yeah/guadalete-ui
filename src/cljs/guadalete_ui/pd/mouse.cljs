@@ -23,10 +23,6 @@
        [seq elm]
        (some #(= elm %) seq))
 
-(defn- reset-all
-       "Sets :seleted to false for all given nodes"
-       [nodes]
-       (into {} (map (fn [[k v]] [k (-> v (assoc :selected false) (dissoc :pos-0))])) nodes))
 
 (defn- move-node [[id n] δ]
        "Move a node by the specified centre."
@@ -165,7 +161,7 @@
 
 (defmethod mouse-down* :pd [_ {:keys [scene-id node-id position db] :as data}]
            (let [scene (get-in db [:scene scene-id])
-                 nodes* (reset-all (:nodes scene))
+                 nodes* (node/reset-all (:nodes scene))
                  scene* (assoc scene
                                :mode :pan
                                :pos-0 (vec-map position)
@@ -200,9 +196,7 @@
        Called by modes [:none :pd :move]"
        [type scene-id node-id position db]
        (let [scene (get-in db [:scene scene-id])
-             nodes* (reset-all (:nodes scene))
-             ;nodes* (reset-outlets nodes*)
-             ;nodes* (reset-inlets nodes*)
+             nodes* (node/reset-all (:nodes scene))
              scene* (assoc scene :mode :none :nodes nodes*)
              scene* (dissoc scene* :pos-0 :pos-1 :link)]
             (dispatch [:scene/update scene*])
@@ -215,6 +209,9 @@
            (default-up* :pd scene-id node-id position db))
 
 (defmethod up* :node [_ {:keys [scene-id node-id position db]}]
+           (default-up* :light scene-id node-id position db))
+
+(defmethod up* :link [_ {:keys [scene-id node-id position db]}]
            (default-up* :light scene-id node-id position db))
 
 (defmethod up* :flow [_ data]

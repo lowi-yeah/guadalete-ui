@@ -212,7 +212,7 @@
                        (assoc :selected false :links links*))]
             [id node*]))
 
-(defn- reset-all
+(defn reset-all
        "Resets all nodes"
        [nodes]
        (into {} (map reset) nodes))

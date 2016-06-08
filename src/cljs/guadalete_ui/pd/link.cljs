@@ -74,7 +74,7 @@
 ;//
 
 (defn reset-all [links]
-      (log/debug "reseetting all links" (pretty links))
+      ;(log/debug "reseetting all links" (pretty links))
       links
       )
 

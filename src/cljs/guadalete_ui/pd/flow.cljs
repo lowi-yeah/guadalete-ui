@@ -11,7 +11,11 @@
     [guadalete-ui.util :refer [pretty abs vec-map]]
     [thi.ng.math.core :as math :refer [PI HALF_PI TWO_PI]]))
 
-
+;//      _
+;//   __| |_ _ __ ___ __ __
+;//  / _` | '_/ _` \ V  V /
+;//  \__,_|_| \__,_|\_/\_/
+;//
 (defn- get-node-position [key link scene]
        (let [
              node (get-in scene [:nodes (:node-id link)])
@@ -42,8 +46,8 @@
 
 
 
-(defn links
-      "Renders the links between nodes"
+(defn flows
+      "Renders the connections between nodes (links that is…)"
       []
       (fn [room-id scene]
           (let [link (:link scene)]
@@ -67,13 +71,42 @@
 ;//  |_|_|_\__,_|_\_\___|
 ;//
 
-(defn- begin [{:keys [db] :as data}]
+(defn- to-mouse
+       "Internal function for creating a flow from an out-flow to the mouse"
+       [{:keys [db] :as data}]
        (let [
              ;link {:from {:node-id node-id :id id} :to :mouse}
              ]
-            (log/debug "link/begin" (pretty (dissoc data :db)))
+            (log/debug "flow/begin" (pretty (dissoc data :db)))
             db
-            ))
+            )
+       )
+
+(defn- from-mouse
+       "Internal function for creating a flow from the mouse into an in-flow"
+       [{:keys [db] :as data}]
+       (log/debug "from-mouse")
+
+       db
+       )
+
+(defn- begin [{:keys [link-type db] :as data}]
+       (condp = (keyword link-type)
+              :in (from-mouse data)
+              :out (to-mouse data)
+              (log/error "Cannot begin link. Dunno the link-type" link-type)))
+
+
+;"buttons": 1,
+;"scene-id": "scene2",
+;"link-type": "out",
+;"type": "link",
+;"node-id": "4974f288-fcf8-45a2-aeb3-0921ab31dfb7",
+;"id": "c73af9c0-37c5-4b48-a150-242101525339",
+;"room-id": "w00t",
+;"position": [ 151, 85 ]
+
+
 ;
 ;(defn make-link [db scene-id position node-id type]
 ;      (let [scene (get-in db [:scene scene-id])

@@ -180,9 +180,6 @@
       (let [rooms-map (mappify :id (:room state))
             lights-map (mappify :id (:light state))
             scenes-map (mappify :id (:scene state))]
-
-           (log/debug "got state" (:scene state))
-           (log/debug "got scenes-map" scenes-map)
            (assoc db
                   :room rooms-map
                   :light lights-map
