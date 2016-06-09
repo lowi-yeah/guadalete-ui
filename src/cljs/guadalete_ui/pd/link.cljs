@@ -24,19 +24,19 @@
 ;//  |_| \___|_||_\__,_\___|_|
 ;//
 (defn- in* []
-       ((fn [links position]
-            [svg/group
-             {:class "in-links"}
-             (doall
-               (for [l links]
-                    (let [position (vec2 link-offset node-height)]
-                         ^{:key (str "link-" (:id l))}
-                         [svg/rect position 0 0             ; dimesions are being set via css
-                          {:id         (:id l)
-                           :class      "link in"
-                           :data-type  "link"
-                           :data-state (:state l)
-                           :data-link  "in"}])))])))
+       (fn [links position]
+           [svg/group
+            {:class "in-links"}
+            (doall
+              (for [l links]
+                   (let [position (vec2 link-offset (* -1 link-offset))]
+                        ^{:key (str "link-" (:id l))}
+                        [svg/rect position 0 0              ; dimesions are being set via css
+                         {:id         (:id l)
+                          :class      "link in"
+                          :data-type  "link"
+                          :data-state (:state l)
+                          :data-link  "in"}])))]))
 
 (defn- out* []
        (fn [links position]
@@ -59,12 +59,13 @@
       (fn [node]
           (let [in-links (into [] (vals (get-in node [:links :in])))
                 out-links (into [] (vals (get-in node [:links :out])))
-                position (vec2 (:position node))
-                ]
+                position (vec2 (:position node))]
                ^{:key (str "links-" (:id node))}
                [svg/group
+                {}
                 (if (not-empty in-links) [in* in-links position])
-                (if (not-empty out-links) [out* out-links position])])))
+                (if (not-empty out-links) [out* out-links position])
+                ])))
 
 
 ;//              _

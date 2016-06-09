@@ -16,9 +16,9 @@
 ;//  / _` | '_/ _` \ V  V /
 ;//  \__,_|_| \__,_|\_/\_/
 ;//
-(defn- get-node-position [key link scene]
+(defn- get-node-position [key flow scene]
        (let [
-             node (get-in scene [:nodes (:node-id link)])
+             node (get-in scene [:nodes (keyword (:node-id flow))])
              node-position (-> node (:position) (vec2))
              offset (condp = key
                            :from (vec2 18 36)
@@ -26,10 +26,10 @@
                            (vec2))]
             (g/+ node-position offset)))
 
-(defn- get-position [key link scene]
-       (let [v (get link key)]
+(defn- get-position [key flow scene]
+       (let [v (get flow key)]
             (if (= :mouse v)
-              (let [mouse-pos (or (:mouse scene) [0 0])]
+              (let [mouse-pos (or (:mouse/position scene) [0 0])]
                    (vec2 mouse-pos))
               (get-node-position key v scene))))
 
@@ -44,24 +44,22 @@
              c1 (g/- to (vec2 0 delta-y))]
             (str "M" (:x from) "," (:y from) " C" (:x c0) "," (:y c0) " " (:x c1) "," (:y c1) " " (:x to) "," (:y to))))
 
-
-
 (defn flows
-      "Renders the connections between nodes (links that is…)"
+      "Renders the connections between nodes (flows that is…)"
       []
       (fn [room-id scene]
-          (let [link (:link scene)]
-               ^{:key "link-group"}
+          (let [mouse-flow (:flow/mouse scene)]
+               ^{:key "flow-group"}
                [svg/group
-                {:id "links"}
-                (when link
-                      (let [from (get-position :from link scene)
-                            to (get-position :to link scene)
+                {:id "flows"}
+                (when mouse-flow
+                      (let [from (get-position :from mouse-flow scene)
+                            to (get-position :to mouse-flow scene)
                             bezier-string (svg-cubic-bezier from to)]
-                           ^{:key "mouse-link"}
+                           ^{:key "mouse-flow"}
                            [:path
-                            {:id    "mouse-link"
-                             :class "link"
+                            {:id    "mouse-flow"
+                             :class "flow"
                              :d     bezier-string}]))])))
 
 
@@ -71,30 +69,54 @@
 ;//  |_|_|_\__,_|_\_\___|
 ;//
 
+(defn- decorate-link
+       "Decorates a given link with data required for properly renderingit .
+       Called during 'begin'"
+       []
+       )
+
 (defn- to-mouse
        "Internal function for creating a flow from an out-flow to the mouse"
-       [{:keys [db] :as data}]
-       (let [
-             ;link {:from {:node-id node-id :id id} :to :mouse}
-             ]
-            (log/debug "flow/begin" (pretty (dissoc data :db)))
-            db
-            )
-       )
+       [{:keys [scene-id node-id id position db] :as data}]
+       (let [flow {:from {:node-id node-id :id id} :to :mouse}]
+            (-> db
+                (assoc-in [:scene scene-id :flow/mouse] flow)
+                (assoc-in [:scene scene-id :mouse/position] (vec-map position))
+                (assoc-in [:scene scene-id :mode] :link)
+                )))
 
 (defn- from-mouse
        "Internal function for creating a flow from the mouse into an in-flow"
-       [{:keys [db] :as data}]
-       (log/debug "from-mouse")
+       [{:keys [scene-id node-id id position db] :as data}]
+       (let [flow {:from :mouse :to {:node-id node-id :id id}}]
+            (-> db
+                (assoc-in [:scene scene-id :flow/mouse] flow)
+                (assoc-in [:scene scene-id :mouse/position] (vec-map position))
+                (assoc-in [:scene scene-id :mode] :link)
+                )))
 
-       db
-       )
+(defn begin [{:keys [link-type db] :as data}]
+      (log/debug "flow/begin" (pretty (dissoc data :db)))
+      (condp = (keyword link-type)
+             :in (from-mouse data)
+             :out (to-mouse data)
+             (log/error "Cannot begin link. Dunno the link-type" link-type)))
 
-(defn- begin [{:keys [link-type db] :as data}]
-       (condp = (keyword link-type)
-              :in (from-mouse data)
-              :out (to-mouse data)
-              (log/error "Cannot begin link. Dunno the link-type" link-type)))
+;(defn- update-link [scene node-id type id] scene)
+
+(defn move
+      "Called when moving the mouse during link creation.
+      Updates the mouse mosition (for rendering the temporary flow.
+      Also Checks the current target and sets appropriae values in the db"
+      [{:keys [db scene-id position node-id type id] :as data}]
+      (let [scene (get-in db [:scene scene-id])
+            position* (g/- position (vec2 (:translation scene)))
+            scene* (assoc scene :mouse/position (vec-map position*))]
+           ;(log/debug "flow/move" (pretty (dissoc data :db)))
+           (log/debug "flow/move" (str (:type data)))
+           (assoc-in db [:scene scene-id] scene*)))
+
+
 
 
 ;"buttons": 1,

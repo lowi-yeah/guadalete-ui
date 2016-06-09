@@ -137,19 +137,6 @@
             (map reset-inlets*)
             (into [])))
 
-(defn- update-link [scene node-id type id]
-
-       scene
-
-       )
-
-
-(defn link-mouse [db scene-id position node-id type id]
-      (let [scene (get-in db [:scene scene-id])
-            position* (g/- position (vec2 (:translation scene)))
-            scene* (assoc scene :mouse (vec-map position*))
-            scene* (update-link scene* node-id type id)]
-           (assoc-in db [:scene scene-id] scene*)))
 
 ;//                              _
 ;//   _ __  ___ _  _ ______   __| |_____ __ ___ _
@@ -173,7 +160,6 @@
            (node/start-move data))
 
 (defmethod mouse-down* :link [_ data]
-           (log/debug "link-down")
            (flow/begin data))
 
 (defmethod mouse-down* :default [type {:keys [db]}]
@@ -198,7 +184,7 @@
        (let [scene (get-in db [:scene scene-id])
              nodes* (node/reset-all (:nodes scene))
              scene* (assoc scene :mode :none :nodes nodes*)
-             scene* (dissoc scene* :pos-0 :pos-1 :link)]
+             scene* (dissoc scene* :pos-0 :pos-1 :flow/mouse)]
             (dispatch [:scene/update scene*])
             (assoc-in db [:scene scene-id] scene*)))
 
@@ -258,18 +244,16 @@
                  scene* (assoc scene :translation (vec-map translation*))]
                 (assoc-in db [:scene scene-id] scene*)))
 
-(defmethod move* :link [_ {:keys [scene-id node-id type id position db] :as data}]
-           (link-mouse db scene-id position node-id type id))
+(defmethod move* :link [_ data] (flow/move data))
 
 (defmethod move* :none [_ {:keys [db]}] db)
 
 (defmethod move* :default [_ {:keys [db]}] db)
 
 (s/defn move :- DB
-        [data :- MouseEventData
+        [{:keys [scene-id] :as data} :- MouseEventData
          db :- DB]
-        (let [scene (get-in db [:scene (:scene-id data)])
-              mode (:mode scene)]
+        (let [mode (get-in db [:scene scene-id :mode])]
              (move* mode (assoc data :db db))))
 
 
@@ -293,24 +277,31 @@
               id)))
 
 
-(defn- node-id* [jq flow]
+(defn- node-id*
        "Recursive helper for node-id"
+       [jq flow]
        (let [type (keyword (.attr jq "data-type"))
              id (.attr jq "id")]
             (if (not (= type :node))
               (node-id* (.parent jq) flow)
               (merge flow {:node-id id}))))
 
-(defn- load-link [{:keys [id] :as link}]
+(defn- load-link
        "Return the id of the node to which the given link belongs"
+       [{:keys [id] :as link}]
        (let [jq (js/$ (str "#" id))
              link-type (keyword (.attr jq "data-link"))]
             (node-id* jq (assoc link :link-type link-type))))
 
-(defn- ->page [ev]
+(defn- ->page
+       "Helper function for getting the event position relative to the page."
+       [ev]
        (vec2 (.-pageX ev) (.-pageY ev)))
 
-(defn event-target [ev]
+(defn event-target
+      "Returns a map containing information to access the specific item type.
+      E.g. if a 'link' is the target the node id and link type will be attached"
+      [ev]
       (let [target* (.-target ev)
             type (target-type target*)
             id (target-id target*)]
@@ -321,10 +312,15 @@
                   {:type type}
                   )))
 
-(defn event-buttons [ev]
+(defn event-buttons
+      "Get the button state of a mouse event"
+      [ev]
       {:buttons (.-buttons ev)})
 
-(defn event-position [ev]
+(defn event-position
+      "Calculates the position of the mouse event with respect to
+      the offset of the svg frame in relation to the screen."
+      [ev]
       (let [ev* (.-nativeEvent ev)
             pos (vec2 (int (.-x ev*)) (int (.-y ev*)))
             offset (pd-screen-offset)]

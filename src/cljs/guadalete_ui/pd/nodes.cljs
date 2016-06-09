@@ -91,7 +91,9 @@
                   [svg/rect (vec2 0 0) 32 32
                    {:rx    2
                     :class "click-target"}]
-                  ]])))
+                  ]])
+
+           ))
 
 (defn- color-node
        []
@@ -168,9 +170,10 @@
                 {:id       node-id
                  :type     "light"
                  :position (vec-map pos)
-                 :links    {:in {link-id {:id    link-id
-                                          :type  "color"
-                                          :state "normal"}}}}))
+                 :links    {:in {(keyword link-id)
+                                 {:id    link-id
+                                  :type  "color"
+                                  :state "normal"}}}}))
 
 (defmethod make-node :color
            [type pos]
@@ -213,9 +216,9 @@
             [id node*]))
 
 (defn reset-all
-       "Resets all nodes"
-       [nodes]
-       (into {} (map reset) nodes))
+      "Resets all nodes"
+      [nodes]
+      (into {} (map reset) nodes))
 
 (defn- selected-node
        "Returns the first node ith a selected attribute."
