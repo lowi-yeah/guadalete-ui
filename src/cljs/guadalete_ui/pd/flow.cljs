@@ -8,8 +8,9 @@
     [thi.ng.geom.svg.core :as svg]
     [thi.ng.geom.core.vector :refer [vec2]]
     [guadalete-ui.console :as log]
-    [guadalete-ui.util :refer [pretty abs vec-map]]
-    [thi.ng.math.core :as math :refer [PI HALF_PI TWO_PI]]))
+    [guadalete-ui.util :refer [pretty abs vec-map kw*]]
+    [thi.ng.math.core :as math :refer [PI HALF_PI TWO_PI]]
+    [guadalete-ui.pd.link :as link]))
 
 ;//      _
 ;//   __| |_ _ __ ___ __ __
@@ -44,23 +45,30 @@
              c1 (g/- to (vec2 0 delta-y))]
             (str "M" (:x from) "," (:y from) " C" (:x c0) "," (:y c0) " " (:x c1) "," (:y c1) " " (:x to) "," (:y to))))
 
+(defn mouse
+      "Renders the temporary mouse-flow (if it exists"
+      []
+      (fn [scene]
+          (when (:flow/mouse scene)
+                (let [from (get-position :from (:flow/mouse scene) scene)
+                      to (get-position :to (:flow/mouse scene) scene)
+                      bezier-string (svg-cubic-bezier from to)]
+                     ^{:key "mouse-flow"}
+                     [:path
+                      {:id    "mouse-flow"
+                       :class "flow"
+                       :d     bezier-string}]))))
+
 (defn flows
       "Renders the connections between nodes (flows that is…)"
       []
       (fn [room-id scene]
-          (let [mouse-flow (:flow/mouse scene)]
-               ^{:key "flow-group"}
-               [svg/group
-                {:id "flows"}
-                (when mouse-flow
-                      (let [from (get-position :from mouse-flow scene)
-                            to (get-position :to mouse-flow scene)
-                            bezier-string (svg-cubic-bezier from to)]
-                           ^{:key "mouse-flow"}
-                           [:path
-                            {:id    "mouse-flow"
-                             :class "flow"
-                             :d     bezier-string}]))])))
+          ^{:key "flow-group"}
+          [svg/group
+           {:id "flows"}
+           [mouse scene]
+
+           ]))
 
 
 ;//              _
@@ -69,34 +77,39 @@
 ;//  |_|_|_\__,_|_\_\___|
 ;//
 
+
+
 (defn- decorate-link
        "Decorates a given link with data required for properly renderingit .
        Called during 'begin'"
-       []
-       )
+       [db scene-id node-id link-id link-type]
+       (let [link (link/->get db scene-id node-id link-id link-type)
+             link* (assoc link :state :active)]
+            (link/->update db scene-id node-id link-id link-type link*)))
 
 (defn- to-mouse
        "Internal function for creating a flow from an out-flow to the mouse"
-       [{:keys [scene-id node-id id position db] :as data}]
+       [{:keys [scene-id node-id id link-type position db] :as data}]
        (let [flow {:from {:node-id node-id :id id} :to :mouse}]
             (-> db
                 (assoc-in [:scene scene-id :flow/mouse] flow)
                 (assoc-in [:scene scene-id :mouse/position] (vec-map position))
                 (assoc-in [:scene scene-id :mode] :link)
+                (decorate-link scene-id node-id id link-type)
                 )))
 
 (defn- from-mouse
        "Internal function for creating a flow from the mouse into an in-flow"
-       [{:keys [scene-id node-id id position db] :as data}]
+       [{:keys [scene-id node-id id link-type position db] :as data}]
        (let [flow {:from :mouse :to {:node-id node-id :id id}}]
             (-> db
                 (assoc-in [:scene scene-id :flow/mouse] flow)
                 (assoc-in [:scene scene-id :mouse/position] (vec-map position))
                 (assoc-in [:scene scene-id :mode] :link)
+                (decorate-link scene-id node-id id link-type)
                 )))
 
 (defn begin [{:keys [link-type db] :as data}]
-      (log/debug "flow/begin" (pretty (dissoc data :db)))
       (condp = (keyword link-type)
              :in (from-mouse data)
              :out (to-mouse data)
@@ -108,13 +121,15 @@
       "Called when moving the mouse during link creation.
       Updates the mouse mosition (for rendering the temporary flow.
       Also Checks the current target and sets appropriae values in the db"
-      [{:keys [db scene-id position node-id type id] :as data}]
+      [{:keys [db scene-id position node-id type id link-type] :as data}]
       (let [scene (get-in db [:scene scene-id])
             position* (g/- position (vec2 (:translation scene)))
             scene* (assoc scene :mouse/position (vec-map position*))]
-           ;(log/debug "flow/move" (pretty (dissoc data :db)))
-           (log/debug "flow/move" (str (:type data)))
-           (assoc-in db [:scene scene-id] scene*)))
+           (if (= :link (:type data))
+             (-> db
+                 (assoc-in [:scene scene-id] scene*)
+                 (decorate-link scene-id node-id id link-type))
+             (assoc-in db [:scene scene-id] scene*))))
 
 
 

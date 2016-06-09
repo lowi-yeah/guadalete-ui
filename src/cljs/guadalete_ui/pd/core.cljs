@@ -103,7 +103,8 @@
                   :on-mouse-down   #(dispatch-mouse :pd/mouse-down % mouse-event-data)
                   :on-mouse-move   #(dispatch-mouse :pd/mouse-move % mouse-event-data)
                   :on-mouse-up     #(dispatch-mouse :pd/mouse-up % mouse-event-data)
-                  ;:on-mouse-enter  #(dispatch-mouse :pd/mouse-enter % mouse-event-data)
+                  :on-mouse-enter  #(dispatch-mouse :pd/mouse-enter % mouse-event-data)
+                  :on-mouse-leave  #(dispatch-mouse :pd/mouse-leave % mouse-event-data)
                   }
 
                  ^{:key "pan-group"}

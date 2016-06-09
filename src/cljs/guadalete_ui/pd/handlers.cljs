@@ -34,6 +34,10 @@
         db)))
 
 (register-handler
+  :pd/mouse-leave
+  (fn [db [_ data]] db))
+
+(register-handler
   :pd/click
   (fn [db [_ data]]
       (mouse/up data db)))

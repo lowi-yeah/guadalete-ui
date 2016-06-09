@@ -115,3 +115,6 @@
       (let [pos* (vec2 pos)
             translation (vec2 (:translation scene))]
            (g/- pos* translation)))
+
+(defn kw* [something]
+      (keyword something))

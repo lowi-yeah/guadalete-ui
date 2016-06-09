@@ -10,7 +10,7 @@
     [thi.ng.geom.core.vector :refer [vec2]]
     [thi.ng.color.core :as color]
     [guadalete-ui.console :as log]
-    [guadalete-ui.util :refer [pretty vec-map]]
+    [guadalete-ui.util :refer [pretty vec-map kw*]]
     [guadalete-ui.pd.color :refer [render-color]])
   )
 
@@ -68,16 +68,22 @@
                 ])))
 
 
-;//              _
-;//   _ __  __ _| |_____
-;//  | '  \/ _` | / / -_)
-;//  |_|_|_\__,_|_\_\___|
-;//
+
+(defn ->get [db scene-id node-id link-id link-type]
+      (get-in db [:scene scene-id :nodes (kw* node-id) :links link-type (kw* link-id)]))
+
+(defn ->update [db scene-id node-id link-id link-type link*]
+      (assoc-in db [:scene scene-id :nodes (kw* node-id) :links link-type (kw* link-id)] link*))
+
+(defn- ->reset [[id link]]
+       [id (assoc link :state :normal)])
 
 (defn reset-all [links]
-      ;(log/debug "reseetting all links" (pretty links))
-      links
-      )
+      (let [ins* (into {} (map ->reset (:in links)))
+            outs* (into {} (map ->reset (:out links)))]
+           (-> links
+               (assoc :in ins*)
+               (assoc :out outs*))))
 
 
 ;(defn- begin-link*
