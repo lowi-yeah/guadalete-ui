@@ -125,33 +125,4 @@
       (let [scene (get-in db [:scene scene-id])
             position* (g/- position (vec2 (:translation scene)))
             scene* (assoc scene :mouse/position (vec-map position*))]
-           (if (= :link (:type data))
-             (-> db
-                 (assoc-in [:scene scene-id] scene*)
-                 (decorate-link scene-id node-id id link-type))
-             (assoc-in db [:scene scene-id] scene*))))
-
-
-
-
-;"buttons": 1,
-;"scene-id": "scene2",
-;"link-type": "out",
-;"type": "link",
-;"node-id": "4974f288-fcf8-45a2-aeb3-0921ab31dfb7",
-;"id": "c73af9c0-37c5-4b48-a150-242101525339",
-;"room-id": "w00t",
-;"position": [ 151, 85 ]
-
-
-;
-;(defn make-link [db scene-id position node-id type]
-;      (let [scene (get-in db [:scene scene-id])
-;            scene* (assoc scene :mouse (vec-map position))]
-;           (assoc-in db [:scene scene-id] scene*)))
-;
-;
-;(defn link-state
-;      "Returns a string describing the state of the links of a node"
-;      [node]
-;      "none")
+           (assoc-in db [:scene scene-id] scene*)))

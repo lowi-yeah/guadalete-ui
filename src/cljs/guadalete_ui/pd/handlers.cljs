@@ -101,3 +101,15 @@
               db* (assoc-in db [:scene (:id scene)] scene*)]
              (dispatch [:scene/update scene*])
              db*))))
+
+(register-handler
+  :pd-link/enter
+  (fn [db [_ data]]
+      (log/debug ":pd-link/enter" (pretty data))
+      db))
+
+(register-handler
+  :pd-link/exit
+  (fn [db [_ data]]
+      (log/debug ":pd-link/exit" (pretty data))
+      db))

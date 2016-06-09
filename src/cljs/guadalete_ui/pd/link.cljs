@@ -11,8 +11,7 @@
     [thi.ng.color.core :as color]
     [guadalete-ui.console :as log]
     [guadalete-ui.util :refer [pretty vec-map kw*]]
-    [guadalete-ui.pd.color :refer [render-color]])
-  )
+    [guadalete-ui.pd.color :refer [render-color]]))
 
 (def node-height 36)
 (def link-height 8)
@@ -23,6 +22,24 @@
 ;//  | '_/ -_) ' \/ _` / -_) '_|
 ;//  |_| \___|_||_\__,_\___|_|
 ;//
+
+
+;:on-mouse-enter  #(dispatch-mouse :pd/mouse-enter % mouse-event-data)
+;:on-mouse-leave  #(dispatch-mouse :pd/mouse-leave % mouse-event-data)
+
+
+(defn- link* []
+       (fn [l type position]
+           [svg/rect position 0 0                           ; dimesions are being set via css
+            {:id             (:id l)
+             :class          (str "link " (name type))
+             :data-type      "link"
+             :data-state     (:state l)
+             :data-link      (name type)
+             :on-mouse-enter #(log/debug ":link/mouse-enter" %)
+             :on-mouse-leave #(log/debug ":link/mouse-leave" %)
+             }]))
+
 (defn- in* []
        (fn [links position]
            [svg/group
@@ -31,12 +48,7 @@
               (for [l links]
                    (let [position (vec2 link-offset (* -1 link-offset))]
                         ^{:key (str "link-" (:id l))}
-                        [svg/rect position 0 0              ; dimesions are being set via css
-                         {:id         (:id l)
-                          :class      "link in"
-                          :data-type  "link"
-                          :data-state (:state l)
-                          :data-link  "in"}])))]))
+                        [link* l :in position])))]))
 
 (defn- out* []
        (fn [links position]
@@ -46,12 +58,7 @@
               (for [l links]
                    (let [position (vec2 link-offset node-height)]
                         ^{:key (str "link-" (:id l))}
-                        [svg/rect position 0 0              ; dimesions are being set via css
-                         {:id         (:id l)
-                          :class      "link out"
-                          :data-type  "link"
-                          :data-state (:state l)
-                          :data-link  "out"}])))]))
+                        [link* l :out position])))]))
 
 (defn links
       "Draws the in- & out-links of a given node"

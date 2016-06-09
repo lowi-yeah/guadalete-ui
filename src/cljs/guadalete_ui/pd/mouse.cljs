@@ -10,7 +10,6 @@
             [guadalete-ui.util :refer [pretty vec-map]]
             [guadalete-ui.console :as log]
             [guadalete-ui.pd.flow :as flow]
-            [guadalete-ui.pd.nodes :as node]
             [guadalete-ui.pd.util :refer [pd-screen-offset]]))
 
 ;//   _        _
@@ -148,12 +147,10 @@
 
 (defmethod mouse-down* :pd [_ {:keys [scene-id node-id position db] :as data}]
            (let [scene (get-in db [:scene scene-id])
-                 nodes* (node/reset-all (:nodes scene))
                  scene* (assoc scene
                                :mode :pan
                                :pos-0 (vec-map position)
-                               :pos-1 (vec-map (:translation scene))
-                               :nodes nodes*)]
+                               :pos-1 (vec-map (:translation scene)))]
                 (assoc-in db [:scene scene-id] scene*)))
 
 (defmethod mouse-down* :node [_ data]
@@ -325,3 +322,12 @@
             pos (vec2 (int (.-x ev*)) (int (.-y ev*)))
             offset (pd-screen-offset)]
            {:position (g/- pos offset)}))
+
+
+
+(defn dispatch-data
+      [msg ev mouse-event-data]
+      (let [target (event-target ev)
+            buttons (event-buttons ev)
+            position (event-position ev)]
+           (merge mouse-event-data target position buttons)))
