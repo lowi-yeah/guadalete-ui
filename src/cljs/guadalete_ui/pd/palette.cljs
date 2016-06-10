@@ -38,7 +38,7 @@
             offset (vec2 (get data "offset"))
             node-pos (g/- ev-pos offset)
             ]
-           (dispatch [:pd/make-node [room-id scene-id type node-pos]])
+           (dispatch [:node/make [room-id scene-id type node-pos]])
            ))
 
 

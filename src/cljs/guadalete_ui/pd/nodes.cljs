@@ -44,7 +44,7 @@
 
 (defn- light-node
        []
-       (fn [room-id scene node item]
+       (fn [room-id scene-id node item]
            (let [id (:id node)
                  position (:position node)
                  type (keyword (:type node))]
@@ -86,7 +86,7 @@
                    [svg/text (vec2 32 21) (str (:name item))
                     {:class "node-text"}]]
 
-                  [links node]
+                  [links scene-id node]
 
                   [svg/rect (vec2 0 0) 32 32
                    {:rx    2
@@ -97,7 +97,7 @@
 
 (defn- color-node
        []
-       (fn [room-id scene node item]
+       (fn [room-id scene-id node item]
            (let [node-size 36
                  outlet (first (:outlets node))
                  outlet-size (vec2 18 8)
@@ -126,7 +126,7 @@
                   {:class "color"
                    :fill  @(color/as-css hacked-color)}]
 
-                 [links node]
+                 [links scene-id node]
 
                  [svg/rect (vec2 0 0) node-size node-size
                   {:rx    2
@@ -134,10 +134,10 @@
                  ])))
 
 (defn node
-      [room-id scene n item]
+      [room-id scene-id n item]
       (condp = (keyword (:type n))
-             :light [light-node room-id scene n item]
-             :color [color-node room-id scene n item]
+             :light [light-node room-id scene-id n item]
+             :color [color-node room-id scene-id n item]
              ;:output [output-node n]
              [default-node n]))
 
@@ -151,7 +151,7 @@
                        (let [type (keyword (:type n))
                              item-rctn (subscribe [:pd/node-item {:type type :id (:item-id n)}])]
                             ^{:key (str "n-" (:id n))}
-                            [node room-id scene n @item-rctn])))]))
+                            [node room-id (:id scene) n @item-rctn])))]))
 
 
 ;//              _
@@ -170,10 +170,11 @@
                 {:id       node-id
                  :type     "light"
                  :position (vec-map pos)
-                 :links    {:in {(keyword link-id)
-                                 {:id    link-id
-                                  :type  "color"
-                                  :state "normal"}}}}))
+                 :links    {(keyword link-id)
+                            {:id        link-id
+                             :ilk      "color"
+                             :state     "normal"
+                             :direction "in"}}}))
 
 (defmethod make-node :color
            [type pos]
@@ -183,10 +184,11 @@
                  :type     "color"
                  :position (vec-map pos)
                  :item-id  "rgb 0.8 0.9 0.9"
-                 :links    {:out {(keyword link-id)
-                                  {:id    link-id
-                                   :type  "color"
-                                   :state "normal"}}}}))
+                 :links    {(keyword link-id)
+                            {:id        link-id
+                             :ilk       "color"
+                             :state     "normal"
+                             :direction "out"}}}))
 
 (defmethod make-node :signal
            [_type pos]
@@ -195,10 +197,11 @@
                 {:id       node-id
                  :type     "signal"
                  :position (vec-map pos)
-                 :links    {:out {(keyword link-id)
-                                  {:id    link-id
-                                   :type  "signal"
-                                   :state "normal"}}}}))
+                 :links    {(keyword link-id)
+                            {:id        link-id
+                             :ilk      "signal"
+                             :state     "normal"
+                             :direction "out"}}}))
 
 ;//   _        _
 ;//  | |_  ___| |_ __ ___ _ _ ___
@@ -215,10 +218,17 @@
                        (assoc :selected false :links links*))]
             [id node*]))
 
+(defn- reset-all*
+       "internal helper for resets-all"
+       [nodes]
+       (into {} (map reset) nodes))
+
 (defn reset-all
       "Resets all nodes"
-      [nodes]
-      (into {} (map reset) nodes))
+      [scene-id db]
+      (let [nodes (get-in db [:scene scene-id :nodes])
+            nodes* (reset-all* nodes)]
+           (assoc-in db [:scene scene-id :nodes] nodes*)))
 
 (defn- selected-node
        "Returns the first node ith a selected attribute."
@@ -226,12 +236,14 @@
        (let [[_ node] (first (filter (fn [[k v]] (:selected v)) nodes))]
             node))
 
+;(defn- get-node [scene-id room-id node-id db])
+
 ;//
 ;//   _ __  _____ _____
 ;//  | '  \/ _ \ V / -_)
 ;//  |_|_|_\___/\_/\___|
 ;//
-(defn start-move [{:keys [scene-id id position db] :as data}]
+(defn begin-move [{:keys [scene-id id position] :as data} db]
       (let [id-key (keyword id)
             scene (get-in db [:scene scene-id])
             nodes (get-in db [:scene scene-id :nodes])
@@ -240,7 +252,7 @@
                          :selected true
                          :pos-0 (vec-map (:position node)))
             nodes* (-> nodes
-                       (reset-all)
+                       (reset-all*)
                        (assoc id-key node*))
             scene* (assoc scene
                           :mode :move
@@ -248,7 +260,7 @@
                           :nodes nodes*)]
            (assoc-in db [:scene scene-id] scene*)))
 
-(defn move [{:keys [scene-id id position db] :as data}]
+(defn move [{:keys [scene-id id position] :as data} db]
       (let [id-key (keyword id)
             scene (get-in db [:scene scene-id])
             nodes (get-in db [:scene scene-id :nodes])

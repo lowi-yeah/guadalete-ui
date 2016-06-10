@@ -7,43 +7,52 @@
     [guadalete-ui.pd.nodes :refer [make-node]]
 
     [guadalete-ui.console :as log]
-    [guadalete-ui.util :refer [pretty offset-position]]
+    [guadalete-ui.util :refer [pretty vec-map offset-position]]
     [guadalete-ui.views.modal :as modal]
-    [guadalete-ui.pd.util :refer [modal-room modal-scene modal-node]]))
+    [guadalete-ui.pd.util :refer [modal-room modal-scene modal-node]]
+    [guadalete-ui.pd.nodes :as node]
+    [guadalete-ui.pd.flow :as flow]
+    [guadalete-ui.pd.link :as link]))
 
+
+;//
+;//   _ __  ___ _  _ ______
+;//  | '  \/ _ \ || (_-< -_)
+;//  |_|_|_\___/\_,_/__\___|
+;//
 (register-handler
-  :pd/mouse-move
+  :mouse/move
   (fn [db [_ data]]
       (mouse/move data db)))
 
 (register-handler
-  :pd/mouse-down
+  :mouse/down
   (fn [db [_ data]]
       (mouse/down data db)))
 
 (register-handler
-  :pd/mouse-up
+  :mouse/up
   (fn [db [_ data]]
       (mouse/up data db)))
 
 (register-handler
-  :pd/mouse-enter
+  :mouse/enter
   (fn [db [_ data]]
       (if (= 0 (:buttons data))
         (mouse/up data db)
         db)))
 
 (register-handler
-  :pd/mouse-leave
+  :mouse/leave
   (fn [db [_ data]] db))
 
 (register-handler
-  :pd/click
+  :mouse/click
   (fn [db [_ data]]
       (mouse/up data db)))
 
 (register-handler
-  :pd/double-click
+  :mouse/double-click
   (fn [db [_ {:keys [type room-id scene-id node-id]}]]
       (condp = type
              :light (do
@@ -54,6 +63,108 @@
                       (assoc db :pd/modal-node-data {:room room-id :scene scene-id :node node-id}))
              db)))
 
+(register-handler
+  :mouse/default-up
+  (fn [db [_ data]]
+      (mouse/default-up data db)))
+
+
+;//           _
+;//   _ __ __| |
+;//  | '_ \ _` |
+;//  | .__\__,_|
+;//  |_|
+(register-handler
+  :pd/mouse-down
+  (fn [db [_ {:keys [scene-id node-id position]}]]
+      (let [scene (get-in db [:scene scene-id])  
+            scene* (assoc scene 
+                          :mode :pan 
+                          :pos-0 (vec-map position)  
+                          :pos-1 (vec-map (:translation scene)))]  
+           (assoc-in db [:scene scene-id] scene*))))
+
+(register-handler
+  :pd/mouse-move
+  (fn [db [_ {:keys [scene-id position]}]]
+      (let [scene (get-in db [:scene scene-id])
+            δ (g/- (vec2 position) (vec2 (:pos-0 scene)))
+            translation* (g/+ (vec2 (:pos-1 scene)) δ)
+            scene* (assoc scene :translation (vec-map translation*))]
+           (assoc-in db [:scene scene-id] scene*))))
+
+;//               _
+;//   _ _  ___ __| |___
+;//  | ' \/ _ \ _` / -_)
+;//  |_||_\___\__,_\___|
+;//
+(register-handler
+  :node/make
+  (fn [db [_ [room-id scene-id type pos]]]
+      (let [
+            scene (get-in db [:scene scene-id])
+            nodes (:nodes scene)
+            node (make-node type (offset-position pos scene))
+            nodes* (assoc nodes (keyword (:id node)) node)
+            scene* (assoc scene :nodes nodes*)]
+           (dispatch [:scene/update scene*])
+           ;(assoc-in db [:scene scene-id] scene*)
+           db)))
+
+
+(register-handler
+  :node/reset-all
+  (fn [db [_ scene-id]]
+      (node/reset-all scene-id db)))
+
+(register-handler
+  :node/mouse-down
+  (fn [db [_ data]]
+      (node/begin-move data db)))
+
+(register-handler
+  :node/mouse-move
+  (fn [db [_ data]]
+      (node/move data db)))
+
+
+;//    __ _
+;//   / _| |_____ __ __
+;//  |  _| / _ \ V  V /
+;//  |_| |_\___/\_/\_/
+;//
+(register-handler
+  :flow/mouse-down
+  (fn [db [_ data]]
+      (flow/begin data db)))
+
+(register-handler
+  :flow/mouse-move
+  (fn [db [_ data]]
+      (flow/move data db)))
+
+(register-handler
+  :flow/mouse-up
+  (fn [db [_ data]]
+      (log/debug "f00")
+      (flow/end data db)))
+
+(register-handler
+  :flow/check-connection
+  (fn [db [_ data]]
+      (flow/check-connection data db)))
+
+(register-handler
+  :flow/reset-target
+  (fn [db [_ data]]
+      (flow/reset-target data db)))
+
+
+;//                _      _
+;//   _ __  ___ __| |__ _| |
+;//  | '  \/ _ \ _` / _` | |
+;//  |_|_|_\___\__,_\__,_|_|
+;//
 (register-handler
   :pd/modal-open
   (fn [db [_ modal-id]]
@@ -71,20 +182,7 @@
       (dissoc db :pd/modal-node-data)))
 
 (register-handler
-  :pd/make-node
-  (fn [db [_ [room-id scene-id type pos]]]
-      (let [
-            scene (get-in db [:scene scene-id])
-            nodes (:nodes scene)
-            node (make-node type (offset-position pos scene))
-            nodes* (assoc nodes (keyword (:id node)) node)
-            scene* (assoc scene :nodes nodes*)]
-           (dispatch [:scene/update scene*])
-           ;(assoc-in db [:scene scene-id] scene*)
-           db)))
-
-(register-handler
-  :pd/link-modal-node
+  :modal/connect-node
   (fn [db [_ {:keys [item-id]}]]
       (if (= item-id "nil")
         db
@@ -101,15 +199,3 @@
               db* (assoc-in db [:scene (:id scene)] scene*)]
              (dispatch [:scene/update scene*])
              db*))))
-
-(register-handler
-  :pd-link/enter
-  (fn [db [_ data]]
-      (log/debug ":pd-link/enter" (pretty data))
-      db))
-
-(register-handler
-  :pd-link/exit
-  (fn [db [_ data]]
-      (log/debug ":pd-link/exit" (pretty data))
-      db))

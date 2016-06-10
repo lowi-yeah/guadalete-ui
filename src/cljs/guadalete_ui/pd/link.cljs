@@ -11,6 +11,7 @@
     [thi.ng.color.core :as color]
     [guadalete-ui.console :as log]
     [guadalete-ui.util :refer [pretty vec-map kw*]]
+    [guadalete-ui.pd.mouse :as mouse]
     [guadalete-ui.pd.color :refer [render-color]]))
 
 (def node-height 36)
@@ -22,97 +23,71 @@
 ;//  | '_/ -_) ' \/ _` / -_) '_|
 ;//  |_| \___|_||_\__,_\___|_|
 ;//
-
-
-;:on-mouse-enter  #(dispatch-mouse :pd/mouse-enter % mouse-event-data)
-;:on-mouse-leave  #(dispatch-mouse :pd/mouse-leave % mouse-event-data)
-
-
 (defn- link* []
-       (fn [l type position]
+       (fn [l direction scene-id node-id position]
            [svg/rect position 0 0                           ; dimesions are being set via css
-            {:id             (:id l)
-             :class          (str "link " (name type))
-             :data-type      "link"
-             :data-state     (:state l)
-             :data-link      (name type)
-             :on-mouse-enter #(log/debug ":link/mouse-enter" %)
-             :on-mouse-leave #(log/debug ":link/mouse-leave" %)
+            {:id            (:id l)
+             :class         (str "link " (:direction l))
+             :data-scene-id scene-id
+             :data-node-id  node-id
+             :data-type     "link"
+             :data-state    (name (:state l))
+             ;:on-mouse-enter #(dispatch [:link/mouse-enter (merge {:scene-id scene-id} (mouse/dispatch-data %))])
+             ;:on-mouse-leave #(dispatch [:link/mouse-exit (merge {:scene-id scene-id} (mouse/dispatch-data %))])
              }]))
 
 (defn- in* []
-       (fn [links position]
+       (fn [links scene-id node-id position]
            [svg/group
             {:class "in-links"}
             (doall
               (for [l links]
-                   (let [position (vec2 link-offset (* -1 link-offset))]
+                   (let [position* (vec2 link-offset (* -1 link-offset))]
                         ^{:key (str "link-" (:id l))}
-                        [link* l :in position])))]))
+                        [link* l :in scene-id node-id position*])))]))
 
 (defn- out* []
-       (fn [links position]
+       (fn [links scene-id node-id position]
            [svg/group
             {:class "out-links"}
             (doall
               (for [l links]
-                   (let [position (vec2 link-offset node-height)]
+                   (let [position* (vec2 link-offset node-height)]
                         ^{:key (str "link-" (:id l))}
-                        [link* l :out position])))]))
+                        [link* l :out scene-id node-id position*])))]))
+
+(defn- filter-direction [links direction]
+       (let [filter-fn (fn [[_id link]] (= direction (:direction link)))]
+            (->> links
+                 (filter filter-fn)
+                 (into {})
+                 (vals))))
 
 (defn links
       "Draws the in- & out-links of a given node"
       []
-      (fn [node]
-          (let [in-links (into [] (vals (get-in node [:links :in])))
-                out-links (into [] (vals (get-in node [:links :out])))
+      (fn [scene-id node]
+          (let [in-links (filter-direction (:links node) "in")
+                out-links (filter-direction (:links node) "out")
                 position (vec2 (:position node))]
                ^{:key (str "links-" (:id node))}
                [svg/group
                 {}
-                (if (not-empty in-links) [in* in-links position])
-                (if (not-empty out-links) [out* out-links position])
-                ])))
+                (if (not-empty in-links) [in* in-links scene-id (:id node) position])
+                (if (not-empty out-links) [out* out-links scene-id (:id node) position])])))
 
 
 
-(defn ->get [db scene-id node-id link-id link-type]
-      (get-in db [:scene scene-id :nodes (kw* node-id) :links link-type (kw* link-id)]))
+(defn ->get [db scene-id node-id link-id]
+      (let [link (get-in db [:scene scene-id :nodes (kw* node-id) :links (kw* link-id)])]
+           (assoc link :node-id node-id :scene-id scene-id)))
 
-(defn ->update [db scene-id node-id link-id link-type link*]
-      (assoc-in db [:scene scene-id :nodes (kw* node-id) :links link-type (kw* link-id)] link*))
+(defn ->update [db scene-id node-id link-id link*]
+      (assoc-in db
+                [:scene scene-id :nodes (kw* node-id) :links (kw* link-id)]
+                (dissoc link* :node-id :scene-id)))
 
 (defn- ->reset [[id link]]
        [id (assoc link :state :normal)])
 
-(defn reset-all [links]
-      (let [ins* (into {} (map ->reset (:in links)))
-            outs* (into {} (map ->reset (:out links)))]
-           (-> links
-               (assoc :in ins*)
-               (assoc :out outs*))))
-
-
-;(defn- begin-link*
-;       "Internal function for staring the creation of a link.
-;       Checks whether it is ok to create a link from the given outlet-inlet"
-;
-;       [scene-id node-id link position db]
-;       (let [scene (get-in db [:scene scene-id])
-;
-;             from (get-outlet (:from link) scene)
-;             to (get-inlet (:to link) scene)
-;
-;             from* (check-outlet from)
-;             to* (check-inlet to)
-;             position* (g/- position (vec2 (:translation scene)))
-;
-;             scene* (set-outlet from* scene node-id)
-;             scene* (set-inlet to* scene* node-id)
-;             scene* (assoc scene*
-;                           :mode :link
-;                           :link link
-;                           :mouse (vec-map position*))]
-;
-;            (assoc-in db [:scene scene-id] scene*)))
-
+(defn reset-all [links] (into {} (map ->reset links)))

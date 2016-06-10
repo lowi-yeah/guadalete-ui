@@ -199,11 +199,11 @@
 
            ;;if the patch is empty, send the whole scene and a replace-flag
 
-           ;(if (and (empty? (first patch)) (empty? (second patch)))
-           ;  (chsk-send! [:scene/update [id original :replace]])
-           ;  (chsk-send! [:scene/update [id patch]]))
+           (if (and (empty? (first patch)) (empty? (second patch)))
+             (chsk-send! [:scene/update [id original :replace]])
+             (chsk-send! [:scene/update [id patch]]))
 
-           ;(log/debug "update scene" (pretty update))
+           (log/debug "update scene")
 
            (assoc-in db [:scene id] update))))
 

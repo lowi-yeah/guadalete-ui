@@ -35,20 +35,6 @@
       css-matrix-string]]))
 
 
-;//
-;//   _ __  ___ _  _ ______
-;//  | '  \/ _ \ || (_-< -_)
-;//  |_|_|_\___/\_,_/__\___|
-;//
-(defn- dispatch-mouse
-       [msg ev mouse-event-data]
-       (let [target (mouse/event-target ev)
-             buttons (mouse/event-buttons ev)
-             position (mouse/event-position ev)
-             data (merge mouse-event-data target position buttons)]
-            ;(log/debug "dispatch-mouse id" (:id data))
-            (dispatch [msg data])))
-
 (defn grid
       "the background grid"
       []
@@ -82,9 +68,7 @@
 (defn pd []
       "A PDish editor for wiring up scenes"
       (fn [room-rctn scene]
-          (let [css-matrix (css-matrix-string (:translation scene))
-                mouse-event-data {:room-id  (:id @room-rctn)
-                                  :scene-id (:id scene)}]
+          (let [css-matrix (css-matrix-string (:translation scene))]
                [:div#pd
                 ;[:button#reset.btn-floating
                 ; {:on-click #(dispatch [:pd/reset-view])}
@@ -93,19 +77,17 @@
 
                 ^{:key "svg"}
                 [svg/svg
-                 {
-                  :id              "pd-svg"
+                 {:id              "pd-svg"
                   :data-type       "pd"
                   :on-drop         #(drop* %)
                   :on-drag-over    #(allow-drop %)
-                  :on-double-click #(dispatch-mouse :pd/double-click % mouse-event-data)
-                  :on-click        #(dispatch-mouse :pd/click % mouse-event-data)
-                  :on-mouse-down   #(dispatch-mouse :pd/mouse-down % mouse-event-data)
-                  :on-mouse-move   #(dispatch-mouse :pd/mouse-move % mouse-event-data)
-                  :on-mouse-up     #(dispatch-mouse :pd/mouse-up % mouse-event-data)
-                  :on-mouse-enter  #(dispatch-mouse :pd/mouse-enter % mouse-event-data)
-                  :on-mouse-leave  #(dispatch-mouse :pd/mouse-leave % mouse-event-data)
-                  }
+                  :on-double-click #(dispatch [:mouse/double-click (mouse/event-data % {:scene-id (:id scene)})])
+                  :on-click        #(dispatch [:mouse/click (mouse/event-data % {:scene-id (:id scene)})])
+                  :on-mouse-down   #(dispatch [:mouse/down (mouse/event-data % {:scene-id (:id scene)})])
+                  :on-mouse-move   #(dispatch [:mouse/move (mouse/event-data % {:scene-id (:id scene)})])
+                  :on-mouse-up     #(dispatch [:mouse/up (mouse/event-data % {:scene-id (:id scene)})])
+                  :on-mouse-enter  #(dispatch [:mouse/enter (mouse/event-data % {:scene-id (:id scene)})])
+                  :on-mouse-leave  #(dispatch [:mouse/leave (mouse/event-data % {:scene-id (:id scene)})])}
 
                  ^{:key "pan-group"}
                  [svg/group {:id    "pan-group"
