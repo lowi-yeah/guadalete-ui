@@ -81,7 +81,14 @@
                   :data-type       "pd"
                   :on-drop         #(drop* %)
                   :on-drag-over    #(allow-drop %)
+
+
                   :on-double-click #(dispatch [:mouse/double-click (mouse/event-data % {:scene-id (:id scene)})])
+                  ;:on-double-click (fn [ev]
+                  ;                     (log/debug ":on-double-click" ev)
+                  ;                     (dispatch [:mouse/double-click (mouse/event-data ev {:scene-id (:id scene)})]))
+
+
                   :on-click        #(dispatch [:mouse/click (mouse/event-data % {:scene-id (:id scene)})])
                   :on-mouse-down   #(dispatch [:mouse/down (mouse/event-data % {:scene-id (:id scene)})])
                   :on-mouse-move   #(dispatch [:mouse/move (mouse/event-data % {:scene-id (:id scene)})])

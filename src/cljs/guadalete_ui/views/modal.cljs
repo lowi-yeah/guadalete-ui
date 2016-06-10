@@ -53,7 +53,7 @@
        (let [item-id (-> ev
                          (.-currentTarget)
                          (.-value))]
-            (dispatch [:modal/connect-node {:item-id item-id}])
+            (dispatch [:modal/register-node {:item-id item-id}])
             (close :pd-light-node)))
 
 (defn- color-type-change [ev node]
@@ -63,7 +63,7 @@
              node-color (color/from-id (:item-id node))
              node-color* (assoc node-color :type new-type)
              color-id* (color/make-id (:color node-color*) (:type node-color*))]
-            (dispatch [:modal/connect-node {:item-id color-id*}])))
+            (dispatch [:modal/register-node {:item-id color-id*}])))
 
 
 
@@ -137,7 +137,7 @@
                                            (let [c (<! channel)
                                                  color-id (color/make-id c (:type @item-rctn))]
                                                 (if (not= (:item-id @node-rctn) color-id)
-                                                  (dispatch [:modal/connect-node {:item-id color-id}])))
+                                                  (dispatch [:modal/register-node {:item-id color-id}])))
                                            (recur)))
                               ;:component-will-unmount #(close! channel)
                               })

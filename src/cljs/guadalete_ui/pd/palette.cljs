@@ -32,22 +32,24 @@
             js-data (t/read r transit-data)
             data (js->clj js-data)
             ev-pos (v/vec2 (.-offsetX ev) (.-offsetY ev))
-            type (keyword (get data "type"))
+            ilk (keyword (get data "ilk"))
             room-id (get data "room")
             scene-id (get data "scene")
             offset (vec2 (get data "offset"))
-            node-pos (g/- ev-pos offset)
+            position (g/- ev-pos offset)
             ]
-           (dispatch [:node/make [room-id scene-id type node-pos]])
-           ))
+           (dispatch [:node/make {:room-id  room-id
+                                  :scene-id scene-id
+                                  :ilk      ilk
+                                  :position position}])))
 
 
 
-(defn- start-drag [ev room-id scene-id type]
+(defn- start-drag [ev room-id scene-id ilk]
        (let [ev (.-nativeEvent ev)
              w (t/writer :json)
              offset (v/vec2 (.-offsetX ev) (.-offsetY ev))
-             data {:type   type
+             data {:ilk    ilk
                    :room   room-id
                    :scene  scene-id
                    :offset offset}

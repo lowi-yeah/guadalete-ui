@@ -20,12 +20,12 @@
 
 (register-sub
   :pd/node-item
-  (fn [db [_ {:keys [id type]}]]
+  (fn [db [_ {:keys [id ilk]}]]
       (if (nil? id)
-        (reaction (nil-item type))
-        (condp = type
-               :light (get-item-reaction db type id)
-               :sgnl (get-item-reaction db type id)
+        (reaction (nil-item ilk))
+        (condp = ilk
+               :light (get-item-reaction db ilk id)
+               :sgnl (get-item-reaction db ilk id)
                :color (get-color-reaction id)))))
 
 (register-sub

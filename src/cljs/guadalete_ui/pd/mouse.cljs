@@ -7,7 +7,7 @@
             [thi.ng.geom.core :as g]
             [thi.ng.geom.core.vector :refer [vec2]]
             [guadalete-ui.schema.core :refer [DB MouseEventData]]
-            [guadalete-ui.util :refer [pretty vec-map]]
+            [guadalete-ui.util :refer [pretty kw* vec-map]]
             [guadalete-ui.console :as log]
             [guadalete-ui.pd.util :refer [pd-screen-offset]]))
 
@@ -138,7 +138,7 @@
               (merge flow {:node-id id}))))
 
 (defn- load-link
-       "Return the id of the node to which the given link belongs"
+       "Return the data required for retrieving a link"
        [id]
        (let [jq (js/$ (str "#" id))
              scene-id* (.attr jq "data-scene-id")
@@ -147,6 +147,17 @@
              :node-id  node-id*
              :id       id
              :type     :link}))
+
+(defn- load-node
+       "Return the data required for retrieving a node"
+       [id]
+       (let [jq (js/$ (str "#" id))
+             scene-id* (.attr jq "data-scene-id")
+             ilk* (kw* (.attr jq "data-ilk"))]
+            {:scene-id scene-id*
+             :id       id
+             :ilk      ilk*
+             :type     :node}))
 
 (defn- ->page
        "Helper function for getting the event position relative to the page."
@@ -162,7 +173,7 @@
             id (target-id target*)]
            (condp = type
                   :pd {:type type}
-                  :node {:type type :id id}
+                  :node (load-node id)
                   :link (load-link id)
                   {:type type}
                   )))

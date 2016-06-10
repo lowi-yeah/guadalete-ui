@@ -7,7 +7,7 @@
     [guadalete-ui.pd.nodes :refer [make-node]]
 
     [guadalete-ui.console :as log]
-    [guadalete-ui.util :refer [pretty vec-map offset-position]]
+    [guadalete-ui.util :refer [pretty kw* vec-map offset-position]]
     [guadalete-ui.views.modal :as modal]
     [guadalete-ui.pd.util :refer [modal-room modal-scene modal-node]]
     [guadalete-ui.pd.nodes :as node]
@@ -53,8 +53,9 @@
 
 (register-handler
   :mouse/double-click
-  (fn [db [_ {:keys [type room-id scene-id node-id]}]]
-      (condp = type
+  (fn [db [_ {:keys [ilk room-id scene-id node-id] :as data}]]
+      (log/debug ":mouse/double-click" (pretty data))
+      (condp = (kw* ilk)
              :light (do
                       (dispatch [:pd/modal-open :pd-light-node])
                       (assoc db :pd/modal-node-data {:room room-id :scene scene-id :node node-id}))
@@ -100,17 +101,16 @@
 ;//
 (register-handler
   :node/make
-  (fn [db [_ [room-id scene-id type pos]]]
+  (fn [db [_ {:keys [room-id scene-id ilk position] :as data}]]
       (let [
             scene (get-in db [:scene scene-id])
             nodes (:nodes scene)
-            node (make-node type (offset-position pos scene))
+            node (make-node ilk (offset-position position scene))
             nodes* (assoc nodes (keyword (:id node)) node)
             scene* (assoc scene :nodes nodes*)]
            (dispatch [:scene/update scene*])
            ;(assoc-in db [:scene scene-id] scene*)
            db)))
-
 
 (register-handler
   :node/reset-all
@@ -182,7 +182,7 @@
       (dissoc db :pd/modal-node-data)))
 
 (register-handler
-  :modal/connect-node
+  :modal/register-node
   (fn [db [_ {:keys [item-id]}]]
       (if (= item-id "nil")
         db
@@ -190,9 +190,10 @@
               scene (modal-scene db)
               nodes (get scene :nodes)
               node (modal-node db)
-              node-type (keyword (:type node))
-              item (get-in db [node-type item-id])
-              scene-items (get scene node-type)
+              ;ilk (keyword (:ilk node))
+              type (keyword (:type node))
+              item (get-in db [type item-id])
+              scene-items (get scene type)
               node* (assoc node :item-id item-id)           ; set the item id in the pd node
               nodes* (assoc nodes (:id node*) node*)
               scene* (assoc scene :nodes nodes*)            ; update the scene

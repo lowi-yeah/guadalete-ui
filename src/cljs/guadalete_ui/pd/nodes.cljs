@@ -10,7 +10,7 @@
     [thi.ng.geom.core.vector :refer [vec2]]
     [thi.ng.color.core :as color]
     [guadalete-ui.console :as log]
-    [guadalete-ui.util :refer [pretty vec-map]]
+    [guadalete-ui.util :refer [pretty kw* vec-map]]
     [guadalete-ui.pd.color :refer [render-color]]
     [guadalete-ui.pd.link :as link :refer [links]]
     ))
@@ -38,9 +38,64 @@
                  {:id        (:id n)
                   :class     (if (:selected n) "node selected" "node")
                   :transform (str "translate(" (:x position) " " (:y position) ")")
-                  :data-type "default-node"}
+                  :data-type "node"
+                  :data-ilk  "none"
+                  }
                  [svg/rect (vec2) 96 32 {:rx 2 :class "bg"}]
                  [svg/text (vec2 8 21) (:name n) {}]])))
+
+;(defn- light-node
+;       []
+;       (fn [room-id scene-id node item]
+;           (let [id (:id node)
+;                 position (:position node)
+;                 type (keyword (:type node))]
+;                [(with-meta identity
+;                            {:component-did-mount
+;                             (fn [this]
+;                                 ; set the correct width to fit the text
+;                                 (let [text-selector (str "#" id " .node-text")
+;                                       rect-selector (str "#" id " rect")
+;                                       text-width (-> text-selector
+;                                                      (js/$)
+;                                                      (.css "width")
+;                                                      (clojure.string/replace #"px" "")
+;                                                      (int))]
+;                                      (-> rect-selector
+;                                          (js/$)
+;                                          (.attr "width" (+ 42 text-width)))))})
+;
+;                 [svg/group
+;                  {:id             id
+;                   :class          (if (:selected node) "light node selected" "light node")
+;                   :transform      (str "translate(" (:x position) " " (:y position) ")")
+;                   :data-type      "node"
+;                   :data-node-type "light"}
+;
+;                  [svg/rect (vec2 0 0) 32 32
+;                   {
+;                    ;:class (if item-id "bg" "bg  invalid")
+;                    :class "bg"
+;                    :rx    2}]
+;
+;                  [svg/group
+;                   {:class "node-content"}
+;                   [:use.icon {:xlink-href "/images/bulb-on.svg#main"
+;                               :width      18
+;                               :height     18
+;                               :x          4
+;                               :y          7}]
+;                   [svg/text (vec2 32 21) (str (:name item))
+;                    {:class "node-text"}]]
+;
+;                  [links scene-id node]
+;
+;                  [svg/rect (vec2 0 0) 32 32
+;                   {:rx    2
+;                    :class "click-target"}]
+;                  ]])
+;
+;           ))
 
 (defn- light-node
        []
@@ -48,51 +103,37 @@
            (let [id (:id node)
                  position (:position node)
                  type (keyword (:type node))]
-                [(with-meta identity
-                            {:component-did-mount
-                             (fn [this]
-                                 ; set the correct width to fit the text
-                                 (let [text-selector (str "#" id " .node-text")
-                                       rect-selector (str "#" id " rect")
-                                       text-width (-> text-selector
-                                                      (js/$)
-                                                      (.css "width")
-                                                      (clojure.string/replace #"px" "")
-                                                      (int))]
-                                      (-> rect-selector
-                                          (js/$)
-                                          (.attr "width" (+ 42 text-width)))))})
+                [svg/group
+                 {:id        id
+                  :class     (if (:selected node) "light node selected" "light node")
+                  :transform (str "translate(" (:x position) " " (:y position) ")")
+                  :data-type "node"
+                  :data-ilk  (:ilk node)
+                  :data-scene-id scene-id
+                  }
+
+                 [svg/rect (vec2 0 0) 32 32
+                  {
+                   ;:class (if item-id "bg" "bg  invalid")
+                   :class "bg"
+                   :rx    2}]
 
                  [svg/group
-                  {:id             id
-                   :class          (if (:selected node) "light node selected" "light node")
-                   :transform      (str "translate(" (:x position) " " (:y position) ")")
-                   :data-type      "node"
-                   :data-node-type "light"}
+                  {:class "node-content"}
+                  [:use.icon {:xlink-href "/images/bulb-on.svg#main"
+                              :width      18
+                              :height     18
+                              :x          4
+                              :y          7}]
+                  [svg/text (vec2 32 21) (str (:name item))
+                   {:class "node-text"}]]
 
-                  [svg/rect (vec2 0 0) 32 32
-                   {
-                    ;:class (if item-id "bg" "bg  invalid")
-                    :class "bg"
-                    :rx    2}]
+                 [links scene-id node]
 
-                  [svg/group
-                   {:class "node-content"}
-                   [:use.icon {:xlink-href "/images/bulb-on.svg#main"
-                               :width      18
-                               :height     18
-                               :x          4
-                               :y          7}]
-                   [svg/text (vec2 32 21) (str (:name item))
-                    {:class "node-text"}]]
-
-                  [links scene-id node]
-
-                  [svg/rect (vec2 0 0) 32 32
-                   {:rx    2
-                    :class "click-target"}]
-                  ]])
-
+                 [svg/rect (vec2 0 0) 32 32
+                  {:rx    2
+                   :class "click-target"}]
+                 ])
            ))
 
 (defn- color-node
@@ -112,11 +153,12 @@
 
                  ]
                 [svg/group
-                 {:id             id
-                  :class          (if (:selected node) "light node selected" "light node")
-                  :transform      (str "translate(" (:x position) " " (:y position) ")")
-                  :data-type      "node"
-                  :data-node-type "color"}
+                 {:id        id
+                  :class     (if (:selected node) "light node selected" "light node")
+                  :transform (str "translate(" (:x position) " " (:y position) ")")
+                  :data-type "node"
+                  :data-scene-id scene-id
+                  :data-ilk  (:ilk node)}
 
                  [svg/rect (vec2 0 0) node-size node-size
                   {:class "bg"
@@ -135,7 +177,7 @@
 
 (defn node
       [room-id scene-id n item]
-      (condp = (keyword (:type n))
+      (condp = (kw* (:ilk n))
              :light [light-node room-id scene-id n item]
              :color [color-node room-id scene-id n item]
              ;:output [output-node n]
@@ -148,8 +190,8 @@
           [svg/group
            {:id "nodes"}
            (doall (for [n (vals (:nodes scene))]
-                       (let [type (keyword (:type n))
-                             item-rctn (subscribe [:pd/node-item {:type type :id (:item-id n)}])]
+                       (let [ilk (keyword (:ilk n))
+                             item-rctn (subscribe [:pd/node-item {:ilk ilk :id (:item-id n)}])]
                             ^{:key (str "n-" (:id n))}
                             [node room-id (:id scene) n @item-rctn])))]))
 
@@ -159,29 +201,29 @@
 ;//  | '  \/ _` | / / -_)
 ;//  |_|_|_\__,_|_\_\___|
 ;//
-
 (defmulti make-node
-          (fn [type pos] type))
+          (fn [ilk pos] ilk))
 
 (defmethod make-node :light
-           [type pos]
+           [_ pos]
            (let [node-id (str (random-uuid))
                  link-id (str (random-uuid))]
                 {:id       node-id
-                 :type     "light"
+                 :ilk      "light"
                  :position (vec-map pos)
                  :links    {(keyword link-id)
                             {:id        link-id
-                             :ilk      "color"
+                             :ilk       "color"
                              :state     "normal"
                              :direction "in"}}}))
 
 (defmethod make-node :color
-           [type pos]
+           [_ pos]
+           (log/debug "make color node")
            (let [node-id (str (random-uuid))
                  link-id (str (random-uuid))]
                 {:id       node-id
-                 :type     "color"
+                 :ilk      "color"
                  :position (vec-map pos)
                  :item-id  "rgb 0.8 0.9 0.9"
                  :links    {(keyword link-id)
@@ -191,15 +233,15 @@
                              :direction "out"}}}))
 
 (defmethod make-node :signal
-           [_type pos]
+           [_ pos]
            (let [node-id (str (random-uuid))
                  link-id (str (random-uuid))]
                 {:id       node-id
-                 :type     "signal"
+                 :ilk      "signal"
                  :position (vec-map pos)
                  :links    {(keyword link-id)
                             {:id        link-id
-                             :ilk      "signal"
+                             :ilk       "signal"
                              :state     "normal"
                              :direction "out"}}}))
 
