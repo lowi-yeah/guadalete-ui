@@ -53,15 +53,14 @@
 
 (register-handler
   :mouse/double-click
-  (fn [db [_ {:keys [ilk room-id scene-id node-id] :as data}]]
-      (log/debug ":mouse/double-click" (pretty data))
+  (fn [db [_ {:keys [room-id ilk scene-id id] :as data}]]
       (condp = (kw* ilk)
              :light (do
-                      (dispatch [:pd/modal-open :pd-light-node])
-                      (assoc db :pd/modal-node-data {:room room-id :scene scene-id :node node-id}))
+                      (dispatch [:modal/open :pd-light-node])
+                      (assoc db :pd/modal-node-data {:room-id room-id :scene scene-id :node id}))
              :color (do
-                      (dispatch [:pd/modal-open :pd-color-node])
-                      (assoc db :pd/modal-node-data {:room room-id :scene scene-id :node node-id}))
+                      (dispatch [:modal/open :pd-color-node])
+                      (assoc db :pd/modal-node-data {:room-id room-id :scene scene-id :node id}))
              db)))
 
 (register-handler
@@ -160,43 +159,3 @@
       (flow/reset-target data db)))
 
 
-;//                _      _
-;//   _ __  ___ __| |__ _| |
-;//  | '  \/ _ \ _` / _` | |
-;//  |_|_|_\___\__,_\__,_|_|
-;//
-(register-handler
-  :pd/modal-open
-  (fn [db [_ modal-id]]
-      (modal/open modal-id)
-      db))
-
-(register-handler
-  :pd/modal-approve
-  (fn [db _]
-      (dissoc db :pd/modal-node-data)))
-
-(register-handler
-  :pd/modal-deny
-  (fn [db _]
-      (dissoc db :pd/modal-node-data)))
-
-(register-handler
-  :modal/register-node
-  (fn [db [_ {:keys [item-id]}]]
-      (if (= item-id "nil")
-        db
-        (let [room (modal-room db)
-              scene (modal-scene db)
-              nodes (get scene :nodes)
-              node (modal-node db)
-              ;ilk (keyword (:ilk node))
-              type (keyword (:type node))
-              item (get-in db [type item-id])
-              scene-items (get scene type)
-              node* (assoc node :item-id item-id)           ; set the item id in the pd node
-              nodes* (assoc nodes (:id node*) node*)
-              scene* (assoc scene :nodes nodes*)            ; update the scene
-              db* (assoc-in db [:scene (:id scene)] scene*)]
-             (dispatch [:scene/update scene*])
-             db*))))

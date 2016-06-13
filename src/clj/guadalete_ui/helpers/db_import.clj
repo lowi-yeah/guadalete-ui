@@ -35,6 +35,16 @@
            (import! conn type data))
       )
 
+(defn truncate [conn table]
+      (log/debug "truncating table" table)
+      (try
+        (-> (r/table-drop table)
+            (r/run conn))
+        (catch Exception e (str "caught exception: " (.getMessage e))))
+
+      (-> (r/table-create table)
+          (r/run conn)))
+
 ;//        _ _
 ;//   __ _| | |
 ;//  / _` | | |
@@ -43,14 +53,14 @@
       (let [{:keys [host port auth-key db]} (:rethinkdb (load-config))]
            (with-open [conn (r/connect :host host :port port :auth-key auth-key :db db)]
 
+                      (truncate conn "light")
                       ;(users)
                       ;(sensors)
                       (items conn "dmx")
                       (items conn "room")
-                      (items conn "light")
+                      ;(items conn "light")
                       (items conn "scene")
                       ;(signals)
-                      ;(dmx)
                       ))
       )
 

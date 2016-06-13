@@ -28,7 +28,6 @@
 (defn- brightness-slider []
        (fn [color channel]
            [:div.color.brightness
-            [:p "Brightness"]
             [(with-meta identity
                         {:component-did-mount
                          (fn [this]
@@ -45,7 +44,6 @@
 (defn- temperature-slider []
        (fn [color channel]
            [:div.color.temperature
-            [:p "Tint"]
             [(with-meta identity
                         {:component-did-mount
                          (fn [this]
@@ -65,11 +63,20 @@
 ;//  / _/ _ \ / _ \ '_| \ V  V / ' \/ -_) -_) |
 ;//  \__\___/_\___/_|    \_/\_/|_||_\___\___|_|
 ;//
-(def size (vec2 400 400))
+(defn- size []
+       (let [width (.-innerWidth js/window)
+             size* (- (* 0.704 width) 48 8)]
+            (vec2 size* size*)))
+
+
+
 (def padding (vec2 4 4))
-(def radius (/ (:x size) 2))
-(def frame-size (-> size (g/+ (g/* padding 2))))
-(def centre (g/div frame-size 2))
+(def radius (/ (:x (size)) 2))
+
+(defn- frame-size []
+       (-> (size) (g/+ (g/* padding 2))))
+
+(defn- centre [] (g/div (frame-size) 2))
 
 
 ; it should be sufficient to use local state (atoms) here instead of re-frame dispatches
@@ -109,8 +116,8 @@
                  (.sqrt js/Math))
              start (vec2 x (:y coordinates))
              end (vec2 (* -1 x) (:y coordinates))
-             start* (g/+ start centre)
-             end* (g/+ end centre)]
+             start* (g/+ start (centre))
+             end* (g/+ end (centre))]
             {:start start* :end end*}))
 
 (defn- get-vertical-points
@@ -122,8 +129,8 @@
                  (.sqrt js/Math))
              start (vec2 (:x coordinates) y)
              end (vec2 (:x coordinates) (* -1 y))
-             start* (g/+ start centre)
-             end* (g/+ end centre)]
+             start* (g/+ start (centre))
+             end* (g/+ end (centre))]
             {:start start* :end end*}))
 
 (defn- calculate-crosshair [color]
@@ -145,7 +152,7 @@
        (when @color-wheel-state
              (let [ev* (.-nativeEvent ev)
                    position (vec2 (.-offsetX ev*) (.-offsetY ev*))
-                   hue-saturation (get-hue-saturation (g/- position centre))
+                   hue-saturation (get-hue-saturation (g/- position (centre)))
                    color* (merge color hue-saturation)]
                   (go (>! channel color*)))))
 
@@ -169,8 +176,8 @@
                 ^{:key "cp-svg"}
                 [svg/svg
                  {:id     "color-picker"
-                  :width  (:x frame-size)
-                  :height (:y frame-size)}
+                  :width  (:x (frame-size))
+                  :height (:y (frame-size))}
 
                  ^{:key "cp-bg"}
                  [svg/group
@@ -183,24 +190,24 @@
                    [:pattern
                     {:id           "cp-pattern"
                      :patternUnits "userSpaceOnUse"
-                     :width        (:x frame-size)
-                     :height       (:y frame-size)
+                     :width        (:x (frame-size))
+                     :height       (:y (frame-size))
                      }
                     ^{:key "cp-pattern-img"}
                     [:image {:x         (:x padding)
                              :y         (:y padding)
-                             :width     (:x size)
-                             :height    (:y size)
+                             :width     (:x (size))
+                             :height    (:y (size))
                              :xlinkHref "/images/color-wheel.png"
                              }]]
 
                    ^{:key "cp-clip-path"}
                    [:clipPath#clippy
-                    [svg/circle centre radius]
+                    [svg/circle (centre) radius]
                     ]]
 
                   ^{:key "cp-circle"}
-                  [svg/circle centre radius
+                  [svg/circle (centre) radius
                    {:id             "color-wheel"
                     :fill           "url(#cp-pattern)"
                     :on-mouse-down  #(mouse-down %)
@@ -226,16 +233,14 @@
 (defn- two-tone-widget []
        (fn [color channel]
            [:div#ww.widget
-            [:pre.code "two tone widget"]
             [temperature-slider color channel]
             [brightness-slider color channel]]))
 
 (defn- rgb-widget []
        (fn [color channel]
            [:div#www.widget
-            [:pre.code "RGB!"]
-            [color-picker color channel]
-            [brightness-slider color channel]]))
+            [brightness-slider color channel]
+            [color-picker color channel]]))
 
 (defn- blank-widget []
        (fn [color])

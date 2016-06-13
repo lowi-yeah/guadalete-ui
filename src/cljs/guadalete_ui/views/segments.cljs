@@ -1,11 +1,12 @@
 (ns guadalete-ui.views.segments
   "The segments of a room: Scenes, lights, switches, maybe sensors, maybe more…?"
-  (:require [re-frame.core :as re-frame]
+  (:require [re-frame.core :refer [dispatch subscribe]]
             [clojure.string :as string]
             [reagent.core :as reagent]
             [guadalete-ui.items :refer [light-type]]
             [guadalete-ui.pd.core :refer [pd]]
             [guadalete-ui.console :as log]
+            [guadalete-ui.dmx :refer [dmx]]
             [guadalete-ui.util :refer [pretty]]))
 ;(defn scenes
 ;      "Scene section"
@@ -61,14 +62,27 @@
                     [:th "type"]
                     [:th "state"]]]
                   [:tbody
-                   (doall
-                     (for [light lights]
-                          ^{:key (str "l-" (:id light))}
-                          [:tr
-                           [:td (:name light)]
-                           [:td (light-type light)]
-                           [:td (get-in light [:state :brightness])]
-                           ]))]]]))
+                   (if (not-empty lights)
+                     (doall
+                       (for [light lights]
+                            ^{:key (str "l-" (:id light))}
+                            [:tr
+                             [:td (:name light)]
+                             [:td (light-type light)]
+                             [:td (get-in light [:state :brightness])]
+                             ]))
+                     (do
+                       ^{:key (str "no-lights")}
+                       [:tr
+                        [:td "No lights have been registered."]
+                        [:td]
+                        [:td]]))]]
+
+                 [:div.ui.button.add
+
+                  {:on-click #(dispatch [:light/prepare-new (:id @room-rctn)])}
+                  [:i.plus.outline.icon] "Make light"]
+                 ]))
 
 (defmethod segment :switch
            [_ room-rctn]
@@ -76,3 +90,9 @@
             [:h1 "debug"]
             [:pre.code (pretty @room-rctn)]
             ])
+
+(defmethod segment :dmx
+           [_]
+           (let [dmx-rctn (subscribe [:dmx/all])]
+                [:div#dmx.ui.flexing.relative
+                 [dmx dmx-rctn]]))

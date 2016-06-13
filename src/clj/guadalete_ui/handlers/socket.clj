@@ -51,10 +51,29 @@
                      (when ?reply-fn
                            (?reply-fn {:role role}))))
 
-; SCENES
+; ROOM
+; ****************
+;(defmethod event-handler :room/create
+;           [{:keys [?data]}]
+;           (let [room ?data]
+;                (db/make-room room)))
+
+(defmethod event-handler :room/update
+           [{:keys [?data db]}]
+           (let [[id diff flag] ?data
+                 flag (or flag :patch)]
+                (db/update-room (:conn db) id diff flag)))
+
+(defmethod event-handler :room/trash
+           [{:keys [?data]}]
+           (let [room ?data]
+                ;(db/trash-scene scene-id)
+                ))
+
+; SCENE
 ; ****************
 (defmethod event-handler :scene/create
-           [{:keys [?data]}]
+           [{:keys [?data db]}]
            (let [[room-id scene] ?data]
                 ;(db/make-scene room-id scene)
                 ))
@@ -71,6 +90,23 @@
                 ;(db/trash-scene scene-id)
                 ))
 
+; LIGHT
+; ****************
+(defmethod event-handler :light/create
+           [{:keys [?data db]}]
+           (db/create-light (:conn db) ?data))
+;
+;(defmethod event-handler :light/update
+;           [{:keys [?data db]}]
+;           (let [[id diff flag] ?data
+;                 flag (or flag :patch)]
+;                (db/update-light (:conn db) id diff flag)))
+
+(defmethod event-handler :light/trash
+           [{:keys [?data]}]
+           (let [light-id ?data]
+                ;(db/trash-light (:conn db) light-id)
+                ))
 
 ; DEFAULT
 ; ****************

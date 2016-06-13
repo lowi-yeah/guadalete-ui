@@ -3,6 +3,8 @@
             [guadalete-ui.util :refer [pretty]]))
 
 (defn- get-lights [light-ids db]
+       (log/debug "get-lights" (str light-ids))
+       (log/debug "lightz" (str (:light db )))
        (let [lights (map #(get-in db [:light %]) light-ids)]
             (into [] lights)))
 
@@ -18,6 +20,7 @@
            [_ db room]
            (let [lights (get-lights (:light room) db)
                  scenes (get-scenes (:scene room) db)]
+                (log/debug "assembling room" (pretty room))
                 (assoc room
                        :light lights
                        :scene scenes)))
@@ -34,3 +37,4 @@
              "w00t"
              )
       )
+

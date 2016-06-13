@@ -9,6 +9,7 @@
     [thi.ng.geom.core :as g]
     [thi.ng.geom.core.matrix :refer [matrix32]]
     [thi.ng.geom.core.vector :refer [vec2]]
+    [guadalete-ui.util :refer [pretty kw*]]
     [guadalete-ui.console :as log]))
 
 
@@ -47,8 +48,7 @@
 (defn modal-node [db]
       (let [mn (:pd/modal-node-data db)]
            (if mn
-             (let [scene (get-in db [:scene (:scene mn)])
-                   node (get-in scene [:nodes (:node mn)])]
+             (let [node (get-in db [:scene (:scene mn) :nodes (kw* (:node mn))])]
                   node)
              (nil-node))))
 
@@ -61,7 +61,7 @@
 (defn modal-room [db]
       (let [mn (:pd/modal-node-data db)]
            (if mn
-             (get-in db [:room (:room mn)])
+             (get-in db [:room (:room-id mn)])
              nil)))
 
 (defmulti nil-item

@@ -4,7 +4,10 @@
             [clojure.set :refer [difference]]
             [clojure.string :as string]
             [guadalete-ui.items :refer [assemble-item]]
-            [guadalete-ui.console :as log]))
+            [guadalete-ui.util :refer [pretty]]
+            [guadalete-ui.dmx :as dmx]
+            [guadalete-ui.console :as log]
+            ))
 
 
 ;//           _              _      _   _
@@ -33,8 +36,20 @@
       (reaction (vals (:room @db)))))
 
 
+;//      _
+;//   __| |_ __ __ __
+;//  / _` | '  \\ \ /
+;//  \__,_|_|_|_/_\_\
+;//
+(re-frame/register-sub
+  :dmx/available
+  (fn [db _]
+      (reaction (dmx/assignable @db))))
 
-
+(re-frame/register-sub
+  :dmx/all
+  (fn [db _]
+      (reaction (dmx/all @db))))
 
 ;//                           _
 ;//   __ _  _ _ _ _ _ ___ _ _| |_
@@ -61,6 +76,18 @@
              (reaction (assemble-item :room @db room))
              (reaction room)
              ))))
+
+;//
+;//   _ _  _____ __ __
+;//  | ' \/ -_) V  V /
+;//  |_||_\___|\_/\_/
+;//
+(re-frame/register-sub
+  :new/light
+  (fn [db _]
+      (reaction (:new/light @db))))
+
+
 
 ;//           _
 ;//   _ __ __| |

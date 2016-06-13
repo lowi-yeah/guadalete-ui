@@ -24,6 +24,12 @@
        "Generic convenience function for extracting all enties of a given table into a map"
        (mappify map-key (get-all connection table)))
 
+(defn- create-item [connection type item]
+       (log/debug "create item" item)
+       (-> (r/table type)
+           (r/insert item)
+           (r/run connection)))
+
 (defn- update-item
        "Generic update function called by update-room, update-light & update-sensor"
        ([connection id diff type] (update-item id diff type :replace))
@@ -46,15 +52,31 @@
 ;//  |_| \___\___/_|_|_/__( ) |_|_\__, |_||_\__/__( ) /__\__\___|_||_\___/__(_)_)_)
 ;//                       |/      |___/           |/
 
-; Rooms
+; Room
 ; ****************
-(defn get-rooms [connection] (get-all connection :room))
+(defn get-rooms [connection]
+      (get-all connection :room))
 
-; Lights
+(defn update-room [connection id diff flag]
+      (update-item connection id diff :room flag))
+
+
+; Light
 ; ****************
-(defn get-lights [connection] (get-all connection :light))
+(defn get-lights [connection]
+      (get-all connection :light))
 
-; Scenes
+(defn create-light [connection light]
+      (log/debug "creaating light" light)
+      (create-item connection :light light))
+
+(defn update-light [connection id diff flag]
+      (update-item connection id diff :light flag))
+
+
+
+
+; Scene
 ; ****************
 (defn- mode-keyword [scene]
        (let [mode (:mode scene)
@@ -68,6 +90,9 @@
 
 (defn update-scene [connection id diff flag]
       (update-item connection id diff :scene flag))
+
+
+
 
 
 ;//
@@ -90,10 +115,7 @@
       [connection]
       (let [rooms (get-rooms connection)
             lights (get-lights connection)
-            scenes (get-scenes connection)
-            ]
-           (log/debug "DB everything!")
-           (log/debug "scenes" scenes)
+            scenes (get-scenes connection)]
            {:room  rooms
             :light lights
             :scene scenes}))

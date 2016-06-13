@@ -8,7 +8,10 @@
             [guadalete-ui.schema.core :refer [DB]]
             [guadalete-ui.console :as log]
             [guadalete-ui.socket :refer [chsk-send! chsk-state chsk-reconnect!]]
-            [guadalete-ui.util :refer [pretty mappify]]
+            [guadalete-ui.pd.util :refer [modal-room modal-scene modal-node]]
+            [guadalete-ui.util :refer [pretty kw* mappify]]
+            [guadalete-ui.dmx :as dmx]
+            [guadalete-ui.util.dickens :as dickens]
 
     ;[secretary.core :as secretary]
     ;        [redonaira.schema :as schema]
@@ -20,7 +23,7 @@
     ;[guadalete-ui.ws :as ws]
     ;[guadalete-ui.helpers :as helpers]
     ;[guadalete-ui.toaster :refer [toast]]
-            ))
+            [guadalete-ui.views.modal :as modal]))
 
 
 
@@ -185,6 +188,51 @@
                   :light lights-map
                   :scene scenes-map))))
 
+;//   _ _
+;//  (_) |_ ___ _ __  ___
+;//  | |  _/ -_) '  \(_-<
+;//  |_|\__\___|_|_|_/__/
+;//
+(register-handler
+  :item/create
+  (fn [db [_ item-key item]]
+      (let [msg-key (-> item-key
+                        (name)
+                        (str "/create")
+                        keyword)]
+           (chsk-send! [msg-key item])
+           (assoc-in db [item-key (:id item)] item))))
+
+(register-handler
+  :item/update
+  (fn [db [_ item-key update]]
+      (let [id (:id update)
+            original (get-in db [item-key id])
+            patch (differ/diff original update)
+            msg-key (-> item-key
+                        (name)
+                        (str "/update")
+                        keyword)]
+           (log/debug "update item " item-key msg-key (pretty update))
+           ;;if the patch is empty, send the whole item together with a replace-flag
+           (if (and (empty? (first patch)) (empty? (second patch)))
+             (chsk-send! [msg-key [id original :replace]])
+             (chsk-send! [msg-key [id patch]]))
+           (assoc-in db [item-key id] update))))
+
+
+;//
+;//   _ _ ___ ___ _ __
+;//  | '_/ _ \ _ \ '  \
+;//  |_| \___\___/_|_|_|
+;//
+(register-handler
+  :room/update
+  (fn [db [_ update]]
+      (dispatch [:item/update :room update])
+      db))
+
+
 ;//
 ;//   _____ ___ _ _  ___
 ;//  (_-< _/ -_) ' \/ -_)
@@ -199,13 +247,133 @@
 
            ;;if the patch is empty, send the whole scene and a replace-flag
 
-           ;(if (and (empty? (first patch)) (empty? (second patch)))
-           ;  (chsk-send! [:scene/update [id original :replace]])
-           ;  (chsk-send! [:scene/update [id patch]]))
+           (if (and (empty? (first patch)) (empty? (second patch)))
+             (chsk-send! [:scene/update [id original :replace]])
+             (chsk-send! [:scene/update [id patch]]))
 
            ;(log/debug "update scene")
 
            (assoc-in db [:scene id] update))))
+
+;//                _      _
+;//   _ __  ___ __| |__ _| |
+;//  | '  \/ _ \ _` / _` | |
+;//  |_|_|_\___\__,_\__,_|_|
+;//
+(register-handler
+  :modal/open
+  (fn [db [_ modal-id]]
+      (modal/open modal-id)
+      db))
+
+(register-handler
+  :modal/approve
+  (fn [db [_ modal-id]]
+      (log/debug ":modal/approve" modal-id)
+      (condp = modal-id
+             :new-light (do (dispatch [:light/make]))
+             :default (comment "nothing yet"))
+      db))
+
+(register-handler
+  :modal/deny
+  (fn [db _]
+      (dissoc db :pd/modal-node-data :new/light)))
+
+(register-handler
+  :modal/register-node
+  (fn [db [_ {:keys [item-id]}]]
+      (if (= item-id "nil")
+        db
+        (let [scene (modal-scene db)
+              nodes (get scene :nodes)
+              node (modal-node db)
+              type (keyword (:type node))
+              item (get-in db [type item-id])
+              scene-items (get scene type)
+              node* (assoc node :item-id item-id)
+              nodes* (assoc nodes (kw* (:id node*)) node*)
+              scene* (assoc scene :nodes nodes*)
+              db* (assoc-in db [:scene (:id scene)] scene*)]
+             (dispatch [:scene/update scene*])
+             db*))))
+
+;//   _ _      _   _
+;//  | (_)__ _| |_| |_
+;//  | | / _` | ' \  _|
+;//  |_|_\__, |_||_\__|
+;//      |___/
+;
+(register-handler
+  :light/prepare-new
+  (fn [db [_ room-id]]
+      (let [channels (sort (into [] (dmx/assignable db)))
+            new-light {:id           (str (random-uuid))
+                       :name         (dickens/generate-name)
+                       :room-id      room-id
+                       :num-channels 1
+                       :transport    :dmx
+                       ; obacht:
+                       ; nested arrays, since each color can be assigned multiple channels
+                       :channels     [[(first channels)]]}]
+           (dispatch [:modal/open :new-light])
+           (assoc db :new/light new-light))))
+
+(register-handler
+  :light/make
+  (fn [db _]
+      (let [new-light (:new/light db)
+            new-light* (if (= "" (:name new-light))
+                         (assoc new-light :name "anonymous")
+                         new-light)
+            room (get-in db [:room (:room-id new-light*)])
+            room-lights* (conj (:light room) (:id new-light*))
+            room* (assoc room :light room-lights*)]
+
+           (dispatch [:item/create :light new-light*])
+           (dispatch [:room/update room*])
+           (-> db
+               (dissoc :new/light)))))
+
+
+(register-handler
+  :light/update
+  (fn [db [_ update]]
+      (dispatch [:item/update :light update])
+      db))
+
+
+(defn remove-channels
+      "Internal helper to remove channel-assignments during :light/update-new"
+      [light old-count new-count]
+      (into []
+            (map
+              (fn [index] (get-in light [:channels index]))
+              (range new-count))))
+
+(defn add-channels
+      "Internal helper to remove channel-assignments during :light/update-new"
+      [light additional db]
+      (let [assignables (sort (into [] (dmx/assignable db)))
+            channels (:channels light)
+            num-channels (:num-channels light)
+            range (range num-channels (+ num-channels additional))
+            channels* (into channels (map (fn [i] [(nth assignables i)]) range))]
+           (into [] channels*)))
+
+(register-handler
+  :light/update-new
+  (fn [db [_ light*]]
+      (let [light (:new/light db)
+            num-channels* (:num-channels light*)
+            num-channels (:num-channels light)
+            channels* (cond
+                        (< num-channels* num-channels) (remove-channels light* num-channels num-channels*)
+                        (> num-channels* num-channels) (add-channels light (- num-channels* num-channels) db)
+                        :default (:channels light*))
+            light* (assoc light* :channels channels*)]
+           (log/debug "num-channels*" num-channels*)
+           (assoc db :new/light light*))))
 
 ;//           _
 ;//   _ __ __| |

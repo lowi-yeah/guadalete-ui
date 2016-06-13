@@ -33,14 +33,17 @@
                 db-rctn (subscribe [:db])
                 scene-link (str "#/room/" (:id @room-rctn) "/scene") ; OBACHT the '#' ist important, since without it the whole page gets relaoded
                 light-link (str "#/room/" (:id @room-rctn) "/light")
-                switch-link (str "#/room/" (:id @room-rctn) "/switch")]
+                switch-link (str "#/room/" (:id @room-rctn) "/switch")
+                dmx-link (str "#/room/" (:id @room-rctn) "/dmx")]
                [:div.room.flex-container.full-height
                 [:div#header.margins
                  [:h3 (:name @room-rctn)]
                  [:div.ui.pointing.menu.inverted
                   [:a.item {:href scene-link :class (active-segment? @segment-rctn :scene)} "scenes"]
                   [:a.item {:href light-link :class (active-segment? @segment-rctn :light)} "lights"]
-                  [:a.item {:href switch-link :class (active-segment? @segment-rctn :switch)} "switches"]]]
+                  [:a.item {:href switch-link :class (active-segment? @segment-rctn :switch)} "switches"]
+                  [:a.item {:href dmx-link :class (active-segment? @segment-rctn :dmx)} "dmx"]
+                  ]]
                 (segment @segment-rctn room-rctn)
                 ])))
 

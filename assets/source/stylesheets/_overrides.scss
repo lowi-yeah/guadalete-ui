@@ -6,6 +6,13 @@ body {
   background-color: $primary-color-very-dark;
 }
 
+
+//  _                _
+// (_)_ _  _ __ _  _| |_
+// | | ' \| '_ \ || |  _|
+// |_|_||_| .__/\_,_|\__|
+//        |_|
+
 .ui.form {
   input:not([type]),
   input[type="date"],
@@ -18,9 +25,10 @@ body {
   input[type="time"],
   input[type="text"],
   input[type="url"] {
-    border-color: $primary-color-dark;
-    background: $primary-color-dark;
-    color: $primary-color-light;
+    background: $grey-dark;
+    border: 1px solid rgba($grey-light, 0.6);
+    color: rgba($grey-light, 0.87);
+    // height: 36px;
   }
 
   input:not([type]):focus,
@@ -46,11 +54,50 @@ body {
   }
 
   select {
-    background: $grey-0;
-    border: 1px solid rgba($grey-1, 0.6);
-    color: rgba($grey-1, 0.87);
+    background: $grey-dark;
+    border: 1px solid rgba($grey-light, 0.6);
+    color: rgba($grey-light, 0.87);
+  }
+
+  .ui.selection {
+    background: $grey-dark;
+    border: 1px solid rgba($grey-light, 0.6);
+    color: rgba($grey-light, 0.87);
+  }
+
+  .ui.dropdown {
+    &.multiple {
+      padding: 0;
+      padding-left: 4px;
+      padding-top: 0.2rem;  
+    }
+
+
+    .menu {
+      background: $grey-dark;
+      color: rgba($grey-light, 0.87);
+
+      .item {
+        color: rgba($grey-light, 0.87);
+        border-top: 1px solid $grey-medium;
+
+        &:hover {
+          background: $yellow;
+          color: $grey-dark;
+        }
+      }
+    }
+    
   }
 }
+
+
+.ui.label {
+  background-color: $grey-medium;
+  color: rgba($grey-light, 0.87);
+}
+
+
 
 //                _           _   _
 //  _ _  __ ___ _(_)__ _ __ _| |_(_)___ _ _
@@ -122,12 +169,12 @@ body {
 .ui.inverted.menu .link.item:hover,
 .ui.inverted.menu a.item:hover {
   background: rgba(255, 255, 255, 0.08);
-  color: $grey-1;
+  color: $grey-light;
 }
 .ui.vertical.inverted.menu .item .menu a.item:hover,
 .ui.vertical.inverted.menu .item .menu .link.item:hover {
   background: transparent;
-  color: $grey-1;
+  color: $grey-light;
 }
 
 /*--- Pressed ---*/
@@ -136,18 +183,18 @@ body {
 .ui.inverted.menu .link.item:active,
 .ui.inverted.menu a.item:active {
   background: rgba(255, 255, 255, 0.08);
-  color: $grey-1;
+  color: $grey-light;
 }
 
 /*--- Active ---*/
 
 .ui.inverted.menu .active.item {
   background: $yellow;
-  color: $grey-0 !important;
+  color: $grey-dark !important;
 }
 .ui.inverted.vertical.menu .item .menu .active.item {
   background: transparent;
-  color: $grey-0;
+  color: $grey-dark;
 }
 .ui.inverted.pointing.menu .active.item:after {
   background: $yellow !important;
@@ -160,7 +207,7 @@ body {
 
 .ui.inverted.menu .active.item:hover {
   background: $yellow;
-  color: $grey-0 !important;
+  color: $grey-dark !important;
 }
 .ui.inverted.pointing.menu .active.item:hover:after {
   background: $yellow !important;
@@ -174,8 +221,8 @@ body {
 
 /* Text Color */
 .ui.inverted.table {
-  background: $grey-0;
-  color: $grey-1;
+  background: $grey-dark;
+  color: $grey-light;
   border: none;
 }
 .ui.inverted.table th {
@@ -224,7 +271,7 @@ body {
 
   &.deny {
     background: $re-red;
-    color: $grey-0;      
+    color: $grey-dark;      
     border: 2px solid $re-red;
     &:hover {
       background: transparent;
@@ -234,7 +281,7 @@ body {
 
   &.approve {
     background: $re-green;
-    color: $grey-0;      
+    color: $grey-dark;      
     border: 2px solid $re-green;
     &:hover {
       background: transparent;  
@@ -264,6 +311,10 @@ body {
 .ui.modal { 
   top: 0;
   margin-top: 8% !important;
+
+  &.w400 {
+    width: 400px;
+  }
 
   .content {
     padding-top: 0;

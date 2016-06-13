@@ -7,19 +7,10 @@
             [thi.ng.geom.core :as g]
             [thi.ng.geom.core.vector :refer [vec2]]
             [guadalete-ui.schema.core :refer [DB MouseEventData]]
-            [guadalete-ui.util :refer [pretty kw* vec-map]]
+            [guadalete-ui.util :refer [pretty kw* vec-map in?]]
             [guadalete-ui.console :as log]
             [guadalete-ui.pd.util :refer [pd-screen-offset]]))
 
-;//   _        _
-;//  | |_  ___| |_ __ ___ _ _ ___
-;//  | ' \/ -_) | '_ \ -_) '_(_-<
-;//  |_||_\___|_| .__\___|_| /__/
-;//             |_|
-(defn- in?
-       "true if seq contains elm"
-       [seq elm]
-       (some #(= elm %) seq))
 
 
 (defn- move-node [[id n] δ]

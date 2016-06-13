@@ -7,7 +7,7 @@
     [re-frame.core :refer [register-sub]]
     [thi.ng.color.core :as col]
     [guadalete-ui.console :as log]
-    [guadalete-ui.util :refer [pretty]]
+    [guadalete-ui.util :refer [pretty kw*]]
     [guadalete-ui.pd.util :refer [nil-node modal-room modal-scene modal-node nil-item]]
     [guadalete-ui.pd.color :refer [from-id]]))
 
@@ -43,15 +43,15 @@
   :pd/modal-item
   (fn [db _]
       (let [node (modal-node @db)
-            type (keyword (:type node))
+            ilk (kw* (:ilk node))
             id (:item-id node)]
-           (condp = type
+           (condp = ilk
                   :color (get-color-reaction id)
                   (get-item-reaction db type id)))))
 
-(defn- get-scene-item-ids [scene type]
+(defn- get-scene-item-ids [scene ilk]
        (let [all-nodes (:nodes scene)
-             nodes (filter #(= (:type %) type) (vals all-nodes))
+             nodes (filter #(= (kw* (:ilk %)) ilk) (vals all-nodes))
              ids (map #(:item-id %) nodes)]
             (into #{} ids)))
 
@@ -61,19 +61,15 @@
       (let [room (modal-room @db)
             scene (modal-scene @db)
             node (modal-node @db)
-            type (keyword (:type node))
-
+            ilk (keyword (:ilk node))
             ; the ids of all items (light, sensor ect…), which are linked to the room and thus can be used by the scene
-            room-item-ids (set (get-in @db [:room (:id room) type]))
-
+            room-item-ids (set (get-in @db [:room (:id room) ilk]))
             ; the ids of the items that are already used by the scene
-            scene-item-ids (get-scene-item-ids scene type)
-
+            scene-item-ids (get-scene-item-ids scene ilk)
             ; filter away those items that are already in the scene
             item-ids (difference room-item-ids scene-item-ids)
             ; re-add the item-id of the node (if it exists)
-            item-ids (if (:item-id node) (cons (:item-id node) item-ids) item-ids)
-
+            item-ids* (if (:item-id node) (cons (:item-id node) item-ids) item-ids)
             ; load the items
-            items (map (fn [id] (get-in @db [type id])) item-ids)]
+            items (map (fn [id] (get-in @db [ilk id])) item-ids*)]
            (reaction items))))

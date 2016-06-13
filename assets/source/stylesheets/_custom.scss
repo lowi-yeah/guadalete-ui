@@ -47,10 +47,16 @@ pre, code, input{
 }
 
 .flex-container {
- 
   display: flex;
   flex-direction: column;
+  .flexing {
+    flex: 1;
+  }
+}
 
+.flex-row-container {
+  display: flex;
+  flex-direction: row;
   .flexing {
     flex: 1;
   }
@@ -113,7 +119,35 @@ i.icon {
   width: 3rem;
   height: 3rem;
   border-radius: 1.5rem;
-  border: 2px solid $grey-1;
+  border: 2px solid $grey-light;
+  margin-right: 1rem;
+  margin-top: -0.25rem;
+}
+
+
+.new-thing {
+    label {
+      margin-right: 1rem;
+      margin-top: 0.5rem;
+      width: 5rem;
+      text-align: right;
+
+      &.white, &.cool {
+        color: $grey-light;
+      }
+      &.warm {
+        color: $yellow;
+      }
+      &.red {
+        color: $red;
+      }
+      &.green {
+        color: $green;
+      }
+      &.blue {
+        color: $blue;
+      }
+  }
 }
 
 
@@ -128,6 +162,10 @@ i.icon {
 
   margin-top: 1.5rem;
   margin-bottom:1.5rem;
+}
+
+.margin-bottom {
+ margin-bottom:1.5rem; 
 }
 
 .side-margins {
