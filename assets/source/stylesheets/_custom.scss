@@ -57,6 +57,11 @@ pre, code, input{
 .flex-row-container {
   display: flex;
   flex-direction: row;
+
+  &.right {
+    justify-content:  flex-end;
+  }
+
   .flexing {
     flex: 1;
   }
@@ -82,7 +87,6 @@ pre, code, input{
     max-width: 450px;
   }
 }
-
 
 //  _
 // (_)__ ___ _ _  ___
@@ -124,8 +128,7 @@ i.icon {
   margin-top: -0.25rem;
 }
 
-
-.new-thing {
+.thing {
     label {
       margin-right: 1rem;
       margin-top: 0.5rem;
@@ -148,6 +151,23 @@ i.icon {
         color: $blue;
       }
   }
+}
+
+tr.light {
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgba($yellow, 0.24);
+  }
+}
+
+.color-indicator {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 2px;
+  border: 1px solid $grey-light;
+  float: left;
+  margin-top: 0.04rem;
 }
 
 

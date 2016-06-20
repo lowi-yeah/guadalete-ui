@@ -14,9 +14,9 @@
     [guadalete-ui.pd.mouse :as mouse]
     [guadalete-ui.pd.color :refer [render-color]]))
 
-(def node-height 36)
+(def node-height 40)
 (def link-height 8)
-(def link-offset 8)
+(def link-offset 0)
 
 ;//                   _
 ;//   _ _ ___ _ _  __| |___ _ _
@@ -25,7 +25,7 @@
 ;//
 (defn- link* []
        (fn [l direction scene-id node-id position]
-           [svg/rect position 0 0                           ; dimesions are being set via css
+           [svg/circle position 6
             {:id            (:id l)
              :class         (str "link " (:direction l))
              :data-scene-id scene-id
@@ -42,7 +42,7 @@
             {:class "in-links"}
             (doall
               (for [l links]
-                   (let [position* (vec2 link-offset (* -1 link-offset))]
+                   (let [position* (vec2 24 (* -1 link-offset))]
                         ^{:key (str "link-" (:id l))}
                         [link* l :in scene-id node-id position*])))]))
 
@@ -52,7 +52,7 @@
             {:class "out-links"}
             (doall
               (for [l links]
-                   (let [position* (vec2 link-offset node-height)]
+                   (let [position* (vec2 24 node-height)]
                         ^{:key (str "link-" (:id l))}
                         [link* l :out scene-id node-id position*])))]))
 

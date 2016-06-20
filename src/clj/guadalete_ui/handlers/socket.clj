@@ -95,16 +95,17 @@
 (defmethod event-handler :light/create
            [{:keys [?data db]}]
            (db/create-light (:conn db) ?data))
-;
-;(defmethod event-handler :light/update
-;           [{:keys [?data db]}]
-;           (let [[id diff flag] ?data
-;                 flag (or flag :patch)]
-;                (db/update-light (:conn db) id diff flag)))
+
+(defmethod event-handler :light/update
+           [{:keys [?data db]}]
+           (let [[id diff flag] ?data
+                 flag (or flag :patch)]
+                (db/update-light (:conn db) id diff flag)))
 
 (defmethod event-handler :light/trash
            [{:keys [?data]}]
            (let [light-id ?data]
+                (log/debug ":light/trash" light-id)
                 ;(db/trash-light (:conn db) light-id)
                 ))
 

@@ -36,7 +36,6 @@
       )
 
 (defn truncate [conn table]
-      (log/debug "truncating table" table)
       (try
         (-> (r/table-drop table)
             (r/run conn))
@@ -54,12 +53,12 @@
            (with-open [conn (r/connect :host host :port port :auth-key auth-key :db db)]
 
                       (truncate conn "light")
-                      ;(users)
-                      ;(sensors)
                       (items conn "dmx")
                       (items conn "room")
-                      ;(items conn "light")
                       (items conn "scene")
+                      ;(users)
+                      ;(sensors)
+                      ;(items conn "light")
                       ;(signals)
                       ))
       )

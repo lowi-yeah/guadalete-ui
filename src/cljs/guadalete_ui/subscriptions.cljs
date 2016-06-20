@@ -77,16 +77,13 @@
              (reaction room)
              ))))
 
-;//
-;//   _ _  _____ __ __
-;//  | ' \/ -_) V  V /
-;//  |_||_\___|\_/\_/
-;//
 (re-frame/register-sub
-  :new/light
+  :current/light
   (fn [db _]
-      (reaction (:new/light @db))))
-
+      (let [light-id (:current/light-id @db)
+            light (get-in @db [:light light-id])]
+           ;(reaction (:new/light @db))
+           (reaction light))))
 
 
 ;//           _

@@ -7,7 +7,9 @@
             [guadalete-ui.pd.core :refer [pd]]
             [guadalete-ui.console :as log]
             [guadalete-ui.dmx :refer [dmx]]
-            [guadalete-ui.util :refer [pretty]]))
+            [guadalete-ui.util :refer [pretty]]
+            [guadalete-ui.pd.color :refer [render-color]]
+            ))
 ;(defn scenes
 ;      "Scene section"
 ;      []
@@ -51,6 +53,32 @@
                  [pd room-rctn scene]
                  ]))
 
+(defn- color-type [num-channels]
+       (condp = num-channels
+              1 "w"
+              2 "ww"
+              3 "rgb"
+              4 "rgbw"
+              "unknown"))
+
+(defn- color-string
+       "Returns a human readable representation of the state"
+       [light]
+       (let [color (:color light)]
+            (condp = (:num-channels light)
+                   1 (str "brightness: " (:v color))
+                   2 (str "brightness: " (:v color) ", tint: " (:s color))
+                   (str "[ h: " (:h color) ", s: " (:s color) ", v: " (:v color) " ]")
+                   )))
+
+(defn- color-indicator []
+       (fn [light]
+           (let [color-item {:color (:color light)}
+
+                 ])
+           [:div.color-indicator]
+           ))
+
 (defmethod segment :light
            [_ room-rctn]
            (let [lights (:light @room-rctn)]
@@ -60,21 +88,28 @@
                    [:tr
                     [:th "name"]
                     [:th "type"]
-                    [:th "state"]]]
+                    [:th "color"]
+                    [:th "channels"]]]
                   [:tbody
                    (if (not-empty lights)
                      (doall
                        (for [light lights]
                             ^{:key (str "l-" (:id light))}
-                            [:tr
+                            [:tr.light
+                             {:on-click #(dispatch [:light/edit (:id light)])}
                              [:td (:name light)]
                              [:td (light-type light)]
-                             [:td (get-in light [:state :brightness])]
-                             ]))
+                             [:td.color
+                              [color-indicator light]
+                              [:span (color-string light)]]
+                             [:td (str (:channels light))]
+                             ]
+                            ))
                      (do
                        ^{:key (str "no-lights")}
                        [:tr
                         [:td "No lights have been registered."]
+                        [:td]
                         [:td]
                         [:td]]))]]
 

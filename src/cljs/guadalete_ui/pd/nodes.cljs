@@ -44,95 +44,43 @@
                  [svg/rect (vec2) 96 32 {:rx 2 :class "bg"}]
                  [svg/text (vec2 8 21) (:name n) {}]])))
 
-;(defn- light-node
-;       []
-;       (fn [room-id scene-id node item]
-;           (let [id (:id node)
-;                 position (:position node)
-;                 type (keyword (:type node))]
-;                [(with-meta identity
-;                            {:component-did-mount
-;                             (fn [this]
-;                                 ; set the correct width to fit the text
-;                                 (let [text-selector (str "#" id " .node-text")
-;                                       rect-selector (str "#" id " rect")
-;                                       text-width (-> text-selector
-;                                                      (js/$)
-;                                                      (.css "width")
-;                                                      (clojure.string/replace #"px" "")
-;                                                      (int))]
-;                                      (-> rect-selector
-;                                          (js/$)
-;                                          (.attr "width" (+ 42 text-width)))))})
-;
-;                 [svg/group
-;                  {:id             id
-;                   :class          (if (:selected node) "light node selected" "light node")
-;                   :transform      (str "translate(" (:x position) " " (:y position) ")")
-;                   :data-type      "node"
-;                   :data-node-type "light"}
-;
-;                  [svg/rect (vec2 0 0) 32 32
-;                   {
-;                    ;:class (if item-id "bg" "bg  invalid")
-;                    :class "bg"
-;                    :rx    2}]
-;
-;                  [svg/group
-;                   {:class "node-content"}
-;                   [:use.icon {:xlink-href "/images/bulb-on.svg#main"
-;                               :width      18
-;                               :height     18
-;                               :x          4
-;                               :y          7}]
-;                   [svg/text (vec2 32 21) (str (:name item))
-;                    {:class "node-text"}]]
-;
-;                  [links scene-id node]
-;
-;                  [svg/rect (vec2 0 0) 32 32
-;                   {:rx    2
-;                    :class "click-target"}]
-;                  ]])
-;
-;           ))
-
 (defn- light-node
        []
        (fn [room-id scene-id node item]
            (let [id (:id node)
                  position (:position node)
-                 type (keyword (:type node))]
+                 type (keyword (:type node))
+                 radius 18
+                 ]
                 [svg/group
-                 {:id        id
-                  :class     (if (:selected node) "light node selected" "light node")
-                  :transform (str "translate(" (:x position) " " (:y position) ")")
-                  :data-type "node"
-                  :data-ilk  (:ilk node)
-                  :data-scene-id scene-id
-                  }
+                 {:id            id
+                  :class         (if (:selected node) "light node selected" "light node")
+                  :transform     (str "translate(" (:x position) " " (:y position) ")")
+                  :data-type     "node"
+                  :data-ilk      (:ilk node)
+                  :data-scene-id scene-id}
 
-                 [svg/rect (vec2 0 0) 32 32
+                 [svg/circle (vec2 radius radius) radius
                   {
                    ;:class (if item-id "bg" "bg  invalid")
-                   :class "bg"
-                   :rx    2}]
+                   :class "bg"}]
 
                  [svg/group
                   {:class "node-content"}
                   [:use.icon {:xlink-href "/images/bulb-on.svg#main"
-                              :width      18
-                              :height     18
-                              :x          4
-                              :y          7}]
-                  [svg/text (vec2 32 21) (str (:name item))
-                   {:class "node-text"}]]
+                              :width      radius
+                              :height     radius
+                              :x          (/ radius 2)
+                              :y          (/ radius 2)}]
+                  [svg/text (vec2 radius (+ (* 2 radius) 12)) (str (:name item))
+                   {:class       "node-text"
+                    :text-anchor "middle"}]]
 
                  [links scene-id node]
 
-                 [svg/rect (vec2 0 0) 32 32
-                  {:rx    2
-                   :class "click-target"}]
+                 ;[svg/rect (vec2 0 0) 32 32
+                 ; {:rx    2
+                 ;  :class "click-target"}]
                  ])
            ))
 
@@ -142,7 +90,6 @@
            (let [node-size 36
                  outlet (first (:outlets node))
                  outlet-size (vec2 18 8)
-                 outlet-position (vec2 9 34)
                  id (:id node)
                  position (:position node)
 
@@ -153,12 +100,12 @@
 
                  ]
                 [svg/group
-                 {:id        id
-                  :class     (if (:selected node) "light node selected" "light node")
-                  :transform (str "translate(" (:x position) " " (:y position) ")")
-                  :data-type "node"
+                 {:id            id
+                  :class         (if (:selected node) "light node selected" "light node")
+                  :transform     (str "translate(" (:x position) " " (:y position) ")")
+                  :data-type     "node"
                   :data-scene-id scene-id
-                  :data-ilk  (:ilk node)}
+                  :data-ilk      (:ilk node)}
 
                  [svg/rect (vec2 0 0) node-size node-size
                   {:class "bg"
@@ -170,9 +117,9 @@
 
                  [links scene-id node]
 
-                 [svg/rect (vec2 0 0) node-size node-size
-                  {:rx    2
-                   :class "click-target"}]
+                 ;[svg/rect (vec2 0 0) node-size node-size
+                 ; {:rx    2
+                 ;  :class "click-target"}]
                  ])))
 
 (defn node

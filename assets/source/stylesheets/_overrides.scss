@@ -266,6 +266,11 @@ body {
     .icon {
       width:1.5rem;
       height:1.5rem;
+      padding-top: 0.25rem;
+
+      &:before {
+        font-size: 1.25rem;
+      }
     }
   }
 
@@ -274,7 +279,7 @@ body {
     color: $grey-dark;      
     border: 2px solid $re-red;
     &:hover {
-      background: transparent;
+      background: $grey-dark;
       color: $re-red;  
     }
   }
@@ -284,9 +289,15 @@ body {
     color: $grey-dark;      
     border: 2px solid $re-green;
     &:hover {
-      background: transparent;  
+      background: $grey-dark;  
       color: $re-green;
     }
+  }
+
+
+  &.trash {
+    margin-right: -3rem;
+    background: $re-red;
   }
 }
 
@@ -312,11 +323,15 @@ body {
   top: 0;
   margin-top: 8% !important;
 
-  &.w400 {
-    width: 400px;
-  }
-
   .content {
     padding-top: 0;
+    padding-bottom: 0;
+  }
+}
+
+#trash-item {
+  .actions {
+    padding-top: 0;
+    padding-right: 1.25rem;
   }
 }

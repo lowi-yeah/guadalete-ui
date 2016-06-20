@@ -56,10 +56,10 @@
   (fn [db [_ {:keys [room-id ilk scene-id id] :as data}]]
       (condp = (kw* ilk)
              :light (do
-                      (dispatch [:modal/open :pd-light-node])
+                      (dispatch [:modal/open {:id :pd-light-node}])
                       (assoc db :pd/modal-node-data {:room-id room-id :scene scene-id :node id}))
              :color (do
-                      (dispatch [:modal/open :pd-color-node])
+                      (dispatch [:modal/open {:id :pd-color-node}])
                       (assoc db :pd/modal-node-data {:room-id room-id :scene scene-id :node id}))
              db)))
 

@@ -22,18 +22,21 @@
        (dispatch [:modal/deny])
        true)
 
-(defn- open [modal-id]
-       (let [jq-node (js/$ (str "#" (name modal-id) ".modal"))
-             options {:onDeny     deny-modal
-                      :onApprove  #(approve-modal modal-id)
-                      :closable   false
-                      :dimPage    true
-                      :detachable false
-                      :context    "#modals"
-                      }
-             js-options (clj->js options)]
-            (.modal jq-node js-options)
-            (.modal jq-node "show")))
+(defn open
+      [modal-id item options]
+      (let [jq-node (js/$ (str "#" (name modal-id) ".modal"))
+            options* (merge
+                       {:onDeny        deny-modal
+                        :onApprove     #(approve-modal modal-id)
+                        :closable      false
+                        :dimPage       true
+                        :detachable    false
+                        :context       "#modals"
+                        :allowMultiple true}
+                       options)
+            js-options (clj->js options*)]
+           (.modal jq-node js-options)
+           (.modal jq-node "show")))
 
 
 (defn- close [modal-id]
@@ -51,25 +54,26 @@
 
 
 (defn- light-channel-change [value-strings new-light-rctn index]
-       (let [values (->> value-strings
+       (let [values (->> (string/split value-strings #",")
                          (map #(int %))
                          (remove #(= 0 %))
                          (into []))
              channels (:channels @new-light-rctn)
              channels* (assoc channels index values)]
-            (dispatch [:light/update-new (assoc @new-light-rctn :channels channels*)])))
+            (dispatch [:light/update (assoc @new-light-rctn :channels channels*)])))
 
 (defn change-light-name [ev new-light-rctn]
       (let [name* (-> ev .-target .-value)]
-           (dispatch [:light/update-new (assoc @new-light-rctn :name name*)])))
+           (log/debug "change-light-name" name*)
+           (dispatch [:light/update (assoc @new-light-rctn :name name*)])))
 
 (defn- change-light-transport [ev new-light-rctn]
        (let [transport* (-> ev .-target .-value kw*)]
-            (dispatch [:light/update-new (assoc @new-light-rctn :transport transport*)])))
+            (dispatch [:light/update (assoc @new-light-rctn :transport transport*)])))
 
 (defn- change-light-channel-count [ev new-light-rctn]
        (let [num-channels* (-> ev .-target .-value int)]
-            (dispatch [:light/update-new (assoc @new-light-rctn :num-channels num-channels*)])))
+            (dispatch [:light/update (assoc @new-light-rctn :num-channels num-channels*)])))
 
 
 (defn- init-dropdown [this]
@@ -145,7 +149,6 @@
                  [(with-meta identity {:component-did-mount init-dropdown})
                   [:select.ui.dropdown.margin-bottom.flexing
                    {:name         "num-channels"
-                    :onChange     (fn [a b c] (log/debug "ON CHAAANGE" a b c))
                     :verbose      true
                     :keepOnScreen false
                     :on-change    #(change-light-channel-count % new-light-rctn)
@@ -164,23 +167,26 @@
       (fn [new-light-rctn]
           [:p "mqtt configuration goes here…"]))
 
-(defn new-light-modal []
+(defn light-modal []
       (fn []
-          (let [new-light-rctn (subscribe [:new/light])
+          (let [light-rctn (subscribe [:current/light])
                 available-dmx-rctn (subscribe [:dmx/available])]
-               [:div#new-light.new-thing.ui.basic.modal.small
-                [:div.header "Create a new light"]
-                [:pre.code (count @available-dmx-rctn)]
-
+               [:div#edit-light.thing.ui.basic.modal.small
                 [:div.content.ui.form
+
+                 [:div.flex-row-container.right
+                  [:div.circular.ui.icon.button.trash
+                   {:on-click #(dispatch [:light/prepare-trash (:id @light-rctn)])}
+                   [:i.trash.outline.icon]]]
+
                  ; name
                  ; ----------------
                  [:div.flex-row-container
                   [:label "Name"]
                   [:div.ui.input.margin-bottom.flexing
                    [:input {:type      "text"
-                            :value     (:name @new-light-rctn)
-                            :on-change #(change-light-name % new-light-rctn)}]]]
+                            :value     (:name @light-rctn)
+                            :on-change #(change-light-name % light-rctn)}]]]
 
                  ; transport
                  ; ----------------
@@ -195,17 +201,17 @@
                  ;  [:option {:value "mqtt"} "MQTT"]]
                  ; ]
 
-                 [transport-dmx new-light-rctn available-dmx-rctn]
+                 [transport-dmx light-rctn available-dmx-rctn]
                  ;(condp = (:transport @new-light-rctn)
                  ;       :dmx
                  ;       :mqtt [transport-mqtt new-light-rctn]
                  ;       (comment "do nothing."))
                  ]
                 [:div.actions
-                 [:div.ui.button.deny "cancel"]
-                 [:div.ui.button.approve "make!"]]
-                [:pre.debug (pretty @new-light-rctn)]])))
-
+                 [:div.ui.button.cancel "close"]
+                 ;[:div.ui.button.approve "make!"]
+                 ]
+                [:pre.debug (pretty @light-rctn)]])))
 
 (defn- light-modal-change [ev node]
        (let [item-id (-> ev
@@ -315,10 +321,21 @@
                  [:div.ui.button.deny
                   "close"]]])))
 
+
+(defn confirm-trash-modal []
+      (fn []
+          [:div#trash-item.ui.basic.modal.small
+           [:div.actions
+            [:div.ui.button.approve
+             {:on-click #(dispatch [:item/trash :bar "foo"])} "Trash"]
+            ]]))
+
+
 (defn modals []
       (fn []
           [:div#modals.ui.modals.dimmer.page
            [new-room-modal]
-           [new-light-modal]
+           [light-modal]
+           [confirm-trash-modal]
            [pd-light-modal]
            [pd-color-modal]]))
