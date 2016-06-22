@@ -33,7 +33,7 @@
                         :dimPage       true
                         :detachable    false
                         :context       "#modals"
-                        ;:allowMultiple true
+                        :allowMultiple true
                         }
                        options)
             js-options (clj->js options*)]

@@ -61,8 +61,7 @@
       []
       (fn []
           (let [view-rctn (subscribe [:current/view])
-                rooms-rctn (subscribe [:rooms])
-                selected-nodes-rctn (subscribe [:selected])]
+                rooms-rctn (subscribe [:rooms])]
                [(with-meta identity
                            {:component-did-mount (fn [this]
                                                      (.sidebar (js/$ "#nav")
@@ -70,8 +69,7 @@
                                                                        "closable" false
                                                                        "dimPage" false))
                                                      (.sidebar (js/$ "#nav") "setting" "transition" "overlay")
-                                                     (.sidebar (js/$ "#nav") "push page")
-                                                     )})
+                                                     (.sidebar (js/$ "#nav") "push page"))})
                 [:div#root
                  [:div#nav.ui.visible.thin.sidebar.inverted.vertical.menu
                   (doall
