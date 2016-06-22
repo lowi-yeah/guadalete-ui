@@ -213,6 +213,21 @@ body {
   background: $yellow !important;
 }
 
+
+/* secondary */
+.ui.secondary.pointing.menu {
+  margin-top: -1.5rem;
+  .item {
+    &.active {
+      border-color: $yellow !important;
+      font-weight: 400;
+      color: $yellow  !important;
+    }
+    padding-bottom: 0.25rem;
+    padding-top: 1.6rem;
+  }
+}
+
 //  _        _    _
 // | |_ __ _| |__| |___
 // |  _/ _` | '_ \ / -_)

@@ -48,12 +48,18 @@
 
 (register-handler
   :mouse/click
-  (fn [db [_ data]]
-      (mouse/up data db)))
+  (fn [db [_ {:keys [ilk scene-id id] :as data}]]
+      (when ilk
+            (dispatch [:node/select {:scene-id scene-id :id id}]))
+      db
+      ;(mouse/up data db)
+
+      ))
 
 (register-handler
   :mouse/double-click
   (fn [db [_ {:keys [room-id ilk scene-id id] :as data}]]
+
       (condp = (kw* ilk)
              :light (do
                       (dispatch [:modal/open {:id :pd-light-node}])
@@ -119,7 +125,7 @@
 (register-handler
   :node/mouse-down
   (fn [db [_ data]]
-      (node/begin-move data db)))
+      (node/select data db)))
 
 (register-handler
   :node/mouse-move

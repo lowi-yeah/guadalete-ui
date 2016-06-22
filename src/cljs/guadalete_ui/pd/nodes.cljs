@@ -227,12 +227,19 @@
 
 ;(defn- get-node [scene-id room-id node-id db])
 
+
+;//          _        _
+;//   ______| |___ __| |_
+;//  (_-< -_) / -_) _|  _|
+;//  /__\___|_\___\__|\__|
+;//
+
 ;//
 ;//   _ __  _____ _____
 ;//  | '  \/ _ \ V / -_)
 ;//  |_|_|_\___/\_/\___|
 ;//
-(defn begin-move [{:keys [scene-id id position] :as data} db]
+(defn select [{:keys [scene-id id position] :as data} db]
       (let [id-key (keyword id)
             scene (get-in db [:scene scene-id])
             nodes (get-in db [:scene scene-id :nodes])
@@ -259,3 +266,4 @@
             node* (assoc node :position (vec-map node-position*))
             scene* (assoc-in scene [:nodes (keyword (:id node))] node*)]
            (assoc-in db [:scene scene-id] scene*)))
+

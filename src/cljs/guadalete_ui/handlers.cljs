@@ -1,6 +1,7 @@
 (ns guadalete-ui.handlers
   ;(:require-macros [reagent.ratom :refer [reaction]])
   (:require [re-frame.core :refer [dispatch register-handler path trim-v after]]
+            [secretary.core :as secretary]
             [taoensso.sente :as sente]
             [schema.core :as s]
             [taoensso.encore :refer [ajax-lite]]
@@ -12,17 +13,6 @@
             [guadalete-ui.util :refer [pretty kw* mappify]]
             [guadalete-ui.dmx :as dmx]
             [guadalete-ui.util.dickens :as dickens]
-
-    ;[secretary.core :as secretary]
-    ;        [redonaira.schema :as schema]
-    ;[schema.core :as s]
-    ;[differ.core :as differ]
-    ;[taoensso.encore :refer [ajax-lite]]
-    ;[clojure.string :as string]
-    ;[thi.ng.geom.core.vector :as v]
-    ;[guadalete-ui.ws :as ws]
-    ;[guadalete-ui.helpers :as helpers]
-    ;[guadalete-ui.toaster :refer [toast]]
             [guadalete-ui.views.modal :as modal]))
 
 
@@ -138,14 +128,25 @@
 (register-handler
   :view/room
   (fn [db [_ [room-id segment]]]
-      (if (= segment :current)
-        (-> db
-            (assoc :current/view :room)
-            (assoc :current/room-id room-id))
-        (-> db
-            (assoc :current/view :room)
-            (assoc :current/segment segment)
-            (assoc :current/room-id room-id)))))
+      (condp = segment
+             ; :current is passed, if the room changes but the segment to be shown remains the same
+             ; (e.g switching form the secenes segment in roomA to the scenes segment in roomB)
+             :current (-> db
+                          (assoc :current/view :room)
+                          (assoc :current/room-id room-id))
+             (-> db
+                 (assoc :current/view :room)
+                 (assoc :current/segment segment)
+                 (assoc :current/room-id room-id)))))
+
+(register-handler
+  :view/scene
+  (fn [db [_ [room-id scene-id]]]
+      (-> db
+          (assoc :current/view :room)
+          (assoc :current/segment :scene)
+          (assoc :current/room-id room-id)
+          (assoc :current/scene-id scene-id))))
 
 
 ;//                _      _

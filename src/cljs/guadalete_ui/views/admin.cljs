@@ -62,16 +62,27 @@
       (fn []
           (let [view-rctn (subscribe [:current/view])
                 rooms-rctn (subscribe [:rooms])
-                ]
+                selected-nodes-rctn (subscribe [:selected])]
                [(with-meta identity
-                           {:component-did-mount (fn [this]
-                                                     (.sidebar (js/$ "#nav")
-                                                               (js-obj "context" (js/$ "#root")
-                                                                       "closable" false
-                                                                       "dimPage" false))
-                                                     (.sidebar (js/$ "#nav") "setting" "transition" "overlay")
-                                                     (.sidebar (js/$ "#nav") "push page"))})
+                           {:component-did-mount
+                            (fn [this]
+                                (let [options {:context  (js/$ "#root")
+                                               :closable false
+                                               :dimPage  false}
+                                      js-options (clj->js options)
+                                      sidebar-ids ["#nav" "#detail"]]
+
+                                     (doall (for [sid sidebar-ids]
+                                                 (let [jq (js/$ sid)]
+                                                      (.sidebar jq js-options)
+                                                      (.sidebar jq "setting" "transition" "overlay")
+                                                      (.sidebar jq "push page"))))))})
                 [:div#root.pushable
+
+                 [:div#detail.ui.inverted.bottom.sidebar
+                  (when (not-empty @selected-nodes-rctn)
+                        [:pre.code (pretty @selected-nodes-rctn)])]
+
                  [:div#nav.ui.visible.thin.sidebar.inverted.vertical.menu
                   (doall
                     (for [room @rooms-rctn]
@@ -82,6 +93,9 @@
                            [:a.item {:href room-link} (:name room)])))
                   [:a.item {:on-click #(.modal (js/$ "#new-room.modal") "show")}
                    [:i.large.add.circle.icon]]]
+
+
+
                  [:div#view.pusher
                   (view @view-rctn)]
 
