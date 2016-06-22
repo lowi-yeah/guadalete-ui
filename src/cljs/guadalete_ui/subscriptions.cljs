@@ -89,18 +89,15 @@
   :current/scene
   (fn [db _]
       (let [scene-id (:current/scene-id @db)
-            room-id (:current/room-id @db)
-            room-scene-ids (get-in @db [:room room-id :scene])
-            scene (if (in? room-scene-ids scene-id)
-                     (get-in @db [:scene scene-id])
-                     (get-in @db [:scene (first room-scene-ids)]))]
+            scene (get-in @db [:scene scene-id])]
            (reaction scene))))
 
 
 (re-frame/register-sub
   :selected
   (fn [db _]
-      (let [nodes (get-in @db [:scene "scene2" :nodes])
+      (let [scene-id (:current/scene-id @db)
+            nodes (get-in @db [:scene "scene2" :nodes])
             selected-nodes (filter (fn [[k v]] (:selected v)) nodes)]
            (reaction selected-nodes))))
 

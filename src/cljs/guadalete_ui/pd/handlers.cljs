@@ -48,18 +48,12 @@
 
 (register-handler
   :mouse/click
-  (fn [db [_ {:keys [ilk scene-id id] :as data}]]
-      (when ilk
-            (dispatch [:node/select {:scene-id scene-id :id id}]))
-      db
-      ;(mouse/up data db)
-
-      ))
+  (fn [db [_ data]]
+      (mouse/up data db)))
 
 (register-handler
   :mouse/double-click
   (fn [db [_ {:keys [room-id ilk scene-id id] :as data}]]
-
       (condp = (kw* ilk)
              :light (do
                       (dispatch [:modal/open {:id :pd-light-node}])
@@ -98,6 +92,16 @@
             translation* (g/+ (vec2 (:pos-1 scene)) δ)
             scene* (assoc scene :translation (vec-map translation*))]
            (assoc-in db [:scene scene-id] scene*))))
+
+(register-handler
+  :pd/mouse-up
+  (fn [db [_ {:keys [scene-id position]}]]
+      (let [scene (get-in db [:scene scene-id])
+            scene* (dissoc scene :pos-0 :pos-1 :flow/mouse :mode)]
+           (dispatch [:scene/update scene*])
+           (dispatch [:node/reset-all scene-id])
+           db)
+      db))
 
 ;//               _
 ;//   _ _  ___ __| |___

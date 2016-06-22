@@ -97,7 +97,16 @@ body {
   color: rgba($grey-light, 0.87);
 }
 
+//     _    _     _
+//  __(_)__| |___| |__  __ _ _ _
+// (_-< / _` / -_) '_ \/ _` | '_|
+// /__/_\__,_\___|_.__/\__,_|_|
 
+/* Animation */
+.animating.ui.overlay.sidebar,
+.ui.visible.overlay.sidebar {
+  transition: transform 10ms ease;
+}
 
 //                _           _   _
 //  _ _  __ ___ _(_)__ _ __ _| |_(_)___ _ _

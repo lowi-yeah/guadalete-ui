@@ -18,8 +18,6 @@
        (let [offset (g/+ (:pos-0 n) δ)]
             [id (assoc n :pos (vec-map offset))]))
 
-
-
 ;//                              _
 ;//   _ __  ___ _  _ ______   __| |_____ __ ___ _
 ;//  | '  \/ _ \ || (_-< -_) / _` / _ \ V  V / ' \
@@ -51,12 +49,10 @@
       (let [scene (get-in db [:scene scene-id])
             scene* (dissoc scene :pos-0 :pos-1 :flow/mouse :mode)]
            (dispatch [:scene/update scene*])
-           (dispatch [:node/reset-all scene-id])
            db))
 
-
 (defmulti up* (fn [type data] type))
-
+;(defmethod up* :pd [_ data] (dispatch [:pd/mouse-up data]))
 (defmethod up* :pd [_ data] (dispatch [:mouse/default-up data]))
 (defmethod up* :node [_ data] (dispatch [:mouse/default-up data]))
 (defmethod up* :link [_ data] (dispatch [:flow/mouse-up data]))

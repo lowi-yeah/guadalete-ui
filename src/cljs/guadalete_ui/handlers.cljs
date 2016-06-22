@@ -125,15 +125,27 @@
 ;//  \ V / / -_) V  V (_-<
 ;//   \_/|_\___|\_/\_//__/
 ;//
+
+(defn- first-scene-id
+       "retrun the id of the 'first' scene in a room."
+       [db room-id]
+       (-> db (get-in [:room room-id :scene]) (first)))
+
 (register-handler
   :view/room
   (fn [db [_ [room-id segment]]]
       (condp = segment
              ; :current is passed, if the room changes but the segment to be shown remains the same
              ; (e.g switching form the secenes segment in roomA to the scenes segment in roomB)
-             :current (-> db
-                          (assoc :current/view :room)
-                          (assoc :current/room-id room-id))
+             :current (do
+                        ; workaround for current/scene-id
+                        ; if current is scene, dispatch ':view/scene' so that the hack below can kick in
+                        (when (= :scene (:current/segment db))
+                              (dispatch [:view/scene [room-id]]))
+                        (-> db
+                            (assoc :current/view :room)
+                            (assoc :current/room-id room-id)
+                            (dissoc :current/scene-id)))
              (-> db
                  (assoc :current/view :room)
                  (assoc :current/segment segment)
@@ -142,11 +154,17 @@
 (register-handler
   :view/scene
   (fn [db [_ [room-id scene-id]]]
-      (-> db
-          (assoc :current/view :room)
-          (assoc :current/segment :scene)
-          (assoc :current/room-id room-id)
-          (assoc :current/scene-id scene-id))))
+      (let [scene-id* (or scene-id (first-scene-id db room-id))]
+
+           ; obacht: hack
+           ; recursicely dispatch as long as the database has not been loaded
+           (when (nil? scene-id*) (dispatch [:view/scene [room-id scene-id]]))
+
+           (-> db
+               (assoc :current/view :room)
+               (assoc :current/segment :scene)
+               (assoc :current/room-id room-id)
+               (assoc :current/scene-id scene-id*)))))
 
 
 ;//                _      _
@@ -275,10 +293,8 @@
   :modal/open
   (fn [db [_ data]]
       (let [modal-id (:id data)
-            options (or (:options data) {})
-            item (:item data)
-            ]
-           (modal/open modal-id item options)
+            options (or (:options data) {})]
+           (modal/open modal-id options)
            db)))
 
 (register-handler

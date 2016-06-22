@@ -23,8 +23,9 @@
        true)
 
 (defn open
-      [modal-id item options]
+      [modal-id  options]
       (let [jq-node (js/$ (str "#" (name modal-id) ".modal"))
+            _ (log/debug "jq-node" modal-id jq-node)
             options* (merge
                        {:onDeny        deny-modal
                         :onApprove     #(approve-modal modal-id)
@@ -32,7 +33,8 @@
                         :dimPage       true
                         :detachable    false
                         :context       "#modals"
-                        :allowMultiple true}
+                        ;:allowMultiple true
+                        }
                        options)
             js-options (clj->js options*)]
            (.modal jq-node js-options)
