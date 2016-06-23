@@ -10,10 +10,12 @@
             [guadalete-ui.console :as log]
             [guadalete-ui.socket :refer [chsk-send! chsk-state chsk-reconnect!]]
             [guadalete-ui.pd.util :refer [modal-room modal-scene modal-node]]
+            [guadalete-ui.pd.scene :as scene]
             [guadalete-ui.util :refer [pretty kw* mappify]]
             [guadalete-ui.dmx :as dmx]
             [guadalete-ui.util.dickens :as dickens]
-            [guadalete-ui.views.modal :as modal]))
+            [guadalete-ui.views.modal :as modal]
+            [guadalete-ui.pd.nodes :as node]))
 
 
 
@@ -201,11 +203,13 @@
   (fn [db [_ state]]
       (let [rooms-map (mappify :id (:room state))
             lights-map (mappify :id (:light state))
-            scenes-map (mappify :id (:scene state))]
+            scenes-map (mappify :id (:scene state))
+            scenes-map* (scene/reset-all scenes-map)]
            (assoc db
                   :room rooms-map
                   :light lights-map
-                  :scene scenes-map))))
+                  :scene scenes-map*)
+           )))
 
 ;//   _ _
 ;//  (_) |_ ___ _ __  ___
@@ -275,13 +279,9 @@
             patch (differ/diff original update)]
 
            ;;if the patch is empty, send the whole scene and a replace-flag
-
            (if (and (empty? (first patch)) (empty? (second patch)))
              (chsk-send! [:scene/update [id original :replace]])
              (chsk-send! [:scene/update [id patch]]))
-
-           ;(log/debug "update scene")
-
            (assoc-in db [:scene id] update))))
 
 ;//                _      _

@@ -78,9 +78,9 @@
            {:type :color
             :id   "nil-color"})
 
-(defmethod nil-item :sgnl
+(defmethod nil-item :signal
            [_]
-           {:type :sgnl
+           {:type :signal
             :id   "nil-signal"
             :name "signal"})
 

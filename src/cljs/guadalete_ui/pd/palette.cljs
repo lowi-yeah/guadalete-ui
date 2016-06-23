@@ -73,7 +73,7 @@
             ; ****************
             [:div#palette-signal.item
              [:button.ui.circular.icon.button
-              {:on-drag-start #(start-drag % room-id scene-id :sgnl)
+              {:on-drag-start #(start-drag % room-id scene-id :signal)
                :draggable     true}
               [:i.icon.gdlt.signal]]]
 

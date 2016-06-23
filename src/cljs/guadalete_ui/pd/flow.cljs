@@ -116,10 +116,12 @@
 (defn- to-mouse
        "Internal function for creating a flow from an out-flow to the mouse"
        [{:keys [scene-id node-id id position] :as data} db]
-       (let [flow {:from {:node-id node-id :id id} :to :mouse}]
+       (let [flow {:from {:node-id node-id :id id} :to :mouse}
+             scene (get-in db [:scene scene-id])
+             position* (g/- position (vec2 (:translation scene)))]
             (-> db
                 (assoc-in [:scene scene-id :flow/mouse] flow)
-                (assoc-in [:scene scene-id :mouse/position] (vec-map position))
+                (assoc-in [:scene scene-id :mouse/position] (vec-map position*))
                 (assoc-in [:scene scene-id :mode] :link)
                 (decorate-link scene-id node-id id)
                 )))
@@ -127,15 +129,17 @@
 (defn- from-mouse
        "Internal function for creating a flow from the mouse into an in-flow"
        [{:keys [scene-id node-id id position] :as data} db]
-       (let [flow {:from :mouse :to {:node-id node-id :id id}}]
+       (let [flow {:from :mouse :to {:node-id node-id :id id}}
+             scene (get-in db [:scene scene-id])
+             position* (g/- position (vec2 (:translation scene)))]
             (-> db
                 (assoc-in [:scene scene-id :flow/mouse] flow)
-                (assoc-in [:scene scene-id :mouse/position] (vec-map position))
+                (assoc-in [:scene scene-id :mouse/position] (vec-map position*))
                 (assoc-in [:scene scene-id :mode] :link)
                 (decorate-link scene-id node-id id)
                 )))
 
-(defn begin [{:keys [scene-id node-id id] :as data} db]
+(defn begin [{:keys [scene-id node-id id position] :as data} db]
       (let [link (link/->get db scene-id node-id id)]
            (condp = (kw* (:direction link))
                   :in (from-mouse data db)
@@ -226,19 +230,16 @@
              new-flow {:id   new-flow-id
                        :from from
                        :to   to}
-
              scene (get-in db [:scene scene-id])
              flows (:flows scene)
              flows* (assoc flows (kw* new-flow-id) new-flow)
-
              scene* (-> scene
                         (assoc :flows flows*)
                         (dissoc :flow/mouse))]
-            (log/debug "scene" (pretty scene*))
-            (assoc-in db [:scene scene-id] scene*)
-            ))
+            (dispatch [:scene/update scene*])
+            (dispatch [:node/reset-all scene-id])
+            (assoc-in db [:scene scene-id] scene*)))
 
 (defn end [data db]
       (if (valid-connection? data db)
-        (make-flow data db)
-        db))
+        (make-flow data db)))

@@ -2,7 +2,7 @@
   (:require-macros
     [reagent.ratom :refer [reaction]])
   (:require
-    [clojure.string]
+    [clojure.string :as string]
     [reagent.core :as r]
     [re-frame.core :refer [dispatch subscribe]]
     [thi.ng.geom.core :as g]
@@ -30,6 +30,10 @@
 ;//  \__,_|_| \__,_|\_/\_/
 ;//
 
+(def node-size 36)
+(def node-width 92)
+(def node-height 28)
+
 (defn- default-node
        []
        (fn [n]
@@ -43,6 +47,26 @@
                   }
                  [svg/rect (vec2) 96 32 {:rx 2 :class "bg"}]
                  [svg/text (vec2 8 21) (:name n) {}]])))
+
+(defn- node-name []
+       (fn [name]
+           (let [words (string/split name #" ")
+                 ;char-counts (map #(count %) words)
+                 ]
+                [svg/group
+                 {:transform (str "translate(28 12)")}
+                 [:text
+                  {:x           0
+                   :y           0
+                   :class       "node-text"
+                   :text-anchor "left"}
+                  (doall
+                    (for [index (range (count words))
+                          :let [word (nth words index)
+                                offset (str (* index 1.2) "em")]]
+                         ^{:key (str (random-uuid))}
+                         [:tspan {:x "0" :dy offset} word]
+                         ))]])))
 
 (defn- light-node
        []
@@ -60,9 +84,10 @@
                   :data-ilk      (:ilk node)
                   :data-scene-id scene-id}
 
-                 [svg/circle (vec2 radius radius) radius
+                 [svg/rect (vec2) node-width node-height
                   {
                    ;:class (if item-id "bg" "bg  invalid")
+                   :rx    2
                    :class "bg"}]
 
                  [svg/group
@@ -70,11 +95,9 @@
                   [:use.icon {:xlink-href "/images/bulb-on.svg#main"
                               :width      radius
                               :height     radius
-                              :x          (/ radius 2)
-                              :y          (/ radius 2)}]
-                  [svg/text (vec2 radius (+ (* 2 radius) 12)) (str (:name item))
-                   {:class       "node-text"
-                    :text-anchor "middle"}]]
+                              :x          4
+                              :y          4}]
+                  [node-name (:name item)]]
 
                  [links scene-id node]
 
@@ -87,8 +110,7 @@
 (defn- color-node
        []
        (fn [room-id scene-id node item]
-           (let [node-size 36
-                 outlet (first (:outlets node))
+           (let [outlet (first (:outlets node))
                  outlet-size (vec2 18 8)
                  id (:id node)
                  position (:position node)
@@ -107,17 +129,21 @@
                   :data-scene-id scene-id
                   :data-ilk      (:ilk node)}
 
-                 [svg/rect (vec2 0 0) node-size node-size
+                 [svg/rect (vec2 0 0) node-width node-height
                   {:class "bg"
                    :rx    2}]
 
-                 [svg/circle [(/ node-size 2) (/ node-size 2)] 12
-                  {:class "color"
-                   :fill  @(color/as-css hacked-color)}]
+                 [svg/rect (vec2 (- node-width node-height) 0) node-height node-height
+                  {:fill @(color/as-css hacked-color)
+                   :rx   2}]
+
+                 [svg/text (vec2 4 (/ node-height 2)) (str (:type item))
+                  {:class       "node-text"
+                   :text-anchor "left"}]
 
                  [links scene-id node]
 
-                 ;[svg/rect (vec2 0 0) node-size node-size
+                 ;[svg/rect (vec2 0 0) node-width node-height
                  ; {:rx    2
                  ;  :class "click-target"}]
                  ])))
@@ -198,7 +224,7 @@
 ;//  |_||_\___|_| .__\___|_| /__/
 ;//             |_|
 
-(defn- reset
+(defn reset
        "Resets a node (selection, links, tmp-positions…)"
        [[id node]]
        (let [links* (link/reset-all (:links node))
@@ -207,7 +233,7 @@
                        (assoc :selected false :links links*))]
             [id node*]))
 
-(defn- reset-all*
+(defn reset-all*
        "internal helper for resets-all"
        [nodes]
        (into {} (map reset) nodes))

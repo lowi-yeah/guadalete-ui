@@ -25,7 +25,7 @@
         (reaction (nil-item ilk))
         (condp = ilk
                :light (get-item-reaction db ilk id)
-               :sgnl (get-item-reaction db ilk id)
+               :signal (get-item-reaction db ilk id)
                :color (get-color-reaction id)))))
 
 (register-sub

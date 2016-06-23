@@ -155,7 +155,6 @@
 (register-handler
   :flow/mouse-up
   (fn [db [_ data]]
-      (log/debug "f00")
       (flow/end data db)))
 
 (register-handler
