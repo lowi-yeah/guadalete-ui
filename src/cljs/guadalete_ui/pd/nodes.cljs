@@ -175,15 +175,15 @@
 ;//  |_|_|_\__,_|_\_\___|
 ;//
 (defmulti make-node
-          (fn [ilk pos] ilk))
+          (fn [ilk data db] ilk))
 
 (defmethod make-node :light
-           [_ pos]
+           [_ {:keys [position] :as data} db]
            (let [node-id (str (random-uuid))
                  link-id (str (random-uuid))]
                 {:id       node-id
                  :ilk      "light"
-                 :position (vec-map pos)
+                 :position (vec-map position)
                  :links    {(keyword link-id)
                             {:id        link-id
                              :ilk       "color"
@@ -191,13 +191,13 @@
                              :direction "in"}}}))
 
 (defmethod make-node :color
-           [_ pos]
+           [_ {:keys [position] :as data} db]
            (log/debug "make color node")
            (let [node-id (str (random-uuid))
                  link-id (str (random-uuid))]
                 {:id       node-id
                  :ilk      "color"
-                 :position (vec-map pos)
+                 :position (vec-map position)
                  :item-id  "rgb 0.8 0.9 0.9"
                  :links    {(keyword link-id)
                             {:id        link-id
@@ -206,12 +206,12 @@
                              :direction "out"}}}))
 
 (defmethod make-node :signal
-           [_ pos]
+           [_ {:keys [position] :as data} db]
            (let [node-id (str (random-uuid))
                  link-id (str (random-uuid))]
                 {:id       node-id
                  :ilk      "signal"
-                 :position (vec-map pos)
+                 :position (vec-map position)
                  :links    {(keyword link-id)
                             {:id        link-id
                              :ilk       "signal"
@@ -225,18 +225,18 @@
 ;//             |_|
 
 (defn reset
-       "Resets a node (selection, links, tmp-positions…)"
-       [[id node]]
-       (let [links* (link/reset-all (:links node))
-             node* (-> node
-                       (dissoc :pos-0)
-                       (assoc :selected false :links links*))]
-            [id node*]))
+      "Resets a node (selection, links, tmp-positions…)"
+      [[id node]]
+      (let [links* (link/reset-all (:links node))
+            node* (-> node
+                      (dissoc :pos-0)
+                      (assoc :selected false :links links*))]
+           [id node*]))
 
 (defn reset-all*
-       "internal helper for resets-all"
-       [nodes]
-       (into {} (map reset) nodes))
+      "internal helper for resets-all"
+      [nodes]
+      (into {} (map reset) nodes))
 
 (defn reset-all
       "Resets all nodes"

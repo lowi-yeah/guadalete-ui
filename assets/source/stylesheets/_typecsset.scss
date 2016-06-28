@@ -148,7 +148,8 @@ html, body {
 
         $typecsset-baseline-size: typecsset-strip-units($typecsset-magic-number);
 
-        background-image: url(http://basehold.it/i/#{$typecsset-baseline-size}); /* [3] */
+        // background-image: url(http://basehold.it/i/#{$typecsset-baseline-size}); /* [3] */
+        background-image: url(#{$image-path}/24.png);
     }
 
 }

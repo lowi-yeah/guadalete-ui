@@ -41,22 +41,8 @@
 
 (defmethod segment :scene
            [_ room-rctn]
-           (let [scenes (:scene @room-rctn)
-                 scene-rctn (subscribe [:current/scene])]
-                [:div#scenes.ui.flexing.relative
-
-                 [:div.side-margins.margin-bottom
-                  [:div.ui.pointing.menu.inverted.secondary
-                   (doall
-                     (for [s scenes]
-                          (let [scene-link (str "#/room/" (:id @room-rctn) "/scene/" (:id s))
-                                current? (= (:id s) (:id @scene-rctn))]
-                               ^{:key (str "s-" (:id s))}
-                               [:a.item
-                                {:href  scene-link
-                                 :class (if current? "active")}
-                                (:name s)])))]]
-                 [pd room-rctn @scene-rctn]]))
+           (let [scene-rctn (subscribe [:current/scene])]
+                [pd room-rctn @scene-rctn]))
 
 (defn- color-type [num-channels]
        (condp = num-channels

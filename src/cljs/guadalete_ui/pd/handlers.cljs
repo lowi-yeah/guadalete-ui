@@ -111,12 +111,13 @@
 (register-handler
   :node/make
   (fn [db [_ {:keys [room-id scene-id ilk position] :as data}]]
-      (let [
-            scene (get-in db [:scene scene-id])
+      (let [scene (get-in db [:scene scene-id])
             nodes (:nodes scene)
-            node (make-node ilk (offset-position position scene))
+            data* (assoc data :position (offset-position position scene))
+            node (make-node ilk data* db)
             nodes* (assoc nodes (keyword (:id node)) node)
             scene* (assoc scene :nodes nodes*)]
+
            (dispatch [:scene/update scene*])
            ;(assoc-in db [:scene scene-id] scene*)
            db)))

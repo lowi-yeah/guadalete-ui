@@ -31,7 +31,5 @@
              2 "warm-cool"
              3 "rgb"
              4 "rgbw"
-             "w00t"
-             )
-      )
+             "w00t"))
 

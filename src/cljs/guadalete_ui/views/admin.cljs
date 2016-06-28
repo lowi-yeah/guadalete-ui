@@ -7,6 +7,7 @@
     [guadalete-ui.util :refer [pretty]]
     [guadalete-ui.views.modal :refer [modals]]
     [guadalete-ui.views.segments :refer [segment]]
+    [guadalete-ui.views.menu :refer [main-menu secondary-menu]]
     ))
 
 
@@ -23,26 +24,18 @@
 
 ;// ROOM
 ;// ********************************
-(defn- active-segment? [active current]
-       (if (= active current) "active" ""))
 
 (defn room-view []
       (fn []
           (let [room-rctn (subscribe [:current/room {:assemble true}])
                 segment-rctn (subscribe [:current/segment])
-                db-rctn (subscribe [:db])
-                scene-link (str "#/room/" (:id @room-rctn) "/scene") ; OBACHT the '#' ist important, since without it the whole page gets relaoded
-                light-link (str "#/room/" (:id @room-rctn) "/light")
-                switch-link (str "#/room/" (:id @room-rctn) "/switch")
-                dmx-link (str "#/room/" (:id @room-rctn) "/dmx")]
-               [:div.room.flex-container.full-height
-                [:div#header.margins
-                 [:h3 (:name @room-rctn)]
-                 [:div.ui.pointing.menu.inverted
-                  [:a.item {:href scene-link :class (active-segment? @segment-rctn :scene)} "scenes"]
-                  [:a.item {:href light-link :class (active-segment? @segment-rctn :light)} "lights"]
-                  [:a.item {:href switch-link :class (active-segment? @segment-rctn :switch)} "switches"]
-                  [:a.item {:href dmx-link :class (active-segment? @segment-rctn :dmx)} "dmx"]
+                db-rctn (subscribe [:db])]
+               [:div.room
+                [:div#header.margins.flex-row-container
+                 [:h2 (:name @room-rctn)]
+                 [:div#menus.flexing
+                  [main-menu (:id @room-rctn) segment-rctn]
+                  [secondary-menu (:id @room-rctn) segment-rctn]
                   ]]
                 (segment @segment-rctn room-rctn)
                 ])))

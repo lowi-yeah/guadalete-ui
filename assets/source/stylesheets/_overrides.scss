@@ -225,17 +225,58 @@ body {
 
 /* secondary */
 .ui.secondary.pointing.menu {
-  margin-top: -1.5rem;
+  margin-bottom: 0;
   .item {
     &.active {
       border-color: $yellow !important;
       font-weight: 400;
       color: $yellow  !important;
     }
-    padding-bottom: 0.25rem;
-    padding-top: 1.6rem;
+    // padding-bottom: 0.25rem;
+    // padding-top: 1.6rem;
   }
 }
+
+.ui.tier-3.menu {
+  background: transparent;
+  margin-top: 0;
+  padding-left:1.5rem;
+  height: 3rem;
+  &:before, &:after {
+      content:none;
+    }
+  a.item {
+    // @extend p;
+    padding: 0;
+    margin: 0;
+    font-size: 0.75rem;
+    height: 1.5rem;
+    margin-right: 1rem;
+    background: transparent;
+
+    &:before, &:after {
+      content:none;
+    }
+
+    &:hover {
+        background: transparent;
+        color: rgba($yellow, 0.8);
+      }
+
+    &.active {
+      font-weight: 400;
+      color: $yellow  !important;
+      background: transparent;
+      // @extend p;
+
+      &:hover {
+        background: transparent;
+        color: $yellow  !important;
+      }
+    }
+  }
+}
+
 
 //  _        _    _
 // | |_ __ _| |__| |___
