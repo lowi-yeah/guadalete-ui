@@ -91,9 +91,14 @@
 (defn update-scene [connection id diff flag]
       (update-item connection id diff :scene flag))
 
+; Color
+; ****************
+(defn get-colors [connection]
+      (get-all connection :color))
 
-
-
+(defn create-color [connection color]
+      (log/debug "creaating color" color)
+      (create-item connection :color color))
 
 ;//
 ;//   _  _ ______ _ _ ___
@@ -115,7 +120,10 @@
       [connection]
       (let [rooms (get-rooms connection)
             lights (get-lights connection)
-            scenes (get-scenes connection)]
-           {:room  rooms
-            :light lights
-            :scene scenes}))
+            scenes (get-scenes connection)
+            colors (get-colors connection)
+            ]
+           {:room   rooms
+            :light  lights
+            :scene  scenes
+            :color colors}))

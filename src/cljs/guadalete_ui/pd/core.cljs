@@ -101,5 +101,6 @@
                   ^{:key "flows"} [flows (:id @room-rctn) scene]
                   ^{:key "nodes"} [nodes (:id @room-rctn) scene]
                   ]]
-                [palette (:id @room-rctn) (:id scene)]
+                ;[palette (:id @room-rctn) (:id scene)]
+                [palette @room-rctn scene]
                 ])))

@@ -11,22 +11,20 @@
     [guadalete-ui.pd.util :refer [nil-node modal-room modal-scene modal-node nil-item]]
     [guadalete-ui.pd.color :refer [from-id]]))
 
-(defn- get-item-reaction [db type id]
-       (let [item (get-in @db [type id])]
+(defn- get-item-reaction [db ilk id]
+       (let [item (get-in @db [ilk id])]
             (reaction item)))
 
-(defn- get-color-reaction [id]
-       (reaction (from-id id)))
+(defn- get-color-reaction [db ilk id]
+       (let [item (get-in @db [ilk id])]
+            (reaction item)))
 
 (register-sub
   :pd/node-item
   (fn [db [_ {:keys [id ilk]}]]
       (if (nil? id)
         (reaction (nil-item ilk))
-        (condp = ilk
-               :light (get-item-reaction db ilk id)
-               :signal (get-item-reaction db ilk id)
-               :color (get-color-reaction id)))))
+        (get-item-reaction db ilk id))))
 
 (register-sub
   :pd/modal-node-data
@@ -46,7 +44,7 @@
             ilk (kw* (:ilk node))
             id (:item-id node)]
            (condp = ilk
-                  :color (get-color-reaction id)
+                  :color (get-color-reaction db ilk id)
                   (get-item-reaction db type id)))))
 
 (defn- get-scene-item-ids [scene ilk]

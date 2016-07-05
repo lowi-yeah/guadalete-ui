@@ -27,7 +27,6 @@
                  scenes (:scene @room-rctn)
                  scene-rctn (subscribe [:current/scene])]
                 [:div.ui.tier-3.inverted.menu
-                 (log/debug "scenes" (pretty scenes))
                  (doall
                    (for [s scenes]
                         (let [scene-link (str "#/room/" (:id @room-rctn) "/scene/" (:id s))

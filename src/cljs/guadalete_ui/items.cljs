@@ -1,6 +1,8 @@
 (ns guadalete-ui.items
-  (:require [guadalete-ui.console :as log]
-            [guadalete-ui.util :refer [pretty]]))
+  (:require
+    [clojure.set :refer [difference]]
+    [guadalete-ui.console :as log]
+    [guadalete-ui.util :refer [pretty kw*]]))
 
 (defn- get-lights [light-ids db]
        (let [lights (map #(get-in db [:light %]) light-ids)]
@@ -32,4 +34,21 @@
              3 "rgb"
              4 "rgbw"
              "w00t"))
+
+
+(defn- find-unused-light
+       "Finds a light inside a room which is not yet in use by the given scene.
+       Used for assigning a light during pd/light-node-creation"
+       [{:keys [room-id scene-id]} db]
+
+       (let [all-light-ids (into #{} (get-in db [:room room-id :light]))
+             used-light-ids (->>
+                              (get-in db [:scene scene-id :nodes])
+                              (filter (fn [[id l]] (= :light (kw* (:ilk l)))))
+                              (map (fn [[id l]] (:item-id l)))
+                              (filter (fn [id] id))
+                              (into #{}))
+             unused (difference all-light-ids used-light-ids)]
+            (first unused)))
+
 

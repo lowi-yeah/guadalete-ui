@@ -11,9 +11,9 @@
     [thi.ng.color.core :as color]
     [guadalete-ui.console :as log]
     [guadalete-ui.util :refer [pretty kw* vec-map]]
-    [guadalete-ui.pd.color :refer [render-color]]
-    [guadalete-ui.pd.link :as link :refer [links]]
-    ))
+    [guadalete-ui.pd.color :refer [make-color render-color]]
+    [guadalete-ui.items :refer [find-unused-light]]
+    [guadalete-ui.pd.link :as link :refer [links]]))
 
 ;(events/listen (r/dom-node this) "dblclick"
 ;               #(double-click % room-id (:id scene)))
@@ -114,16 +114,13 @@
                  outlet-size (vec2 18 8)
                  id (:id node)
                  position (:position node)
-
                  ; hackedy hack:
                  ; to make the rendering a bit nicer, take the brightness value and set it as the alpha channel
                  ; that way not a black splot gets rendered when the birightness is low, but rather a transparent one
-                 hacked-color (render-color item)
-
-                 ]
+                 hacked-color (render-color item)]
                 [svg/group
                  {:id            id
-                  :class         (if (:selected node) "light node selected" "light node")
+                  :class         (if (:selected node) "color node selected" "color node")
                   :transform     (str "translate(" (:x position) " " (:y position) ")")
                   :data-type     "node"
                   :data-scene-id scene-id
@@ -134,14 +131,14 @@
                    :rx    2}]
 
                  [svg/rect (vec2 (- node-width node-height) 0) node-height node-height
-                  {:fill @(color/as-css hacked-color)
+                  {:fill hacked-color
                    :rx   2}]
 
                  [svg/text (vec2 4 (/ node-height 2)) (str (:type item))
                   {:class       "node-text"
                    :text-anchor "left"}]
-
-                 [links scene-id node]
+                 ;
+                 ;[links scene-id node]
 
                  ;[svg/rect (vec2 0 0) node-width node-height
                  ; {:rx    2
@@ -174,15 +171,19 @@
 ;//  | '  \/ _` | / / -_)
 ;//  |_|_|_\__,_|_\_\___|
 ;//
+
+
 (defmulti make-node
           (fn [ilk data db] ilk))
 
 (defmethod make-node :light
            [_ {:keys [position] :as data} db]
            (let [node-id (str (random-uuid))
-                 link-id (str (random-uuid))]
+                 link-id (str (random-uuid))
+                 item-id (find-unused-light data db)]
                 {:id       node-id
                  :ilk      "light"
+                 :item-id  item-id
                  :position (vec-map position)
                  :links    {(keyword link-id)
                             {:id        link-id
@@ -192,15 +193,16 @@
 
 (defmethod make-node :color
            [_ {:keys [position] :as data} db]
-           (log/debug "make color node")
            (let [node-id (str (random-uuid))
-                 link-id (str (random-uuid))]
+                 color* (make-color)]
+                (log/debug "make color node" (pretty color*))
+                (dispatch [:color/make color*])
                 {:id       node-id
                  :ilk      "color"
                  :position (vec-map position)
-                 :item-id  "rgb 0.8 0.9 0.9"
-                 :links    {(keyword link-id)
-                            {:id        link-id
+                 :item-id  (:id color*)
+                 :links    {(keyword (str "out-" node-id))
+                            {:id        (str "out-" node-id)
                              :ilk       "color"
                              :state     "normal"
                              :direction "out"}}}))

@@ -3,12 +3,14 @@
     [thi.ng.math.macros :as mm]
     [reagent.ratom :refer [reaction]])
   (:require
+    [clojure.set :refer [difference]]
     [reagent.core :as r]
-    [re-frame.core :refer [dispatch]]
+    [re-frame.core :refer [dispatch subscribe]]
     [cognitect.transit :as t]
     [thi.ng.geom.core :as g]
     [thi.ng.geom.core.vector :as v :refer [vec2 vec3]]
     [guadalete-ui.console :as log]
+    [guadalete-ui.util :refer [pretty kw* mappify]]
     ))
 
 
@@ -62,35 +64,57 @@
 ;//  | '  \/ _` | | ' \
 ;//  |_|_|_\__,_|_|_||_|
 ;//
+
+
+(defn- unused-lights
+       "Finds a light inside a room which is not yet in use by the given scene."
+       [room scene]
+       (let [all-light-ids (->> (:light room)
+                                (map (fn [l] (:id l)))
+                                (into []))
+             used-light-ids (->> (:nodes scene)
+                                 (filter (fn [[id l]] (= :light (kw* (:ilk l)))))
+                                 (map (fn [[id l]] (:item-id l)))
+                                 (filter (fn [id] id))
+                                 (into #{}))]
+            (if (< 0 (count all-light-ids))
+              (into [] (difference (set all-light-ids) used-light-ids))
+              [])))
+
 (defn palette
       "the toolbar for the editor."
       []
-      (fn [room-id scene-id]
-          [:div#palette
-           [:div.ui.list
+      (fn [room scene]
+          (let [unused-lights? (> (count (unused-lights room scene)) 0)]
+               [:div#palette
+                [:div.ui.list
 
-            ; SIGNAL
-            ; ****************
-            [:div#palette-signal.item
-             [:button.ui.circular.icon.button
-              {:on-drag-start #(start-drag % room-id scene-id :signal)
-               :draggable     true}
-              [:i.icon.gdlt.signal]]]
+                 ; SIGNAL
+                 ; ****************
+                 [:div#palette-signal.item
+                  [:button.ui.circular.icon.button
+                   {:on-drag-start #(start-drag % (:id room) (:id scene) :signal)
+                    :draggable     true}
+                   [:i.icon.gdlt.signal]]]
 
-            ; COL0R
-            ; ****************
-            [:div#palette-color.item
-             [:button.ui.circular.icon.button
-              {:on-drag-start #(start-drag % room-id scene-id :color)
-               :draggable     true}
-              [:i.icon.gdlt.color]]]
+                 ; COL0R
+                 ; ****************
+                 [:div#palette-color.item
+                  [:button.ui.circular.icon.button
+                   {:on-drag-start #(start-drag % (:id room) (:id scene) :color)
+                    :draggable     true}
+                   [:i.icon.gdlt.color]]]
 
-            ; LIGHT
-            ; ****************
-            [:div#palette-light.item
-             [:button.ui.circular.icon.button
-              {:on-drag-start #(start-drag % room-id scene-id :light)
-               :draggable     true}
-              [:i.icon.gdlt.bulb]
-              ]]
-            ]]))
+                 ; LIGHT
+                 ; ****************
+                 [:div#palette-light.item
+                  [:button.ui.circular.icon.button
+                   {:on-drag-start #(start-drag % (:id room) (:id scene) :light)
+                    :draggable     unused-lights?
+                    :disabled      (not unused-lights?)}
+                   [:i.icon.gdlt.bulb]
+                   ]]
+                 ]]
+               )
+          ))
+

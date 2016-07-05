@@ -109,6 +109,11 @@
                 ;(db/trash-light (:conn db) light-id)
                 ))
 
+(defmethod event-handler :color/make
+           [{:keys [?data db]}]
+           (let [color ?data]
+                (db/create-color (:conn db) color)))
+
 ; DEFAULT
 ; ****************
 (defmethod event-handler :default

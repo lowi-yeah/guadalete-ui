@@ -12,11 +12,8 @@
     [thi.ng.color.core :as col]
     [reagent.core :as reagent]
     [re-frame.core :refer [dispatch]]
-    [guadalete-ui.util :refer [pretty map-value]]
+    [guadalete-ui.util :refer [pretty map-value kw*]]
     [guadalete-ui.console :as log]))
-
-
-
 
 (defn change-brightness [v color channel]
       (go (>! channel (assoc color :v (/ v 255.0)))))
@@ -65,7 +62,8 @@
 ;//
 (defn- size []
        (let [width (.-innerWidth js/window)
-             size* (- (* 0.704 width) 48 8)]
+             size* (- (* 0.704 width) 48 8)
+             size* (min size* 320)]
             (vec2 size* size*)))
 
 
@@ -253,6 +251,13 @@
             v (nth color-array 2)]
            (str type " " h " " s " " v)))
 
+(defn make-color []
+      {:id   (str (random-uuid))
+       :type :hsv
+       :h    0.4
+       :s    0.1
+       :v    0.8})
+
 (defn from-id [color-id]
       (let [[type h s v] (str/split color-id #" ")
             color (col/hsva (read-string h) (read-string s) (read-string v))]
@@ -274,10 +279,10 @@
 
 (defn render-color
       ; little hack used by color nodes for prettier rendering
-      [{:keys [type color] :as color-item}]
-      (let [color* (-> color
-                       (assoc :a (:v color))
-                       (assoc :v 1))
-            color* (if (= type "w") (assoc color* :s 0) color*)
-            color* (if (= type "ww") (assoc color* :h 0.125) color*)]
-           color*))
+      [{:keys [type h s v] :as color-item}]
+      (let [c (condp = (kw* type)
+                     :hsv (col/hsva h s v 1)
+                     :sv (col/hsva 0.125 s v 1)
+                     :v (col/hsva 0 0 v 1)
+                     :default (col/hsva 0 0 1 1))]
+           @(col/as-css c)))

@@ -204,12 +204,13 @@
       (let [rooms-map (mappify :id (:room state))
             lights-map (mappify :id (:light state))
             scenes-map (mappify :id (:scene state))
-            scenes-map* (scene/reset-all scenes-map)]
+            scenes-map* (scene/reset-all scenes-map)
+            colors-map (mappify :id (:color state))]
            (assoc db
                   :room rooms-map
                   :light lights-map
-                  :scene scenes-map*)
-           )))
+                  :color colors-map
+                  :scene scenes-map*))))
 
 ;//   _ _
 ;//  (_) |_ ___ _ __  ___
@@ -408,6 +409,22 @@
                                         :id   light-id}
                               :options {:closable true}}])
       db))
+
+;//          _
+;//   __ ___| |___ _ _
+;//  / _/ _ \ / _ \ '_|
+;//  \__\___/_\___/_|
+;//
+(register-handler
+  :color/make
+  (fn [db [_ color]]
+      (log/debug ":color/make" (pretty color))
+      (chsk-send! [:color/make color])
+      (assoc-in db [:color (:id color)] color)))
+
+
+;(defn- unused-lights? []
+
 ;//           _
 ;//   _ __ __| |
 ;//  | '_ \ _` |

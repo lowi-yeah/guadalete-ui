@@ -4,7 +4,7 @@
             [clojure.set :refer [difference]]
             [clojure.string :as string]
             [guadalete-ui.items :refer [assemble-item]]
-            [guadalete-ui.util :refer [pretty in?]]
+            [guadalete-ui.util :refer [pretty in? kw*]]
             [guadalete-ui.dmx :as dmx]
             [guadalete-ui.console :as log]
             ))
@@ -100,6 +100,25 @@
             nodes (get-in @db [:scene "scene2" :nodes])
             selected-nodes (filter (fn [[k v]] (:selected v)) nodes)]
            (reaction selected-nodes))))
+
+
+;//   _ _      _   _
+;//  | (_)__ _| |_| |_
+;//  | | / _` | ' \  _|
+;//  |_|_\__, |_||_\__|
+;//      |___/
+(re-frame/register-sub
+  :light/unused-by-scene
+  (fn [db [_ room-id scene-id]]
+      (let [all-light-ids (into #{} (get-in @db [:room room-id :light]))
+            used-light-ids (->>
+                             (get-in @db [:scene scene-id :nodes])
+                             (filter (fn [[id l]] (= :light (kw* (:ilk l)))))
+                             (map (fn [[id l]] (:item-id l)))
+                             (filter (fn [id] id))
+                             (into #{}))
+            unused (difference all-light-ids used-light-ids)]
+           (reaction (into [] unused)))))
 
 
 ;//           _

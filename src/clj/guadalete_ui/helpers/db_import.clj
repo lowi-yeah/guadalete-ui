@@ -56,6 +56,7 @@
                       (items conn "dmx")
                       (items conn "room")
                       (items conn "scene")
+                      (items conn "color")
                       ;(users)
                       ;(sensors)
                       ;(items conn "light")
