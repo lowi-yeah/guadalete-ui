@@ -48,8 +48,8 @@
       [{:keys [type scene-id node-id position]} db]
       (let [scene (get-in db [:scene scene-id])
             scene* (dissoc scene :pos-0 :pos-1 :flow/mouse :mode)]
-           (dispatch [:node/reset-all scene-id])
            (dispatch [:scene/update scene*])
+           (dispatch [:node/reset-all scene-id])
            db))
 
 (defmulti up* (fn [type data] type))

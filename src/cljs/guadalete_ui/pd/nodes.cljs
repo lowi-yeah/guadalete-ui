@@ -33,6 +33,7 @@
 (def node-size 36)
 (def node-width 92)
 (def node-height 28)
+(def line-height 14)
 
 (defn- default-node
        []
@@ -114,10 +115,12 @@
                  outlet-size (vec2 18 8)
                  id (:id node)
                  position (:position node)
+                 height (* line-height (+ 3 (count (:type item))))
                  ; hackedy hack:
                  ; to make the rendering a bit nicer, take the brightness value and set it as the alpha channel
                  ; that way not a black splot gets rendered when the birightness is low, but rather a transparent one
                  hacked-color (render-color item)]
+
                 [svg/group
                  {:id            id
                   :class         (if (:selected node) "color node selected" "color node")
@@ -126,23 +129,27 @@
                   :data-scene-id scene-id
                   :data-ilk      (:ilk node)}
 
-                 [svg/rect (vec2 0 0) node-width node-height
+                 [svg/rect (vec2 0 0) node-width height
                   {:class "bg"
-                   :rx    2}]
+                   :rx    1}]
 
-                 [svg/rect (vec2 (- node-width node-height) 0) node-height node-height
+                 [svg/rect (vec2 0 0) node-width line-height
                   {:fill hacked-color
-                   :rx   2}]
+                   :rx   1}]
 
-                 [svg/text (vec2 4 (/ node-height 2)) (str (:type item))
+                 [svg/text
+                  (vec2 4 (+ line-height 8))
+                  ;(str (:type item))
+                  (str (:selected node))
                   {:class       "node-text"
                    :text-anchor "left"}]
-                 ;
+
+                 (log/debug "nooode" (str node))
                  ;[links scene-id node]
 
-                 ;[svg/rect (vec2 0 0) node-width node-height
-                 ; {:rx    2
-                 ;  :class "click-target"}]
+                 [svg/rect (vec2 0 0) node-width height
+                  {:rx    1
+                   :class "click-target"}]
                  ])))
 
 (defn node
@@ -229,6 +236,7 @@
 (defn reset
       "Resets a node (selection, links, tmp-positions…)"
       [[id node]]
+
       (let [links* (link/reset-all (:links node))
             node* (-> node
                       (dissoc :pos-0)
@@ -245,6 +253,7 @@
       [scene-id db]
       (let [nodes (get-in db [:scene scene-id :nodes])
             nodes* (reset-all* nodes)]
+           (log/debug "reseting node!!" (pretty nodes*))
            (assoc-in db [:scene scene-id :nodes] nodes*)))
 
 (defn- selected-node
