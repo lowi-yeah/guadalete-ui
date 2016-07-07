@@ -115,7 +115,7 @@
                  outlet-size (vec2 18 8)
                  id (:id node)
                  position (:position node)
-                 height (* line-height (+ 3 (count (:type item))))
+                 height (* line-height (+ 3 (count (name (:type item)))))
                  ; hackedy hack:
                  ; to make the rendering a bit nicer, take the brightness value and set it as the alpha channel
                  ; that way not a black splot gets rendered when the birightness is low, but rather a transparent one
@@ -139,18 +139,15 @@
 
                  [svg/text
                   (vec2 4 (+ line-height 8))
-                  ;(str (:type item))
-                  (str (:selected node))
+                  (str (:type item))
                   {:class       "node-text"
                    :text-anchor "left"}]
-
-                 (log/debug "nooode" (str node))
-                 ;[links scene-id node]
 
                  [svg/rect (vec2 0 0) node-width height
                   {:rx    1
                    :class "click-target"}]
-                 ])))
+
+                 [links scene-id node]])))
 
 (defn node
       [room-id scene-id n item]
@@ -180,6 +177,35 @@
 ;//
 
 
+
+(defn- color-in-link [type name node-id]
+       {:id        (str type "-" node-id)
+        :type      type
+        :name      name
+        :ilk       "signal"
+        :state     "normal"
+        :direction "in"})
+
+(defn- make-color-links
+       "Helper function for creating the in/out links for a given color.
+       The number input-links corresponds to the number of color channels (h,s,v)"
+       [node-id color]
+       (let [out-link [{:id        (str "out-" node-id)
+                        :ilk       "color"
+                        :state     "normal"
+                        :name      "out"
+                        :direction "out"}]
+             in-links (condp = (:type color)
+                             :v [(color-in-link "v" "brightness" node-id)]
+                             :sv [(color-in-link "v" "brightness" node-id)
+                                  (color-in-link "s" "saturation" node-id)]
+                             :hsv [(color-in-link "v" "brightness" node-id)
+                                   (color-in-link "s" "saturation" node-id)
+                                   (color-in-link "h" "hue" node-id)]
+                             :default (log/error (str "Unknown color type " (:type color) ". Must be either :v :sv or :hsv")))]
+            (->> (map (fn [l] [(:id l) l]) (concat out-link in-links))
+                 (into {}))))
+
 (defmulti make-node
           (fn [ilk data db] ilk))
 
@@ -201,18 +227,14 @@
 (defmethod make-node :color
            [_ {:keys [position] :as data} db]
            (let [node-id (str (random-uuid))
-                 color* (make-color)]
-                (log/debug "make color node" (pretty color*))
+                 color* (make-color)
+                 links (make-color-links node-id color*)]
                 (dispatch [:color/make color*])
                 {:id       node-id
                  :ilk      "color"
                  :position (vec-map position)
                  :item-id  (:id color*)
-                 :links    {(keyword (str "out-" node-id))
-                            {:id        (str "out-" node-id)
-                             :ilk       "color"
-                             :state     "normal"
-                             :direction "out"}}}))
+                 :links    links}))
 
 (defmethod make-node :signal
            [_ {:keys [position] :as data} db]
@@ -253,7 +275,6 @@
       [scene-id db]
       (let [nodes (get-in db [:scene scene-id :nodes])
             nodes* (reset-all* nodes)]
-           (log/debug "reseting node!!" (pretty nodes*))
            (assoc-in db [:scene scene-id :nodes] nodes*)))
 
 (defn- selected-node
@@ -261,9 +282,6 @@
        [nodes]
        (let [[_ node] (first (filter (fn [[k v]] (:selected v)) nodes))]
             node))
-
-;(defn- get-node [scene-id room-id node-id db])
-
 
 ;//          _        _
 ;//   ______| |___ __| |_

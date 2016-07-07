@@ -17,15 +17,18 @@
 (def node-height 28)
 (def link-height 8)
 (def link-offset 8)
+(def line-height 14)
+(def node-width 92)
+(def link-radius 6)
 
 ;//                   _
 ;//   _ _ ___ _ _  __| |___ _ _
 ;//  | '_/ -_) ' \/ _` / -_) '_|
 ;//  |_| \___|_||_\__,_\___|_|
 ;//
-(defn- link* []
+(defn- link-handle []
        (fn [l direction scene-id node-id position]
-           [svg/rect position 0 0
+           [svg/circle position link-radius
             {:id            (:id l)
              :class         (str "link " (:direction l))
              :data-scene-id scene-id
@@ -37,24 +40,34 @@
              }]))
 
 (defn- in* []
-       (fn [links scene-id node-id position]
+       (fn [links scene-id node-id position offset]
            [svg/group
             {:class "in-links"}
             (doall
               (for [l links]
-                   (let [position* (vec2 link-offset (* -1 (- link-offset 1)))]
+                   (let [position* (vec2 0 (* offset line-height))]
                         ^{:key (str "link-" (:id l))}
-                        [link* l :in scene-id node-id position*])))]))
+                        [svg/group {}
+                         [link-handle l :in scene-id node-id position*]
+                         [svg/text
+                          (g/+ position* (vec2 (+ 2 link-radius) 3))
+                          (str (:name l))]])))]))
 
 (defn- out* []
-       (fn [links scene-id node-id position]
+       (fn [links scene-id node-id position offset]
+           (log/debug "offset" (str offset))
            [svg/group
             {:class "out-links"}
             (doall
               (for [l links]
-                   (let [position* (vec2 link-offset (- node-height 1))]
+                   (let [position* (vec2 node-width (* offset line-height))]
                         ^{:key (str "link-" (:id l))}
-                        [link* l :out scene-id node-id position*])))]))
+                        [svg/group {}
+                         [link-handle l :out scene-id node-id position*]
+                         [svg/text
+                          (g/+ position* (vec2 (* -1 (+ 2 link-radius)) 3))
+                          (str (:name l))
+                          {:text-anchor :end}]])))]))
 
 (defn- filter-direction [links direction]
        (let [filter-fn (fn [[_id link]] (= direction (:direction link)))]
@@ -69,12 +82,19 @@
       (fn [scene-id node]
           (let [in-links (filter-direction (:links node) "in")
                 out-links (filter-direction (:links node) "out")
-                position (vec2 (:position node))]
+                position (vec2 (:position node))
+
+                base-offset 2]
+
+               (log/debug "out-links" (str out-links))
+               (log/debug "in-links" (str in-links))
+               (log/debug "position" (str position))
+
                ^{:key (str "links-" (:id node))}
                [svg/group
                 {}
-                (if (not-empty in-links) [in* in-links scene-id (:id node) position])
-                (if (not-empty out-links) [out* out-links scene-id (:id node) position])])))
+                (if (not-empty out-links) [out* out-links scene-id (:id node) position base-offset])
+                (if (not-empty in-links) [in* in-links scene-id (:id node) position (+ base-offset (count out-links))])])))
 
 
 

@@ -253,9 +253,7 @@
 
 (defn make-color []
       {:id   (str (random-uuid))
-       :type :hsv
-       :h    0.4
-       :s    0.1
+       :type :v
        :v    0.8})
 
 (defn from-id [color-id]
