@@ -17,6 +17,13 @@
       (into {} (map (fn [x] {(get x map-key) x}) coll))
       )
 
+(defn in?
+      "true if coll contains elm"
+      [coll elm]
+      (some #(= elm %) coll))
+
+(defn uuid [] (str (java.util.UUID/randomUUID)))
+
 
 ; this is here due to a weird behaviour when loading the schema definition (@see cljc/redonaira/schema)
 ; since there seems to be no Vec2 in the thin/ng clojure (ie. not the clojure) implementation,

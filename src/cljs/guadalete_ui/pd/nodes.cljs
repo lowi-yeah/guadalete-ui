@@ -12,7 +12,7 @@
     [guadalete-ui.console :as log]
     [guadalete-ui.util :refer [pretty kw* vec-map]]
     [guadalete-ui.pd.color :refer [make-color render-color]]
-    [guadalete-ui.items :refer [find-unused-light]]
+    [guadalete-ui.items :refer [find-unused-light find-unused-signal]]
     [guadalete-ui.pd.link :as link :refer [links]]))
 
 ;(events/listen (r/dom-node this) "dblclick"
@@ -149,9 +149,45 @@
 
                  [links scene-id node]])))
 
+(defn- signal-node []
+       (fn [room-id scene-id node item]
+           (let [outlet (first (:outlets node))
+                 outlet-size (vec2 18 8)
+                 id (:id node)
+                 position (:position node)
+                 height (* line-height 3)
+                 ]
+
+                [svg/group
+                 {:id            id
+                  :class         (if (:selected node) "signal node selected" "signal node")
+                  :transform     (str "translate(" (:x position) " " (:y position) ")")
+                  :data-type     "node"
+                  :data-scene-id scene-id
+                  :data-ilk      (:ilk node)}
+
+                 [svg/rect (vec2 0 0) node-width height
+                  {:class "bg"
+                   :rx    1}]
+
+                 [svg/text
+                  (vec2 4 12)
+                  (str (:name item))
+                  {:class       "node-text"
+                   :text-anchor "left"}]
+
+                 [svg/rect (vec2 0 0) node-width height
+                  {:rx    1
+                   :class "click-target"}]
+
+                 ;[links scene-id node]
+                 ])))
+
+
 (defn node
       [room-id scene-id n item]
       (condp = (kw* (:ilk n))
+             :signal [signal-node room-id scene-id n item]
              :light [light-node room-id scene-id n item]
              :color [color-node room-id scene-id n item]
              ;:output [output-node n]
@@ -239,10 +275,12 @@
 (defmethod make-node :signal
            [_ {:keys [position] :as data} db]
            (let [node-id (str (random-uuid))
-                 link-id (str (random-uuid))]
+                 link-id (str (random-uuid))
+                 item-id (find-unused-signal data db)]
                 {:id       node-id
                  :ilk      "signal"
                  :position (vec-map position)
+                 :item-id  item-id
                  :links    {(keyword link-id)
                             {:id        link-id
                              :ilk       "signal"

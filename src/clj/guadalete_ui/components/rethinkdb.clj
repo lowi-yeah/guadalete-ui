@@ -1,5 +1,6 @@
 (ns guadalete-ui.components.rethinkdb
-    (:require [com.stuartsierra.component :as component]
+    (:require
+      [com.stuartsierra.component :as component]
       [taoensso.timbre :as log]
       [rethinkdb.query :as r]
       [rethinkdb.core :refer [close]]

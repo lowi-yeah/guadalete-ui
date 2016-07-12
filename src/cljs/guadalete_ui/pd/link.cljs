@@ -55,7 +55,6 @@
 
 (defn- out* []
        (fn [links scene-id node-id position offset]
-           (log/debug "offset" (str offset))
            [svg/group
             {:class "out-links"}
             (doall
@@ -83,13 +82,7 @@
           (let [in-links (filter-direction (:links node) "in")
                 out-links (filter-direction (:links node) "out")
                 position (vec2 (:position node))
-
                 base-offset 2]
-
-               (log/debug "out-links" (str out-links))
-               (log/debug "in-links" (str in-links))
-               (log/debug "position" (str position))
-
                ^{:key (str "links-" (:id node))}
                [svg/group
                 {}

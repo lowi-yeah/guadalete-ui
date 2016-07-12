@@ -20,7 +20,8 @@
       [environ.core :refer [env]]
 
       (guadalete-ui.components
-        [rethinkdb :refer [new-rethink-db]])
+        [rethinkdb :refer [new-rethink-db]]
+        [kafka :refer [new-kafka]])
       ))
 
 ;//                __ _                     _               _
@@ -43,8 +44,12 @@
       "Assembles and returns components for a base application"
       []
       (let [config (load-config)]
+
+           (log/debug "configuration: " (str config))
+
            (component/system-map
              :db (new-rethink-db (:rethinkdb config))
+             :kafka (new-kafka (:kafka config))
              :sente (component/using
                       (new-channel-socket-server
                         sente-handler

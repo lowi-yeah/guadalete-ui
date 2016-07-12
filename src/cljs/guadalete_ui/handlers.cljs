@@ -205,10 +205,12 @@
             lights-map (mappify :id (:light state))
             scenes-map (mappify :id (:scene state))
             scenes-map* (scene/reset-all scenes-map)
-            colors-map (mappify :id (:color state))]
+            colors-map (mappify :id (:color state))
+            signals-map (mappify :id (:signal state))]
            (assoc db
                   :room rooms-map
                   :light lights-map
+                  :signal signals-map
                   :color colors-map
                   :scene scenes-map*))))
 
@@ -275,15 +277,26 @@
 (register-handler
   :scene/update
   (fn [db [_ update]]
-      (let [id (:id update)
-            original (get-in db [:scene id])
-            patch (differ/diff original update)]
 
-           ;;if the patch is empty, send the whole scene and a replace-flag
-           (if (and (empty? (first patch)) (empty? (second patch)))
-             (chsk-send! [:scene/update [id original :replace]])
-             (chsk-send! [:scene/update [id patch]]))
-           (assoc-in db [:scene id] update))))
+      (if (nil? update)
+        (do
+          (log/error "Error during update scene. Scene is nil.")
+          db)
+        (let [id (:id update)
+              original (get-in db [:scene id])
+              patch (differ/diff original update)]
+
+             ;; if the id is nil, log an error
+             (if (nil? id)
+               (do
+                 (log/error "Error during update scene. Scene is nil.")
+                 db)
+               (do
+                 ;;if the patch is empty, send the whole scene and a replace-flag
+                 (if (and (empty? (first patch)) (empty? (second patch)))
+                   (chsk-send! [:scene/update [id original :replace]])
+                   (chsk-send! [:scene/update [id patch]]))
+                 (assoc-in db [:scene id] update)))))))
 
 ;//                _      _
 ;//   _ __  ___ __| |__ _| |

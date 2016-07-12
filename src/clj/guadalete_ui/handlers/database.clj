@@ -97,8 +97,14 @@
       (get-all connection :color))
 
 (defn create-color [connection color]
-      (log/debug "creaating color" color)
       (create-item connection :color color))
+
+; Signal
+; ****************
+(defn get-signals [connection]
+      (->> (get-all connection :signal)
+           (map #(select-keys % [:accepted :description :id :name :type]))))
+
 
 ;//
 ;//   _  _ ______ _ _ ___
@@ -122,8 +128,13 @@
             lights (get-lights connection)
             scenes (get-scenes connection)
             colors (get-colors connection)
-            ]
+            signals (get-signals connection)]
+           (log/debug "gettig everything")
+           (log/debug (into [] signals))
+
            {:room   rooms
             :light  lights
             :scene  scenes
-            :color colors}))
+            :color  colors
+            :signal signals
+            }))

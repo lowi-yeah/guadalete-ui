@@ -29,6 +29,10 @@
                   [com.apa512/rethinkdb "0.15.23"]
                   [cheshire "5.6.1"]
 
+                  ; evaluate, keep one of them
+                  [clj-kafka "0.3.4"]
+                  ;[kafka-clj "3.6.5"]
+
                   ; ---- workaround for 'No namespace: clojure.core.memoize' error
                   ; ---- @see https://github.com/cemerick/friend/issues/116
                   [org.clojure/core.cache "0.6.4"]
@@ -71,11 +75,10 @@
                           :config-file "resources/config.edn"})
            (watch :verbose true)
            (speak)
-           (middleman)
+           ;(middleman)
            (system :sys #'dev-system :auto true :files ["handler.clj" "html.clj"])
            (reload)
            (cljs-repl)
-           (cljs :source-map true :optimizations :none)
-           ;(repl :server true)
+           ;(cljs :source-map true :optimizations :none)
            (target "target")))
 

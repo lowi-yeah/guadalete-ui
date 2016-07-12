@@ -51,4 +51,23 @@
              unused (difference all-light-ids used-light-ids)]
             (first unused)))
 
+(defn- find-unused-signal
+       "Finds a signal which is not yet in use by the given scene.
+       Used for assigning a signal during pd/signal-node-creation"
+       [{:keys [room-id scene-id]} db]
+
+       (let [all-signal-ids (->> (get-in db [:signal])
+                                 (into [])
+                                 (map #(first %))
+                                 (into #{}))
+             used-signal-ids (->>
+                               (get-in db [:scene scene-id :nodes])
+                               (filter (fn [[id l]] (= :signal (kw* (:ilk l)))))
+                               (map (fn [[id l]] (:item-id l)))
+                               (filter (fn [id] id))
+                               (into #{}))
+             unused (difference all-signal-ids used-signal-ids)]
+            (log/debug "find-unused-signal" (str used-signal-ids))
+            (log/debug "all-signal-ids" (str all-signal-ids))
+            (first unused)))
 

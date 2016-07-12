@@ -5,5 +5,13 @@
              :auth-key ""
              :db       "guadalete"}
 
-
- }
+ :kafka     {:config {"zookeeper.connect"  "zookeeper1:2181"
+                      "group.id"           "guadalete-ui.kafka-consumer"
+                      "auto.offset.reset"  "largest"
+                      "auto.commit.enable" "true"}
+             :topiks {:signal-value  "gdlt-sgnl-v"
+                      :signal-config "gdlt-sgnl-c"
+                      :switch-value  "gdlt-swtch-v"
+                      :switch-config "gdlt-swtch-c"
+                      :artnet        "gdlt-artnet"
+                      :light-value   "gdlt-lght-v"}}}
