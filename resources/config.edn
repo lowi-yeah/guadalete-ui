@@ -4,14 +4,26 @@
              :port     28015
              :auth-key ""
              :db       "guadalete"}
+ :redis     {:host    "redis1"
+             :port    6379}
+ ; @see: https://kafka.apache.org/07/configuration.html
+ :kafka     {:config
+             {"zookeeper.connect"           "zookeeper1:2181"
+              "group.id"                    "guadalete-ui"
+              "auto.offset.reset"           "largest"
+              "auto.commit.interval.ms"     "100"
+              "auto.commit.enable"          "true"
+              "fetch.min.bytes"             "1"
+              ;"socket.timeout.ms"           "1000"
+              "socket.receive.buffer.bytes" "1024"
+              }
+             :topiks
+             {:signal-value  "gdlt-sgnl-v"
+              :signal-config "gdlt-sgnl-c"
+              :switch-value  "gdlt-swtch-v"
+              :switch-config "gdlt-swtch-c"
+              :artnet        "gdlt-artnet"
+              :light-value   "gdlt-lght-v"}}
 
- :kafka     {:config {"zookeeper.connect"  "zookeeper1:2181"
-                      "group.id"           "guadalete-ui.kafka-consumer"
-                      "auto.offset.reset"  "largest"
-                      "auto.commit.enable" "true"}
-             :topiks {:signal-value  "gdlt-sgnl-v"
-                      :signal-config "gdlt-sgnl-c"
-                      :switch-value  "gdlt-swtch-v"
-                      :switch-config "gdlt-swtch-c"
-                      :artnet        "gdlt-artnet"
-                      :light-value   "gdlt-lght-v"}}}
+ :frontend  {:signal
+             {:sparkline/timespan-seconds 15}}}

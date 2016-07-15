@@ -8,6 +8,7 @@
   (:require [re-frame.core :refer [dispatch]]
             [cljs.core.async :as async :refer [<! >! put! chan]]
             [taoensso.sente :as sente]
+            [cognitect.transit :as transit]
             [system.components.sente :refer [new-channel-socket-client]]
             [com.stuartsierra.component :as component]
             [cljs.core.match :refer-macros [match]]
@@ -20,6 +21,8 @@
 (def chsk (:chsk sente-client))
 (def chsk-send! (:chsk-send! sente-client))
 (def chsk-state (:chsk-state sente-client))
+
+(def json-reader (transit/reader :json))
 
 (defn chsk-reconnect!
       "Delegate for reconneting sente. Called after login/logout for re-authentication"
@@ -34,12 +37,19 @@
        (let [[_ _ ?user-role] ?data]
             (dispatch [:ws/handshake (keyword ?user-role)])))
 
+(defn- ->chsk-receive [[_ msg]]
+       (let [[topic data] msg
+             data* (transit/read json-reader data)
+             data** {:id (get data* "id") :data (get data* "data")}]
+            (dispatch [topic data**])))
+
 
 (defn- event-handler [event]
        (match [event]
               [[:chsk/state state]] (->chsk-state state)
               [[:chsk/handshake _]] (->chsk-handshake event)
-              :else (log/debug "Unmatched event: %s" event)))
+              [[:chsk/recv _]] (->chsk-receive event)
+              :else (log/debug "Unmatched event: %s" (str event))))
 
 ;; Wrap for logging, catching, etc.:
 (defn- event-handler* [{:as ev-msg :keys [id ?data event]}]

@@ -13,12 +13,14 @@
           (let [scene-link (str "#/room/" room-id "/scene") ; OBACHT the '#' ist important, since without it the whole page gets relaoded
                 light-link (str "#/room/" room-id "/light")
                 switch-link (str "#/room/" room-id "/switch")
-                dmx-link (str "#/room/" room-id "/dmx")]
+                dmx-link (str "#/room/" room-id "/dmx")
+                signal-link (str "#/room/" room-id "/signal")]
                [:div.ui.pointing.menu.inverted.secondary
                 [:a.item {:href scene-link :class (active-segment? @segment-rctn :scene)} "scenes"]
                 [:a.item {:href light-link :class (active-segment? @segment-rctn :light)} "lights"]
                 [:a.item {:href switch-link :class (active-segment? @segment-rctn :switch)} "switches"]
-                [:a.item {:href dmx-link :class (active-segment? @segment-rctn :dmx)} "dmx"]])))
+                [:a.item {:href dmx-link :class (active-segment? @segment-rctn :dmx)} "dmx"]
+                [:a.item {:href signal-link :class (active-segment? @segment-rctn :signal)} "signals"]])))
 
 
 (defn- scene-menu []
@@ -43,6 +45,7 @@
                  :scene [scene-menu room-id]
                  ;:light (log/debug "light!")
                  ;:switch (log/debug "switch!")
+                 ;:signal (log/debug "signal!")
                  (do
                    (log/error (str "Sorry, I don't know the segment type " @segment-rctn))
                    [:div.invisible]))))

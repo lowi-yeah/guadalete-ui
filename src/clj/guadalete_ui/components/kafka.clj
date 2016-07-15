@@ -9,6 +9,7 @@
       [clojure.core.async :as async :refer [chan >! >!! <! go go-loop thread close! alts!]]
       [com.stuartsierra.component :as component]
       [taoensso.timbre :as log]
+      [cheshire.core :refer :all]
       [clj-kafka.admin :as admin]
       [clj-kafka.consumer.zk :as zk]
       [clj-kafka.core :as kafka]
@@ -25,8 +26,7 @@
                        (map #(identity %))))
 
 (defn- log-it [x]
-       (log/debug "logging it:" (str x))
-       )
+       (log/debug "logging it:" (str x)))
 
 (defn- message-to-vec
        "returns a vector of all of the message fields"
@@ -43,46 +43,73 @@
             (go
               (doseq
                 [^kafka.message.MessageAndMetadata message stream]
-                (>! c (String. (nth (message-to-vec message) 4)))))
+                (>! c (String. (nth (message-to-vec message) 4)))
+                ))
             c))
 
-(defrecord Kafka [config topiks]
+(defn- send [topic message sente]
+       (let [uids (:any @(:connected-uids sente))
+             zend! (:chsk-send! sente)
+             message* (parse-string message true)
+             message** (->
+                         {:id   (:id message*)
+                          :data [(:at message*) (:data message*)]}
+                         generate-string)]
+            (doseq [uid uids]
+                   (try
+                     ;(log/debug "zend!" message**)
+                     (zend! uid [topic message**])
+                     (catch Exception e
+                       (log/debug "EXCEPTION" e))))))
+
+(defrecord Kafka [config topiks sente]
            component/Lifecycle
            (start [component]
                   (log/info "**************** Starting Kafka component ***************")
                   (log/debug "***** config" config)
                   (log/debug "***** topikz" topiks)
-                  (let [c (zk/consumer config)
+                  (log/debug "***** sente" sente)
+                  (let [
                         t (->>
                             (topics config)
                             (filter #(in? (vals topiks) %))
                             (map (fn [t] [t (partitions config t)]))
                             (into {}))
-                        stream (zk/create-message-stream c "gdlt-sgnl-v")
-                        stream-channel (default-iterator stream)
-                        stop-channel (chan)
 
+                        ;config-consumer (zk/consumer config)
+                        ;config-stream (zk/create-message-stream config-consumer "gdlt-sgnl-c")
+                        ;config-channel (default-iterator config-stream)
+
+                        value-consumer (zk/consumer config)
+                        value-stream (zk/create-message-stream value-consumer "gdlt-sgnl-v")
+                        value-channel (default-iterator value-stream)
+
+                        stop-channel (chan)
                         ;offets (fetch-consumer-offsets "127.0.0.1:9092" {"zookeeper.connect" "127.0.0.1:2181"} "gdlt-sgnl-v" "guadalete-ui.kafka-consumer")
                         ]
-                       (log/debug "consumer" (str c))
-                       (log/debug "topics" (str t))
-                       (log/debug "stream-channel " (str stream-channel))
-
-                       ;(log/debug "offets" (str offets))
-
-
                        (go-loop
                          []
-                         (let [[msg ch] (alts! [stream-channel stop-channel])]
-                              (when-not (= ch stop-channel)
-                                        (log/debug msg)
-                                        (recur))))
+                         ;(let [[msg ch] (alts! [value-channel config-channel stop-channel])]
+                         (let [[msg ch] (alts! [value-channel stop-channel])]
+                              (condp = ch
+                                     ;config-channel (do
+                                     ;                 (send :signal/config msg sente)
+                                     ;                 (recur))
+                                     value-channel (do
+                                                     (send :signal/value msg sente)
+                                                     (recur))
+                                     (log/info "kafka consumer received stop signal"))))
 
-                       (assoc component :consumer c :stop-channel stop-channel)))
+                       (assoc component
+                              ;:config-consumer config-consumer
+                              :value-consumer value-consumer
+                              :stop-channel stop-channel)))
 
            (stop [component]
                  (log/info "Stopping Kafka component")
-                 (zk/shutdown (:consumer component))
+
+                 ;(zk/shutdown (:config-consumer component))
+                 (zk/shutdown (:value-consumer component))
                  (>!! (:stop-channel component) :halt)
                  (dissoc component :consumer)))
 

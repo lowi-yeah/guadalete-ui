@@ -50,6 +50,8 @@
                 (re-frame/dispatch [:view/room [id :switch]]))
       (defroute "/room/:id/dmx" [id]
                 (re-frame/dispatch [:view/room [id :dmx]]))
+      (defroute "/room/:id/signal" [id]
+                (re-frame/dispatch [:view/room [id :signal]]))
 
 
 

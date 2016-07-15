@@ -3,6 +3,7 @@
       [clojure.core.match :refer [match]]
       [taoensso.timbre :as log]
       [guadalete-ui.helpers.session :refer [session-role session-uid]]
+      [guadalete-ui.helpers.config :refer [load-config]]
       [guadalete-ui.handlers.database :as db]))
 
 ; custom sente functions
@@ -14,6 +15,9 @@
 (def user-id-fn
   (fn [ring-req]
       (:session/key ring-req)))
+
+(defn frontend-config []
+      (:frontend (load-config)))
 
 
 ;//                   _     _                 _ _ _
@@ -32,16 +36,16 @@
 ; PING
 ; ****************
 (defmethod event-handler :chsk/ws-ping [ev-msg]
-           (log/debug ":chsk/ws-ping"))
+           (log/debug ":chsk/ws-ping" ev-msg))
 
 ; STATE
 ; ****************
 (defmethod event-handler :sync/state
            [{:keys [ring-req ?reply-fn send-fn db]}]
            (when (and (session-uid ring-req) ?reply-fn)
-                 (let [state (db/everything (:conn db))]
-                      (log/debug "sync/state" state)
-                      (?reply-fn state))))
+                 (let [state (db/everything (:conn db))
+                       state* (assoc state :config (frontend-config))]
+                      (?reply-fn state*))))
 
 ; ROLE
 ; ****************
@@ -127,7 +131,9 @@
 ;//  | '  \/ _` | | ' \
 ;//  |_|_|_\__,_|_|_||_|
 ;//
+;redis :redis
 (defn sente-handler [{db :db}]
+      (log/debug "sente-handler|sente-handler" db)
       (fn [ev-msg]
           ; put the database into the event map, so that those handlers that need it can use it
           ; (I'm looking at you :sync/state)

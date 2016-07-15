@@ -9,6 +9,7 @@
             [guadalete-ui.dmx :refer [dmx]]
             [guadalete-ui.util :refer [pretty]]
             [guadalete-ui.pd.color :refer [render-color]]
+            [guadalete-ui.views.widgets :refer [signal-sparkline]]
             ))
 ;(defn scenes
 ;      "Scene section"
@@ -122,3 +123,25 @@
            (let [dmx-rctn (subscribe [:dmx/all])]
                 [:div#dmx.ui.flexing.relative
                  [dmx dmx-rctn]]))
+
+(defmethod segment :signal
+           [_]
+           (let [signals-rctn (subscribe [:signal/all])]
+                [:div#signals.ui.flexing.relative.side-margins
+                 [:table.ui.celled.table.inverted
+                  [:thead
+                   [:tr
+                    [:th "name"]
+                    [:th "type"]
+                    [:th "values"]]]
+                  [:tbody
+                   (doall
+                     (for [signal (vals @signals-rctn)]
+                          (do
+                            ^{:key (str "s-" (:id signal))}
+                            [:tr.signal
+                             [:td (:name signal)]
+                             [:td (:type signal)]
+                             [:td
+                              [signal-sparkline signal]
+                              ]])))]]]))

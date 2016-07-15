@@ -21,7 +21,8 @@
 
       (guadalete-ui.components
         [rethinkdb :refer [new-rethink-db]]
-        [kafka :refer [new-kafka]])
+        [kafka :refer [new-kafka]]
+        [redis :refer [new-redis]])
       ))
 
 ;//                __ _                     _               _
@@ -46,10 +47,12 @@
       (let [config (load-config)]
 
            (log/debug "configuration: " (str config))
+           (log/debug "(:redis config): " (str (:redis config)))
 
            (component/system-map
              :db (new-rethink-db (:rethinkdb config))
-             :kafka (new-kafka (:kafka config))
+             :redis (new-redis (:redis config))
+
              :sente (component/using
                       (new-channel-socket-server
                         sente-handler
@@ -57,7 +60,8 @@
                         {:wrap-component?   true
                          :handshake-data-fn socket/handshake-data-fn
                          :user-id-fn        socket/user-id-fn})
-                      [:db])
+                      [:db :redis])
+             :kafka (component/using (new-kafka (:kafka config)) [:sente])
              :sente-endpoint (component/using
                                (new-endpoint sente-routes)
                                [:sente])

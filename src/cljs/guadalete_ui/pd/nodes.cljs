@@ -86,9 +86,7 @@
                   :data-scene-id scene-id}
 
                  [svg/rect (vec2) node-width node-height
-                  {
-                   ;:class (if item-id "bg" "bg  invalid")
-                   :rx    2
+                  {:rx    2
                    :class "bg"}]
 
                  [svg/group
@@ -100,13 +98,7 @@
                               :y          4}]
                   [node-name (:name item)]]
 
-                 [links scene-id node]
-
-                 ;[svg/rect (vec2 0 0) 32 32
-                 ; {:rx    2
-                 ;  :class "click-target"}]
-                 ])
-           ))
+                 [links scene-id node]])))
 
 (defn- color-node
        []
@@ -157,6 +149,8 @@
                  position (:position node)
                  height (* line-height 3)
                  ]
+
+                ;(log/debug "signel item" (str item))
 
                 [svg/group
                  {:id            id
@@ -292,7 +286,6 @@
 ;//  | ' \/ -_) | '_ \ -_) '_(_-<
 ;//  |_||_\___|_| .__\___|_| /__/
 ;//             |_|
-
 (defn reset
       "Resets a node (selection, links, tmp-positions…)"
       [[id node]]

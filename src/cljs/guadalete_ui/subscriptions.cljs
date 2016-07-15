@@ -35,6 +35,17 @@
   (fn [db _]
       (reaction (vals (:room @db)))))
 
+;//      _                _
+;//   ____)__ _ _ _  __ _| |
+;//  (_-< / _` | ' \/ _` | |
+;//  /__/_\__, |_||_\__,_|_|
+;//       |___/
+(re-frame/register-sub
+  :signal/all
+  (fn [db _]
+      (->> (:signal @db)
+           (remove (fn [s] (nil? s)))
+           (reaction))))
 
 ;//      _
 ;//   __| |_ __ __ __

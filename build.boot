@@ -28,10 +28,10 @@
                   [expiring-map "0.1.7"]                    ;maps with ttl used for session storage
                   [com.apa512/rethinkdb "0.15.23"]
                   [cheshire "5.6.1"]
+                  [com.taoensso/carmine "2.13.1"]
 
                   ; evaluate, keep one of them
                   [clj-kafka "0.3.4"]
-                  ;[kafka-clj "3.6.5"]
 
                   ; ---- workaround for 'No namespace: clojure.core.memoize' error
                   ; ---- @see https://github.com/cemerick/friend/issues/116
@@ -49,6 +49,7 @@
                   [re-frame "0.7.0"]
                   [secretary "1.2.3"]
                   [prismatic/schema "1.1.1"]
+                  [com.andrewmcveigh/cljs-time "0.4.0"]
                   [com.taoensso/encore "2.53.0"]
                   [com.joshuadavey/boot-middleman "0.0.7" :scope "test"]
                   [com.cognitect/transit-cljs "0.8.237"]
@@ -75,10 +76,10 @@
                           :config-file "resources/config.edn"})
            (watch :verbose true)
            (speak)
-           ;(middleman)
+           (middleman)
            (system :sys #'dev-system :auto true :files ["handler.clj" "html.clj"])
            (reload)
            (cljs-repl)
-           ;(cljs :source-map true :optimizations :none)
+           (cljs :source-map true :optimizations :none)
            (target "target")))
 

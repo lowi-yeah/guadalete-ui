@@ -1,21 +1,26 @@
 (ns guadalete-ui.handlers
   ;(:require-macros [reagent.ratom :refer [reaction]])
-  (:require [re-frame.core :refer [dispatch register-handler path trim-v after]]
-            [secretary.core :as secretary]
-            [taoensso.sente :as sente]
-            [schema.core :as s]
-            [taoensso.encore :refer [ajax-lite]]
-            [differ.core :as differ]
-            [guadalete-ui.schema.core :refer [DB]]
-            [guadalete-ui.console :as log]
-            [guadalete-ui.socket :refer [chsk-send! chsk-state chsk-reconnect!]]
-            [guadalete-ui.pd.util :refer [modal-room modal-scene modal-node]]
-            [guadalete-ui.pd.scene :as scene]
-            [guadalete-ui.util :refer [pretty kw* mappify]]
-            [guadalete-ui.dmx :as dmx]
-            [guadalete-ui.util.dickens :as dickens]
-            [guadalete-ui.views.modal :as modal]
-            [guadalete-ui.pd.nodes :as node]))
+  (:require
+    [re-frame.core :refer [dispatch register-handler path trim-v after]]
+    [secretary.core :as secretary]
+    [taoensso.sente :as sente]
+    [schema.core :as s]
+    [taoensso.encore :refer [ajax-lite]]
+    [differ.core :as differ]
+    [cljs-time.core :as time :refer [seconds ago]]
+    [cljs-time.coerce :refer [to-long]]
+    [cognitect.transit :as transit]
+    [guadalete-ui.schema.core :refer [DB]]
+    [guadalete-ui.console :as log]
+    [guadalete-ui.socket :refer [chsk-send! chsk-state chsk-reconnect!]]
+    [guadalete-ui.pd.util :refer [modal-room modal-scene modal-node]]
+    [guadalete-ui.pd.scene :as scene]
+    [guadalete-ui.util :refer [pretty kw* mappify]]
+    [guadalete-ui.util.queue :as queue]
+    [guadalete-ui.dmx :as dmx]
+    [guadalete-ui.util.dickens :as dickens]
+    [guadalete-ui.views.modal :as modal]
+    [guadalete-ui.pd.nodes :as node]))
 
 
 
@@ -206,13 +211,15 @@
             scenes-map (mappify :id (:scene state))
             scenes-map* (scene/reset-all scenes-map)
             colors-map (mappify :id (:color state))
-            signals-map (mappify :id (:signal state))]
+            signals-map (mappify :id (:signal state))
+            config (:config state)]
            (assoc db
                   :room rooms-map
                   :light lights-map
                   :signal signals-map
                   :color colors-map
-                  :scene scenes-map*))))
+                  :scene scenes-map*
+                  :config config))))
 
 ;//   _ _
 ;//  (_) |_ ___ _ __  ___
@@ -422,6 +429,29 @@
                                         :id   light-id}
                               :options {:closable true}}])
       db))
+
+;//      _                _
+;//   ____)__ _ _ _  __ _| |___
+;//  (_-< / _` | ' \/ _` | (_-<
+;//  /__/_\__, |_||_\__,_|_/__/
+;//       |___/
+(def json-reader (transit/reader :json))
+
+(register-handler
+  :signal/value
+  (fn [db [_ {:keys [id data] :as message}]]
+      (log/debug ":signal/value message" (str message))
+      (let [[timestamp value] data
+            signal (get-in db [:signal id])
+            values (or (:values signal) (queue/make))
+            values* (queue/push values timestamp (int value))
+            timespan (get-in db [:config :signal :sparkline/timespan-seconds])]
+           (if timespan
+             (let [threshold (-> timespan seconds ago to-long)
+                   values** (queue/truncate values* threshold)]
+                  (assoc-in db [:signal id :values] values**))
+             ;else
+             (assoc-in db [:signal id :values] values*)))))
 
 ;//          _
 ;//   __ ___| |___ _ _
