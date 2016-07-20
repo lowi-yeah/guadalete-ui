@@ -4,8 +4,10 @@
              :port     28015
              :auth-key ""
              :db       "guadalete"}
- :redis     {:host    "redis1"
-             :port    6379}
+ :redis     {:host   "redis1"
+             :port   6379
+             :topics {:signals "guadalete/sgnl/raw"}}
+
  ; @see: https://kafka.apache.org/07/configuration.html
  :kafka     {:config
              {"zookeeper.connect"           "zookeeper1:2181"

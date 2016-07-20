@@ -18,12 +18,10 @@
         [handler :refer [new-handler]]
         [middleware :refer [new-middleware]])
       [environ.core :refer [env]]
-
       (guadalete-ui.components
         [rethinkdb :refer [new-rethink-db]]
         [kafka :refer [new-kafka]]
-        [redis :refer [new-redis]])
-      ))
+        [redis :refer [new-redis]])))
 
 ;//                __ _                     _               _
 ;//   __ ___ _ _  / _(_)__ _ _  _ _ _ ___  | |___ __ _ __ _(_)_ _  __ _
@@ -34,25 +32,21 @@
 (log/merge-config!
   {:appenders {:spit (appenders/spit-appender {:fname "log/guadalete-ui.log"})}})
 
-
-
 ;//      _             _                        _
 ;//   __| |_____ _____| |___ _ __ _ __  ___ _ _| |_
 ;//  / _` / -_) V / -_) / _ \ '_ \ '  \/ -_) ' \  _|
 ;//  \__,_\___|\_/\___|_\___/ .__/_|_|_\___|_||_\__|
 ;//                         |_|
+
+;(defsystem dev-system [])
+
 (defn dev-system
       "Assembles and returns components for a base application"
       []
       (let [config (load-config)]
-
-           (log/debug "configuration: " (str config))
-           (log/debug "(:redis config): " (str (:redis config)))
-
            (component/system-map
              :db (new-rethink-db (:rethinkdb config))
              :redis (new-redis (:redis config))
-
              :sente (component/using
                       (new-channel-socket-server
                         sente-handler

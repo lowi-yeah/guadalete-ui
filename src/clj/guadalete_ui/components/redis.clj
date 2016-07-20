@@ -10,15 +10,16 @@
     )
 
 
-(defrecord Redis [host port]
+(defrecord Redis [host port topics]
            component/Lifecycle
            (start [component]
                   (log/info (str "**************** Starting Redis component: " host ":" port " ***************"))
+                  (log/info (str "topics" (str topics)))
                   (let [connection {:pool {} :spec {:host host :port port}}]
-                       (assoc component :connection connection)))
+                       (assoc component :connection connection :topics topics)))
            (stop [component]
                  (log/info "Stopping Redis component")
-                 (dissoc component :connection)))
+                 (dissoc component :connection :topics)))
 
 (defn new-redis [config]
       (map->Redis config))

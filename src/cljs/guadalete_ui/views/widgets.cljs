@@ -10,30 +10,37 @@
   )
 
 (def w 240)
-(def h 28)
+(def h 64)
 
 (defn- map-x
-       "maps the x values from [min-time now] to [0 w]"
-       [x]
-       (math/map-interval x (vec2 0 1) (vec2 h 0)))
+  "maps the x values from [min-time now] to [0 w]"
+  [t min max]
+  (math/map-interval t (vec2 min max) (vec2 0 w)))
 
 (defn- map-y
-       "maps the y values from [0 1] to [h 0]"
-       [x]
-       (math/map-interval x (vec2 0 1) (vec2 h 0)))
+  "maps the y value from [0 255] to [h 0]"
+  [v]
+  (math/map-interval v (vec2 0 255) (vec2 h 0)))
 
 (defn- signal-sparkline
-       "renders a sparkline of the given signal"
-       []
-       (fn [signal]
-           (let [id (str "signal-" (:id signal))
-                 values (or (:values signal) [0])
-                 ]
-                ^{:key id}
-                [svg/svg
-                 {:id     id
-                  :class  "sparkline"
-                  :width  w
-                  :height h}
-                 [svg/line (vec2 0 (map-y 0)) (vec2 w (map-y 0.9)) {}]
-                 ])))
+  "renders a sparkline of the given signal"
+  []
+  (fn [signal]
+    (let [id (str "signal-" (:id signal))
+          values (or (:values signal) [[0 0] [1 0]])
+          t-min (int (first (first values)))
+          t-max (int (first (last values)))
+          points (into [] (map (fn [[t v]] (vec2 (map-x (int t) t-min t-max) (map-y v))) values))
+          ]
+      ^{:key id}
+      [svg/svg
+       {:id     id
+        :class  "sparkline"
+        :width  w
+        :height h}
+       ^{:key (str "s-" id)}
+       [svg/line-strip
+        points
+        {}
+        ]
+       ])))

@@ -105,6 +105,9 @@
       (->> (get-all connection :signal)
            (map #(select-keys % [:accepted :description :id :name :type]))))
 
+(defn signal-ids [connection]
+      (->> (get-all connection :signal)
+           (map #(get % :id))))
 
 ;//
 ;//   _  _ ______ _ _ ___
@@ -129,12 +132,8 @@
             scenes (get-scenes connection)
             colors (get-colors connection)
             signals (get-signals connection)]
-           (log/debug "gettig everything")
-           (log/debug (into [] signals))
-
            {:room   rooms
             :light  lights
             :scene  scenes
             :color  colors
-            :signal signals
-            }))
+            :signal signals}))

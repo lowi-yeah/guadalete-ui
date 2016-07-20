@@ -4,70 +4,66 @@
   (:require
     [clojure.set :refer [difference]]
     [clojure.string :as str]
-    [re-frame.core :refer [register-sub]]
+    [re-frame.core :refer [def-sub]]
     [thi.ng.color.core :as col]
     [guadalete-ui.console :as log]
     [guadalete-ui.util :refer [pretty kw*]]
     [guadalete-ui.pd.util :refer [nil-node modal-room modal-scene modal-node nil-item]]
     [guadalete-ui.pd.color :refer [from-id]]))
 
-(defn- get-item-reaction [db ilk id]
-       (let [item (get-in @db [ilk id])]
-            (reaction item)))
+(defn- get-item [db ilk id]
+  (get-in db [ilk id]))
 
 (defn- get-color-reaction [db ilk id]
-       (let [item (get-in @db [ilk id])]
-            (reaction item)))
+  (get-in db [ilk id]))
 
-(register-sub
+(def-sub
   :pd/node-item
   (fn [db [_ {:keys [id ilk]}]]
-      (if (nil? id)
-        (reaction (nil-item ilk))
-        (get-item-reaction db ilk id))))
+    (if (nil? id)
+      (nil-item ilk)
+      (get-item db ilk id))))
 
-(register-sub
+(def-sub
   :pd/modal-node-data
   (fn [db _]
-      (reaction (:pd/modal-node-data @db))))
+    (:pd/modal-node-data db)))
 
-(register-sub
+(def-sub
   :pd/modal-node
   (fn [db _]
-      (reaction (modal-node @db))))
+    (modal-node db)))
 
 
-(register-sub
+(def-sub
   :pd/modal-item
   (fn [db _]
-      (let [node (modal-node @db)
-            ilk (kw* (:ilk node))
-            id (:item-id node)]
-           (condp = ilk
-                  :color (get-color-reaction db ilk id)
-                  (get-item-reaction db type id)))))
+    (let [node (modal-node db)
+          ilk (kw* (:ilk node))
+          id (:item-id node)]
+      (get-item db ilk id))))
 
 (defn- get-scene-item-ids [scene ilk]
-       (let [all-nodes (:nodes scene)
-             nodes (filter #(= (kw* (:ilk %)) ilk) (vals all-nodes))
-             ids (map #(:item-id %) nodes)]
-            (into #{} ids)))
+  (let [all-nodes (:nodes scene)
+        nodes (filter #(= (kw* (:ilk %)) ilk) (vals all-nodes))
+        ids (map #(:item-id %) nodes)]
+    (into #{} ids)))
 
-(register-sub
+(def-sub
   :pd/modal-select-options
   (fn [db _]
-      (let [room (modal-room @db)
-            scene (modal-scene @db)
-            node (modal-node @db)
-            ilk (keyword (:ilk node))
-            ; the ids of all items (light, sensor ect…), which are linked to the room and thus can be used by the scene
-            room-item-ids (set (get-in @db [:room (:id room) ilk]))
-            ; the ids of the items that are already used by the scene
-            scene-item-ids (get-scene-item-ids scene ilk)
-            ; filter away those items that are already in the scene
-            item-ids (difference room-item-ids scene-item-ids)
-            ; re-add the item-id of the node (if it exists)
-            item-ids* (if (:item-id node) (cons (:item-id node) item-ids) item-ids)
-            ; load the items
-            items (map (fn [id] (get-in @db [ilk id])) item-ids*)]
-           (reaction items))))
+    (let [room (modal-room db)
+          scene (modal-scene db)
+          node (modal-node db)
+          ilk (keyword (:ilk node))
+          ; the ids of all items (light, sensor ect…), which are linked to the room and thus can be used by the scene
+          room-item-ids (set (get-in db [:room (:id room) ilk]))
+          ; the ids of the items that are already used by the scene
+          scene-item-ids (get-scene-item-ids scene ilk)
+          ; filter away those items that are already in the scene
+          item-ids (difference room-item-ids scene-item-ids)
+          ; re-add the item-id of the node (if it exists)
+          item-ids* (if (:item-id node) (cons (:item-id node) item-ids) item-ids)
+          ; load the items
+          items (map (fn [id] (get-in @db [ilk id])) item-ids*)]
+      items)))

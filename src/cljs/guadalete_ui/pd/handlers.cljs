@@ -1,6 +1,6 @@
 (ns guadalete-ui.pd.handlers
   (:require
-    [re-frame.core :refer [dispatch register-handler]]
+    [re-frame.core :refer [dispatch def-event]]
     [thi.ng.geom.core :as g]
     [thi.ng.geom.core.vector :refer [vec2]]
     [guadalete-ui.pd.mouse :as mouse]
@@ -20,38 +20,38 @@
 ;//  | '  \/ _ \ || (_-< -_)
 ;//  |_|_|_\___/\_,_/__\___|
 ;//
-(register-handler
+(def-event
   :mouse/move
   (fn [db [_ data]]
       (mouse/move data db)))
 
-(register-handler
+(def-event
   :mouse/down
   (fn [db [_ data]]
       (mouse/down data db)))
 
-(register-handler
+(def-event
   :mouse/up
   (fn [db [_ data]]
       (mouse/up data db)))
 
-(register-handler
+(def-event
   :mouse/enter
   (fn [db [_ data]]
       (if (= 0 (:buttons data))
         (mouse/up data db)
         db)))
 
-(register-handler
+(def-event
   :mouse/leave
   (fn [db [_ data]] db))
 
-(register-handler
+(def-event
   :mouse/click
   (fn [db [_ data]]
       (mouse/up data db)))
 
-(register-handler
+(def-event
   :mouse/double-click
   (fn [db [_ {:keys [room-id ilk scene-id id] :as data}]]
       (condp = (kw* ilk)
@@ -63,7 +63,7 @@
                       (assoc db :pd/modal-node-data {:room-id room-id :scene scene-id :node id}))
              db)))
 
-(register-handler
+(def-event
   :mouse/default-up
   (fn [db [_ data]]
       (mouse/default-up data db)))
@@ -74,7 +74,7 @@
 ;//  | '_ \ _` |
 ;//  | .__\__,_|
 ;//  |_|
-(register-handler
+(def-event
   :pd/mouse-down
   (fn [db [_ {:keys [scene-id node-id position]}]]
       (let [scene (get-in db [:scene scene-id])  
@@ -84,7 +84,7 @@
                           :pos-1 (vec-map (:translation scene)))]  
            (assoc-in db [:scene scene-id] scene*))))
 
-(register-handler
+(def-event
   :pd/mouse-move
   (fn [db [_ {:keys [scene-id position]}]]
       (let [scene (get-in db [:scene scene-id])
@@ -93,7 +93,7 @@
             scene* (assoc scene :translation (vec-map translation*))]
            (assoc-in db [:scene scene-id] scene*))))
 
-(register-handler
+(def-event
   :pd/mouse-up
   (fn [db [_ {:keys [scene-id position]}]]
       (let [scene (get-in db [:scene scene-id])
@@ -108,7 +108,7 @@
 ;//  | ' \/ _ \ _` / -_)
 ;//  |_||_\___\__,_\___|
 ;//
-(register-handler
+(def-event
   :node/make
   (fn [db [_ {:keys [room-id scene-id ilk position] :as data}]]
       (let [scene (get-in db [:scene scene-id])
@@ -122,17 +122,17 @@
            ;(assoc-in db [:scene scene-id] scene*)
            db)))
 
-(register-handler
+(def-event
   :node/reset-all
   (fn [db [_ scene-id]]
       (node/reset-all scene-id db)))
 
-(register-handler
+(def-event
   :node/mouse-down
   (fn [db [_ data]]
       (node/select data db)))
 
-(register-handler
+(def-event
   :node/mouse-move
   (fn [db [_ data]]
       (node/move data db)))
@@ -143,27 +143,27 @@
 ;//  |  _| / _ \ V  V /
 ;//  |_| |_\___/\_/\_/
 ;//
-(register-handler
+(def-event
   :flow/mouse-down
   (fn [db [_ data]]
       (flow/begin data db)))
 
-(register-handler
+(def-event
   :flow/mouse-move
   (fn [db [_ data]]
       (flow/move data db)))
 
-(register-handler
+(def-event
   :flow/mouse-up
   (fn [db [_ data]]
       (flow/end data db)))
 
-(register-handler
+(def-event
   :flow/check-connection
   (fn [db [_ data]]
       (flow/check-connection data db)))
 
-(register-handler
+(def-event
   :flow/reset-target
   (fn [db [_ data]]
       (flow/reset-target data db)))

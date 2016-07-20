@@ -1,8 +1,10 @@
 (ns guadalete-ui.core
+  (:require-macros [secretary.core :refer [defroute]])
   (:require
     [clojure.string :as s]
     [taoensso.sente :as sente]
     [schema.core :as schema]
+    [secretary.core :as secretary]
     [system.components.sente :refer [new-channel-socket-client]]
     [com.stuartsierra.component :as component]
     [cljs-utils.core :as utils :refer [by-id]]
@@ -10,6 +12,7 @@
     [goog.events :as events]
     [reagent.core :as reagent]
     [re-frame.core :as re-frame]
+    [devtools.core :as devtools]
 
     [guadalete-ui.handlers]
     [guadalete-ui.subscriptions]
@@ -21,13 +24,18 @@
     [guadalete-ui.util :refer [contains-value?]]
     [guadalete-ui.console :as log])
 
-  (:import [goog.history Html5History]))
+  (:import [goog History]
+           [goog.history EventType]))
 
-(def history (Html5History.))
-(doto history
-      (.setUseFragment false)
-      (.setPathPrefix "")
-      (.setEnabled true))
+;; -- Debugging aids ----------------------------------------------------------
+(devtools/install!)       ;; we love https://github.com/binaryage/cljs-devtools
+
+
+(def history
+  (doto (History.)
+    (events/listen EventType.NAVIGATE
+                   (fn [event] (secretary/dispatch! (.-token event))))
+    (.setEnabled true)))
 
 (def INPUTTYPE_WHITELIST
   ["TEXT" "PASSWORD" "SEARCH" "EMAIL" "NUMBER" "DATE" "FILE"])

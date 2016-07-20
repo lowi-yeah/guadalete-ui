@@ -1,6 +1,6 @@
 (ns guadalete-ui.subscriptions
   (:require-macros [reagent.ratom :refer [reaction]])
-  (:require [re-frame.core :as re-frame]
+  (:require [re-frame.core :as re-frame :refer [def-sub subscribe]]
             [clojure.set :refer [difference]]
             [clojure.string :as string]
             [guadalete-ui.items :refer [assemble-item]]
@@ -15,102 +15,99 @@
 ;//  (_-< || | '_ (_-< _| '_| | '_ \  _| / _ \ ' \(_-<
 ;//  /__/\_,_|_.__/__\__|_| |_| .__/\__|_\___/_||_/__/
 ;//                           |_|
-(re-frame/register-sub
+(def-sub
   :main-panel
   (fn [db _]
-      (reaction (:main-panel @db))))
+    (log/debug "subscribing to :main-panel" db)
+    (:main-panel db)))
 
-(re-frame/register-sub
+(def-sub
   :user/role
   (fn [db _]
-      (reaction (:user/role @db))))
+    (:user/role db)))
 
 ;//
 ;//   _ _ ___ ___ _ __  ___
 ;//  | '_/ _ \ _ \ '  \(_-<
 ;//  |_| \___\___/_|_|_/__/
 ;//
-(re-frame/register-sub
+(def-sub
   :rooms
   (fn [db _]
-      (reaction (vals (:room @db)))))
+    (vals (:room db))))
 
 ;//      _                _
 ;//   ____)__ _ _ _  __ _| |
 ;//  (_-< / _` | ' \/ _` | |
 ;//  /__/_\__, |_||_\__,_|_|
 ;//       |___/
-(re-frame/register-sub
+(def-sub
   :signal/all
   (fn [db _]
-      (->> (:signal @db)
-           (remove (fn [s] (nil? s)))
-           (reaction))))
+    (->> (:signal db)
+         (remove (fn [s] (nil? s))))))
 
 ;//      _
 ;//   __| |_ __ __ __
 ;//  / _` | '  \\ \ /
 ;//  \__,_|_|_|_/_\_\
 ;//
-(re-frame/register-sub
+(def-sub
   :dmx/available
   (fn [db _]
-      (reaction (dmx/assignable @db))))
+    (dmx/assignable db)))
 
-(re-frame/register-sub
+(def-sub
   :dmx/all
   (fn [db _]
-      (reaction (dmx/all @db))))
+    (dmx/all db)))
 
 ;//                           _
 ;//   __ _  _ _ _ _ _ ___ _ _| |_
 ;//  / _| || | '_| '_/ -_) ' \  _|
 ;//  \__|\_,_|_| |_| \___|_||_\__|
 ;//
-(re-frame/register-sub
+(def-sub
   :current/view
   (fn [db _]
-      (reaction (:current/view @db))))
+    (:current/view db)))
 
-(re-frame/register-sub
+(def-sub
   :current/segment
   (fn [db _]
-      (reaction (:current/segment @db))))
+    (:current/segment db)))
 
 
-(re-frame/register-sub
+(def-sub
   :current/room
   (fn [db [_ {:keys [assemble]}]]
-      (let [room-id (reaction (:current/room-id @db))
-            room (get-in @db [:room @room-id])]
-           (if assemble
-             (reaction (assemble-item :room @db room))
-             (reaction room)
-             ))))
+    (let [room-id (reaction (:current/room-id db))
+          room (get-in db [:room @room-id])]
+      (if assemble
+        (assemble-item :room db room)
+        room
+        ))))
 
-(re-frame/register-sub
+(def-sub
   :current/light
   (fn [db _]
-      (let [light-id (:current/light-id @db)
-            light (get-in @db [:light light-id])]
-           ;(reaction (:new/light @db))
-           (reaction light))))
+    (let [light-id (:current/light-id db)
+          light (get-in db [:light light-id])]
+      light)))
 
-(re-frame/register-sub
+(def-sub
   :current/scene
   (fn [db _]
-      (let [scene-id (:current/scene-id @db)
-            scene (get-in @db [:scene scene-id])]
-           (reaction scene))))
+    (let [scene-id (:current/scene-id db)
+          scene (get-in db [:scene scene-id])]
+      scene)))
 
-
-(re-frame/register-sub
+(def-sub
   :selected
   (fn [db _]
-      (let [scene-id (:current/scene-id @db)
-            nodes (get-in @db [:scene "scene2" :nodes])
-            selected-nodes (filter (fn [[k v]] (:selected v)) nodes)]
-           (reaction selected-nodes))))
+    (let [nodes (get-in db [:scene "scene2" :nodes])
+          selected-nodes (filter (fn [[k v]] (:selected v)) nodes)]
+      selected-nodes)))
 
 
 ;//   _ _      _   _
@@ -118,18 +115,18 @@
 ;//  | | / _` | ' \  _|
 ;//  |_|_\__, |_||_\__|
 ;//      |___/
-(re-frame/register-sub
+(def-sub
   :light/unused-by-scene
   (fn [db [_ room-id scene-id]]
-      (let [all-light-ids (into #{} (get-in @db [:room room-id :light]))
-            used-light-ids (->>
-                             (get-in @db [:scene scene-id :nodes])
-                             (filter (fn [[id l]] (= :light (kw* (:ilk l)))))
-                             (map (fn [[id l]] (:item-id l)))
-                             (filter (fn [id] id))
-                             (into #{}))
-            unused (difference all-light-ids used-light-ids)]
-           (reaction (into [] unused)))))
+    (let [all-light-ids (into #{} (get-in db [:room room-id :light]))
+          used-light-ids (->>
+                           (get-in db [:scene scene-id :nodes])
+                           (filter (fn [[id l]] (= :light (kw* (:ilk l)))))
+                           (map (fn [[id l]] (:item-id l)))
+                           (filter (fn [id] id))
+                           (into #{}))
+          unused (difference all-light-ids used-light-ids)]
+      (into [] unused))))
 
 
 ;//           _
@@ -144,7 +141,4 @@
 ;//  |  _| ' \/ -_) \ V  V / ' \/ _ \ / -_) / _` / _` |  _/ _` | '_ \ _` (_-< -_)
 ;//   \__|_||_\___|  \_/\_/|_||_\___/_\___| \__,_\__,_|\__\__,_|_.__\__,_/__\___|
 ;//
-(re-frame/register-sub
-  :db
-  (fn [db _]
-      (reaction @db)))
+(def-sub :db (fn [db _] db))

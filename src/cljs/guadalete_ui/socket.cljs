@@ -25,40 +25,38 @@
 (def json-reader (transit/reader :json))
 
 (defn chsk-reconnect!
-      "Delegate for reconneting sente. Called after login/logout for re-authentication"
-      []
-      (sente/chsk-reconnect! chsk))
+  "Delegate for reconneting sente. Called after login/logout for re-authentication"
+  []
+  (sente/chsk-reconnect! chsk))
 
 (defn- ->chsk-state [state]
-       (if (= state {:first-open? true})
-         (log/info "Socket connection opened")))
+  (if (= state {:first-open? true})
+    (log/info "Socket connection opened")))
 
 (defn- ->chsk-handshake [[_ ?data]]
-       (let [[_ _ ?user-role] ?data]
-            (dispatch [:ws/handshake (keyword ?user-role)])))
+  (let [[_ _ ?user-role] ?data]
+    (dispatch [:ws/handshake (keyword ?user-role)])))
 
 (defn- ->chsk-receive [[_ msg]]
-       (let [[topic data] msg
-             data* (transit/read json-reader data)
-             data** {:id (get data* "id") :data (get data* "data")}]
-            (dispatch [topic data**])))
-
+  (let [[topic data] msg
+        data* (transit/read json-reader data)]
+    (dispatch [topic data*])))
 
 (defn- event-handler [event]
-       (match [event]
-              [[:chsk/state state]] (->chsk-state state)
-              [[:chsk/handshake _]] (->chsk-handshake event)
-              [[:chsk/recv _]] (->chsk-receive event)
-              :else (log/debug "Unmatched event: %s" (str event))))
+  (match [event]
+         [[:chsk/state state]] (->chsk-state state)
+         [[:chsk/handshake _]] (->chsk-handshake event)
+         [[:chsk/recv _]] (->chsk-receive event)
+         :else (log/debug "Unmatched event: %s" (str event))))
 
 ;; Wrap for logging, catching, etc.:
 (defn- event-handler* [{:as ev-msg :keys [id ?data event]}]
-       (event-handler event))
+  (event-handler event))
 
 (defn event-loop
-      "Handle inbound events."
-      []
-      (go-loop []
-               (let [ev-msg (<! (:ch-chsk sente-client))]
-                    (event-handler* ev-msg)
-                    (recur))))
+  "Handle inbound events."
+  []
+  (go-loop []
+           (let [ev-msg (<! (:ch-chsk sente-client))]
+             (event-handler* ev-msg)
+             (recur))))
