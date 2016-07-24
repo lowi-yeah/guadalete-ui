@@ -21,6 +21,7 @@
 (def chsk (:chsk sente-client))
 (def chsk-send! (:chsk-send! sente-client))
 (def chsk-state (:chsk-state sente-client))
+(def cb-success? sente/cb-success?)
 
 (def json-reader (transit/reader :json))
 

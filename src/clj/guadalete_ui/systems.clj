@@ -37,9 +37,6 @@
 ;//  / _` / -_) V / -_) / _ \ '_ \ '  \/ -_) ' \  _|
 ;//  \__,_\___|\_/\___|_\___/ .__/_|_|_\___|_||_\__|
 ;//                         |_|
-
-;(defsystem dev-system [])
-
 (defn dev-system
       "Assembles and returns components for a base application"
       []

@@ -36,10 +36,10 @@ pre, code, input{
 // \ V / / -_) V  V (_-<
 //  \_/|_\___|\_/\_//__/
 #view {
-  width: calc(100% - 150px);
-  // padding: 1.5rem 1rem;
   min-height: 100vh;
-  margin-left:150px;
+  // width: calc(100% - 150px);
+  padding-left:150px;
+  // margin-left:150px;
 }
 
 .full-height {
@@ -219,4 +219,8 @@ tr.light {
 
 .relative {
   position:relative;
+}
+
+.green-bg {
+  background-color: rgba($grey-light, 0.64);
 }

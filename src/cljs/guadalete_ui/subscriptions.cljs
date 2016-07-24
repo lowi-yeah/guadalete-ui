@@ -18,7 +18,6 @@
 (def-sub
   :main-panel
   (fn [db _]
-    (log/debug "subscribing to :main-panel" db)
     (:main-panel db)))
 
 (def-sub

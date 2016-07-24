@@ -7,7 +7,6 @@
       [ring.middleware.format :refer [wrap-restful-format]]
       [clojure.core.match :as match :refer (match)]
       [environ.core :refer [env]]
-      [taoensso.timbre :as log]
       [cemerick.friend :as friend]
       (cemerick.friend [workflows :as workflows]
                        [credentials :as creds])

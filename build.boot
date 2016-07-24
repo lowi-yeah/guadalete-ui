@@ -48,6 +48,7 @@
                   [reagent "0.6.0-rc"]
                   [reagent-utils "0.1.9"]
                   [re-frame "0.8.0-alpha2"]
+                  ;[day8.re-frame/async-flow-fx "0.0.1"]
                   [secretary "1.2.3"]
                   [prismatic/schema "1.1.1"]
                   [com.andrewmcveigh/cljs-time "0.4.0"]

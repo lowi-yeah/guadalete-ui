@@ -1,7 +1,7 @@
 (ns guadalete-ui.handlers
   ;(:require-macros [reagent.ratom :refer [reaction]])
   (:require
-    [re-frame.core :refer [dispatch def-event path trim-v after]]
+    [re-frame.core :refer [dispatch def-event def-event-fx def-fx path trim-v after]]
     [secretary.core :as secretary]
     [taoensso.sente :as sente]
     [schema.core :as s]
@@ -22,8 +22,6 @@
     [guadalete-ui.views.modal :as modal]
     [guadalete-ui.pd.nodes :as node]))
 
-
-
 ;//         _    _    _ _
 ;//   _ __ (_)__| |__| | |_____ __ ____ _ _ _ ___
 ;//  | '  \| / _` / _` | / -_) V  V / _` | '_/ -_)
@@ -38,47 +36,24 @@
 ;; after an event handler has run, this middleware can check that
 ;; it the value in app-db still correctly matches the schema.
 (def check-schema-mw (after (partial check-and-throw DB)))
+;
+;(log/debug "day8.re-frame.async-flow-fx" (:make-flow-event-handler day8.re-frame.async-flow-fx))
+;
+;(fx/register :async-flow (:make-flow-event-handler day8.re-frame.async-flow-fx))
 
+;(fx/register
+;  :aync-flow
+;  (fn [{:as flow :keys [id]}]
+;    (def-event-fx
+;      (or id :async/flow)
+;      (day8.re-frame.async-flow-fx/make-flow-event-handler flow))
+;    (dispatch [id :setup])))
 
 ;//          _
 ;//   ______| |_ _  _ _ __
 ;//  (_-< -_)  _| || | '_ \
 ;//  /__\___|\__|\_,_| .__/
 ;//                  |_|
-(def-event
-  :initialize-db
-  check-schema-mw
-  (fn [_db _msg]
-    (dispatch [:sync/role])
-    ;return default db
-    {:ws/connected?   false
-     :loading?        false
-     :user/role       :none
-     :main-panel      :blank-panel
-     :name            "guadalete-ui"
-     :message         ""
-     :current/view    :blank
-     :current/segment :scene}))
-
-(def-event
-  :ws/handshake
-  ;check-schema-mw
-  (fn [db [_ role]]
-    (dispatch [:set-root-panel role])
-    (assoc db :ws/connected? true :user/role role)))
-
-; more of a convenience handler for development
-; when auto-reload updates the page, no new handshake is being exchanged,
-; and thus the userr-role is not set. Here this is done explicitly
-; irrelevant for normal operation, as not auto-reload happens there
-(def-event
-  :sync/role
-  (fn [db _]
-    (chsk-send! [:sync/role]
-                8000
-                (fn [reply]
-                  (dispatch [:ws/handshake (keyword (:role reply))])))
-    db))
 
 
 (def-event
@@ -87,9 +62,7 @@
     (condp = (:user/role db)
       :none (assoc db :main-panel :blank-panel)
       :anonymous (assoc db :main-panel :login-panel)
-      :admin (do
-               (dispatch [:sync/state])
-               (assoc db :main-panel :root-panel)))))
+      :admin (assoc db :main-panel :root-panel))))
 
 ;//   _          _
 ;//  | |___ __ _(_)_ _
@@ -121,6 +94,7 @@
 (def-event
   :chsk/reconnect
   (fn [db]
+    (log/debug ":chsk/reconnekkt")
     (chsk-reconnect!)
     (assoc db :ws/connected? false)))
 
@@ -184,40 +158,6 @@
     (log/debug ":modal/new-room")
     db))
 
-
-
-;//      _        _
-;//   ___ |_ __ _| |_ ___
-;//  (_-<  _/ _` |  _/ -_)
-;//  /__/\__\__,_|\__\___|
-;//
-(def-event
-  :sync/state
-  (fn [db _]
-    (chsk-send! [:sync/state]
-                8000                                        ; Timeout
-                (fn [reply]                                 ; Reply is arbitrary Clojure data
-                  (when (sente/cb-success? reply)           ; Checks for :chsk/closed, :chsk/timeout, :chsk/error
-                    (dispatch [:state reply]))))
-    db))
-
-(def-event
-  :state
-  (fn [db [_ state]]
-    (let [rooms-map (mappify :id (:room state))
-          lights-map (mappify :id (:light state))
-          scenes-map (mappify :id (:scene state))
-          scenes-map* (scene/reset-all scenes-map)
-          colors-map (mappify :id (:color state))
-          signals-map (mappify :id (:signal state))
-          config (:config state)]
-      (assoc db
-        :room rooms-map
-        :light lights-map
-        :signal signals-map
-        :color colors-map
-        :scene scenes-map*
-        :config config))))
 
 ;//   _ _
 ;//  (_) |_ ___ _ __  ___
@@ -313,6 +253,7 @@
   (fn [db [_ data]]
     (let [modal-id (:id data)
           options (or (:options data) {})]
+      (log/debug "open moddal" modal-id options)
       (modal/open modal-id options)
       db)))
 

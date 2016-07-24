@@ -9,6 +9,5 @@
       (let [nodes* (nodes/reset-all* (:nodes scene))]
            [id (assoc scene :nodes nodes*)]))
 
-
 (defn reset-all [scenes-map]
       (into {} (map reset scenes-map)))

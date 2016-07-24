@@ -65,5 +65,5 @@
           ; re-add the item-id of the node (if it exists)
           item-ids* (if (:item-id node) (cons (:item-id node) item-ids) item-ids)
           ; load the items
-          items (map (fn [id] (get-in @db [ilk id])) item-ids*)]
+          items (map (fn [id] (get-in db [ilk id])) item-ids*)]
       items)))

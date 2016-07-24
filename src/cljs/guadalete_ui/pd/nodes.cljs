@@ -13,7 +13,8 @@
     [guadalete-ui.util :refer [pretty kw* vec-map]]
     [guadalete-ui.pd.color :refer [make-color render-color]]
     [guadalete-ui.items :refer [find-unused-light find-unused-signal]]
-    [guadalete-ui.pd.link :as link :refer [links]]))
+    [guadalete-ui.pd.link :as link :refer [links]]
+    [guadalete-ui.views.widgets :refer [sparky]]))
 
 ;(events/listen (r/dom-node this) "dblclick"
 ;               #(double-click % room-id (:id scene)))
@@ -163,6 +164,8 @@
                  [svg/rect (vec2 0 0) node-width height
                   {:class "bg"
                    :rx    1}]
+
+                 [sparky item]
 
                  [svg/text
                   (vec2 4 12)
