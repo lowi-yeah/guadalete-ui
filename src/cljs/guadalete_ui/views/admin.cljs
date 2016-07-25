@@ -2,14 +2,14 @@
   "The login screen."
   (:require
     [cljs-utils.core :refer [by-id]]
+    [reagent.core :refer [create-class]]
     [re-frame.core :refer [subscribe]]
     [reagent.core :as reagent]
     [guadalete-ui.console :as log]
     [guadalete-ui.util :refer [pretty]]
     [guadalete-ui.views.modal :refer [modals]]
     [guadalete-ui.views.segments :refer [segment]]
-    [guadalete-ui.views.menu :refer [main-menu secondary-menu]]
-    ))
+    [guadalete-ui.views.menu :refer [main-menu secondary-menu]]))
 
 
 ;//       _
@@ -34,8 +34,8 @@
        [:div#header.margins.flex-row-container
         [:h2 (:name @room-rctn)]
         [:div#menus.flexing
-         [main-menu (:id @room-rctn) segment-rctn]
-         [secondary-menu (:id @room-rctn) segment-rctn]]]
+         [main-menu room-rctn segment-rctn]
+         [secondary-menu room-rctn segment-rctn]]]
        [:div.flexing.relative
         (segment @segment-rctn room-rctn)
         ]])))
@@ -49,36 +49,44 @@
 ;//  | '_/ _ \ _ \  _|
 ;//  |_| \___\___/\__|
 ;//
+
 (defn root-panel
-  "root component for :role/admin"
+  "Root component for :admin.
+  Using a Form-3 component here, as an eternal js library (semantic-ui) has to be initialized.
+  @see: https://github.com/Day8/re-frame/wiki/Creating%20Reagent%20Components"
   []
-  (fn []
-    (let [
-          view-rctn (subscribe [:current/view])
-          rooms-rctn (subscribe [:rooms])
-          ]
-      [(with-meta identity
-                  {:component-did-mount (fn [_]
-                                          (let [jq-root (js/$ "#root")
-                                                jq-nav (js/$ "#nav")]
-                                            (.sidebar jq-nav
-                                                      (js-obj "context" jq-root
-                                                              "closable" false
-                                                              "dimPage" false))
-                                            (.sidebar jq-nav "setting" "transition" "overlay")
-                                            (.sidebar jq-nav "push page")))})
-       [:div#root.attached.segment.pushable
-        [:div#nav.ui.visible.thin.sidebar.inverted.vertical.menu
-         (doall
-           (for [room @rooms-rctn]
-             (let
-               ; OBACHT the '#' is important, since without it the whole page gets relaoded
-               [room-link (str "#/room/" (:id room))]
-               ^{:key (str "r-" (:id room))}
-               [:a.item {:href room-link} (:name room)])))
-         [:a.item {:on-click #(.modal (js/$ "#new-room.modal") "show")}
-          [:i.large.add.circle.icon]]]
-        [:div#view.pusher
-         (view @view-rctn)]
-        ;[modals]
-        ]])))
+  (let [view-rctn (subscribe [:current/view])
+        rooms-rctn (subscribe [:rooms])]
+    (create-class
+      {:component-did-mount
+       (fn [_]
+         (let [jq-root (js/$ "#root")
+               jq-nav (js/$ "#nav")]
+           (.sidebar jq-nav
+                     (js-obj "context" jq-root
+                             "closable" false
+                             "dimPage" false))
+           (.sidebar jq-nav "setting" "transition" "overlay")
+           (.sidebar jq-nav "push page")))
+
+       ;; for more helpful warnings & errors
+       :display-name
+       "root/admin"
+
+       :reagent-render
+       (fn []
+         [:div#root.attached.segment.pushable
+          [:div#nav.ui.visible.thin.sidebar.inverted.vertical.menu
+           (doall
+             (for [room @rooms-rctn]
+               (let
+                 ; OBACHT the '#' is important, since without it the whole page gets relaoded
+                 [room-link (str "#/room/" (:id room))]
+                 ^{:key (str "r-" (:id room))}
+                 [:a.item {:href room-link} (:name room)])))
+           [:a.item {:on-click #(.modal (js/$ "#new-room.modal") "show")}
+            [:i.large.add.circle.icon]]]
+          [:div#view.pusher
+           (view @view-rctn)]
+          ;[modals]
+          ])})))

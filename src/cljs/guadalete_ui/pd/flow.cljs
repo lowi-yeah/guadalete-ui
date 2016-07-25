@@ -87,7 +87,7 @@
 (defn flows
       "Renders the connections between nodes (flows that is…)"
       []
-      (fn [room-id scene]
+      (fn [scene]
           ^{:key "flow-group"}
           [svg/group
            {:id "flows"}

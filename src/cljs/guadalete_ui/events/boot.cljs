@@ -87,7 +87,6 @@
           rooms-map (mappify :id (:room state))
           lights-map (mappify :id (:light state))
           scenes-map (mappify :id (:scene state))
-          scenes-map* (mappify :id scenes-map)
           colors-map (mappify :id (:color state))
           signals-map (mappify :id (:signal state))
           config (:config state)]
@@ -96,6 +95,6 @@
                    :light lights-map
                    :signal signals-map
                    :color colors-map
-                   :scene scenes-map*
+                   :scene scenes-map
                    :config config)
        :dispatch [:set-root-panel role]})))

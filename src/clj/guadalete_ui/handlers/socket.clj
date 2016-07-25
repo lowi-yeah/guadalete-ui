@@ -114,10 +114,12 @@
     ))
 
 (defmethod event-handler :scene/update
-  [{:keys [?data db-conn]}]
+  [{:keys [?data db-conn ?reply-fn]}]
   (let [[id diff flag] ?data
         flag (or flag :patch)]
-    (db/update-scene db-conn id diff flag)))
+    (log/debug "update scene" ?reply-fn)
+    ;(db/update-scene db-conn id diff flag)
+    ))
 
 (defmethod event-handler :scene/trash
   [{:keys [?data]}]

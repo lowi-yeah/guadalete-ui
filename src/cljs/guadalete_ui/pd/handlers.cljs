@@ -1,6 +1,6 @@
 (ns guadalete-ui.pd.handlers
   (:require
-    [re-frame.core :refer [dispatch def-event]]
+    [re-frame.core :refer [dispatch def-event def-event-fx]]
     [thi.ng.geom.core :as g]
     [thi.ng.geom.core.vector :refer [vec2]]
     [guadalete-ui.pd.mouse :as mouse]
@@ -111,19 +111,30 @@
 ;//  | ' \/ _ \ _` / -_)
 ;//  |_||_\___\__,_\___|
 ;//
-(def-event
+;(comment
+;  (def-event-fx
+;    :node/make
+;    (fn [world [_ role]]
+;      (let [sente-effect {:topic      :sync/state
+;                          :data       {:role role}
+;                          :timeout    8000                  ;; optional see API docs
+;                          :on-success [:success-sync-state]
+;                          :on-failure [:failure-sync-state]}]
+;        {:db    (:db world)
+;         :sente sente-effect}))))
+
+(def-event-fx
   :node/make
-  (fn [db [_ {:keys [room-id scene-id ilk position] :as data}]]
+  (fn [{:keys [db]} [_ {:keys [room-id scene-id ilk position] :as data}]]
     (let [scene (get-in db [:scene scene-id])
           nodes (:nodes scene)
           data* (assoc data :position (offset-position position scene))
           node (make-node ilk data* db)
           nodes* (assoc nodes (keyword (:id node)) node)
-          scene* (assoc scene :nodes nodes*)]
-
-      (dispatch [:scene/update scene*])
-      ;(assoc-in db [:scene scene-id] scene*)
-      db)))
+          scene* (assoc scene :nodes nodes*)
+          db* (assoc-in db [:scene scene-id] scene*)]
+      {:db       db*
+       :dispatch [:scene/update scene* scene]})))
 
 (def-event
   :node/reset-all

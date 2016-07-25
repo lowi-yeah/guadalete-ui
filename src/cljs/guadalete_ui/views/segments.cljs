@@ -36,14 +36,12 @@
 ;                     "Login"]
 ;                    ]]]]])))
 
-(defmulti segment
-          (fn [type room-rctn]
-              type))
+(defmulti segment (fn [type _] type))
 
 (defmethod segment :scene
            [_ room-rctn]
            (let [scene-rctn (subscribe [:current/scene])]
-                [pd room-rctn @scene-rctn]))
+                [pd room-rctn scene-rctn]))
 
 (defn- color-type [num-channels]
        (condp = num-channels

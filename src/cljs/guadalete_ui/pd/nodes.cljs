@@ -193,14 +193,14 @@
 (defn nodes
       "Renders all nodes into the editor"
       []
-      (fn [room-id scene]
+      (fn [room-rctn scene-rctn]
           [svg/group
            {:id "nodes"}
-           (doall (for [n (vals (:nodes scene))]
+           (doall (for [n (vals (:nodes @scene-rctn))]
                        (let [ilk (keyword (:ilk n))
                              item-rctn (subscribe [:pd/node-item {:ilk ilk :id (:item-id n)}])]
                             ^{:key (str "n-" (:id n))}
-                            [node room-id (:id scene) n @item-rctn])))]))
+                            [node (:id @room-rctn) (:id @scene-rctn) n @item-rctn])))]))
 
 
 ;//              _

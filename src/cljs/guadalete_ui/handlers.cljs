@@ -214,35 +214,6 @@
     db))
 
 
-;//
-;//   _____ ___ _ _  ___
-;//  (_-< _/ -_) ' \/ -_)
-;//  /__\__\___|_||_\___|
-;//
-(def-event
-  :scene/update
-  (fn [db [_ update]]
-
-    (if (nil? update)
-      (do
-        (log/error "Error during update scene. Scene is nil.")
-        db)
-      (let [id (:id update)
-            original (get-in db [:scene id])
-            patch (differ/diff original update)]
-
-        ;; if the id is nil, log an error
-        (if (nil? id)
-          (do
-            (log/error "Error during update scene. Scene is nil.")
-            db)
-          (do
-            ;;if the patch is empty, send the whole scene and a replace-flag
-            (if (and (empty? (first patch)) (empty? (second patch)))
-              (chsk-send! [:scene/update [id original :replace]])
-              (chsk-send! [:scene/update [id patch]]))
-            (assoc-in db [:scene id] update)))))))
-
 ;//                _      _
 ;//   _ __  ___ __| |__ _| |
 ;//  | '  \/ _ \ _` / _` | |

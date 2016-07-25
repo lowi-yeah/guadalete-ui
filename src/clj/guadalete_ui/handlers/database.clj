@@ -39,8 +39,6 @@
                             :patch (differ/patch item diff)
                             :replace diff
                             (str "unexpected flag, \"" (str flag) \"))]
-
-              (log/debug "update item" patch)
               (-> (r/table type)
                   (r/get id)
                   (r/update patch)
