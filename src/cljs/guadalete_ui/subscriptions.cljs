@@ -1,13 +1,14 @@
 (ns guadalete-ui.subscriptions
-  (:require-macros [reagent.ratom :refer [reaction]])
-  (:require [re-frame.core :as re-frame :refer [def-sub subscribe]]
-            [clojure.set :refer [difference]]
-            [clojure.string :as string]
-            [guadalete-ui.items :refer [assemble-item]]
-            [guadalete-ui.util :refer [pretty in? kw*]]
-            [guadalete-ui.dmx :as dmx]
-            [guadalete-ui.console :as log]
-            ))
+  (:require-macros
+    [reagent.ratom :refer [reaction]])
+  (:require
+    [re-frame.core :refer [def-sub subscribe]]
+    ;[re-frame.interop :refer [make-reaction]]
+    [clojure.set :refer [difference]]
+    [guadalete-ui.items :refer [assemble-item]]
+    [guadalete-ui.util :refer [pretty in? kw*]]
+    [guadalete-ui.dmx :as dmx]
+    [guadalete-ui.console :as log]))
 
 
 ;//           _              _      _   _
@@ -109,6 +110,36 @@
           selected-nodes (filter (fn [[k v]] (:selected v)) nodes)]
       selected-nodes)))
 
+;//                _      _
+;//   _ __  ___ __| |__ _| |
+;//  | '  \/ _ \ _` / _` | |
+;//  |_|_|_\___\__,_\__,_|_|
+;//
+
+
+;Dynamic subscriptions allow you to create subscriptions that depend on Ratoms or Reactions (lets call them Signals).
+; These subscriptions will be rerun when the Ratom or Reaction changes.
+; You subscribe as usual with a vector like [:todos-list], and pass an additional vector of Signals.
+; The Signals are dereferenced and passed to the handler-fn.
+; Dynamic subscriptions need to pass a fn which takes app-db, the static vector, and the dereffed dynamic values.
+(def-sub
+  :modal-item-dynamic
+  (fn modal-item-dynamic [db _ [modal-data]]
+    (let [id (:id modal-data)
+          type (:type modal-data)]
+      (get-in db [type id]))))
+
+(def-sub
+  :modal-data*
+  (fn [db _]
+    (:modal/item db)))
+
+(def-sub
+  :modal/item
+  (fn [_ _]
+    (let [modal-data-rctn (subscribe [:modal-data*])
+          item-rctn (subscribe [:modal-item-dynamic] [modal-data-rctn])]
+      @item-rctn)))
 
 ;//   _ _      _   _
 ;//  | (_)__ _| |_| |_

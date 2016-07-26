@@ -53,10 +53,10 @@
            (with-open [conn (r/connect :host host :port port :auth-key auth-key :db db)]
                       (truncate conn "light")
                       (truncate conn "color")
-                      ;(items conn "dmx")
-                      ;(items conn "room")
+                      (items conn "dmx")
+                      (items conn "room")
                       (items conn "scene")
-                      ;(items conn "color")
+                      (items conn "color")
                       ;(users)
                       ;(sensors)
                       ;(items conn "light")

@@ -111,21 +111,11 @@
 ;//  | ' \/ _ \ _` / -_)
 ;//  |_||_\___\__,_\___|
 ;//
-;(comment
-;  (def-event-fx
-;    :node/make
-;    (fn [world [_ role]]
-;      (let [sente-effect {:topic      :sync/state
-;                          :data       {:role role}
-;                          :timeout    8000                  ;; optional see API docs
-;                          :on-success [:success-sync-state]
-;                          :on-failure [:failure-sync-state]}]
-;        {:db    (:db world)
-;         :sente sente-effect}))))
 
+;; event handler for adding nodes to a pd-scene. Called when an item is dropped from the pallete
 (def-event-fx
   :node/make
-  (fn [{:keys [db]} [_ {:keys [room-id scene-id ilk position] :as data}]]
+  (fn [{:keys [db]} [_ {:keys [scene-id ilk position] :as data}]]
     (let [scene (get-in db [:scene scene-id])
           nodes (:nodes scene)
           data* (assoc data :position (offset-position position scene))

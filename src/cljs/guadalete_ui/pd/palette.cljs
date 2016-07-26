@@ -35,14 +35,11 @@
         room-id (get data "room")
         scene-id (get data "scene")
         offset (vec2 (get data "offset"))
-        position (g/- ev-pos offset)
-        ]
+        position (g/- ev-pos offset)]
     (dispatch [:node/make {:room-id  room-id
                            :scene-id scene-id
                            :ilk      ilk
                            :position position}])))
-
-
 
 (defn- start-drag [ev room-id scene-id ilk]
   (let [ev (.-nativeEvent ev)

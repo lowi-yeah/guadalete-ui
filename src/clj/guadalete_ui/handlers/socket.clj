@@ -94,10 +94,12 @@
 ;                (db/make-room room)))
 
 (defmethod event-handler :room/update
-  [{:keys [?data db-conn]}]
+  [{:keys [?data ?reply-fn db-conn]}]
   (let [[id diff flag] ?data
-        flag (or flag :patch)]
-    (db/update-room db-conn id diff flag)))
+        flag (or flag :patch)
+        response (db/update-room db-conn id diff flag)]
+    (when ?reply-fn
+      (?reply-fn response))))
 
 (defmethod event-handler :room/trash
   [{:keys [?data]}]
@@ -129,15 +131,20 @@
 
 ; LIGHT
 ; ****************
-(defmethod event-handler :light/create
-  [{:keys [?data db-conn]}]
-  (db/create-light db-conn ?data))
+(defmethod event-handler :light/make
+  [{:keys [?data db-conn ?reply-fn]}]
+  (let [response (db/create-light db-conn ?data)]
+    (when ?reply-fn
+      (?reply-fn response))))
 
 (defmethod event-handler :light/update
-  [{:keys [?data db-conn]}]
+  [{:keys [?data ?reply-fn db-conn]}]
   (let [[id diff flag] ?data
-        flag (or flag :patch)]
-    (db/update-light db-conn id diff flag)))
+        flag (or flag :patch)
+        response (db/update-light db-conn id diff flag)]
+    (log/debug "updating light" response)
+    (when ?reply-fn
+      (?reply-fn response))))
 
 (defmethod event-handler :light/trash
   [{:keys [?data]}]

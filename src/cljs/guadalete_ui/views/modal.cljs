@@ -8,6 +8,7 @@
     [reagent.core :as reagent :refer [dom-node]]
     [re-frame.core :refer [dispatch subscribe]]
     [thi.ng.color.core :refer [as-css]]
+    [guadalete-ui.views.modal.light :refer [light-modal]]
     [guadalete-ui.util :refer [pretty kw*]]
     [guadalete-ui.console :as log]
     [guadalete-ui.pd.color :as color :refer [color-widget render-color]]))
@@ -61,10 +62,7 @@
         channels* (assoc channels index values)]
     (dispatch [:light/update (assoc @new-light-rctn :channels channels*)])))
 
-(defn change-light-name [ev new-light-rctn]
-  (let [name* (-> ev .-target .-value)]
-    (log/debug "change-light-name" name*)
-    (dispatch [:light/update (assoc @new-light-rctn :name name*)])))
+
 
 (defn- change-light-transport [ev new-light-rctn]
   (let [transport* (-> ev .-target .-value kw*)]
@@ -166,51 +164,7 @@
   (fn [new-light-rctn]
     [:p "mqtt configuration goes here…"]))
 
-(defn light-modal []
-  (fn []
-    (let [light-rctn (subscribe [:current/light])
-          available-dmx-rctn (subscribe [:dmx/available])]
-      [:div#edit-light.thing.ui.basic.modal.small
-       [:div.content.ui.form
 
-        [:div.flex-row-container.right
-         [:div.circular.ui.icon.button.trash
-          {:on-click #(dispatch [:light/prepare-trash (:id @light-rctn)])}
-          [:i.trash.outline.icon]]]
-
-        ; name
-        ; ----------------
-        [:div.flex-row-container
-         [:label "Name"]
-         [:div.ui.input.margin-bottom.flexing
-          [:input {:type      "text"
-                   :value     (:name @light-rctn)
-                   :on-change #(change-light-name % light-rctn)}]]]
-
-        ; transport
-        ; ----------------
-        ;[:div.flex-row-container
-        ; [:label "Transport"]
-        ; [:select.ui.dropdown.margin-bottom
-        ;  {:name      "transport"
-        ;   :on-change #(change-light-transport % new-light-rctn)
-        ;   :value     (:transport @new-light-rctn)
-        ;   }
-        ;  [:option {:value "dmx"} "DMX"]
-        ;  [:option {:value "mqtt"} "MQTT"]]
-        ; ]
-
-        [transport-dmx light-rctn available-dmx-rctn]
-        ;(condp = (:transport @new-light-rctn)
-        ;       :dmx
-        ;       :mqtt [transport-mqtt new-light-rctn]
-        ;       (comment "do nothing."))
-        ]
-       [:div.actions
-        [:div.ui.button.cancel "close"]
-        ;[:div.ui.button.approve "make!"]
-        ]
-       [:pre.debug (pretty @light-rctn)]])))
 
 (defn- light-modal-change [ev node]
   (let [item-id (-> ev
@@ -351,9 +305,10 @@
 (defn modals []
   (fn []
     [:div#modals.ui.modals.dimmer.page
-     [new-room-modal]
+     ;[new-room-modal]
      [light-modal]
-     [confirm-trash-modal]
-     [pd-light-modal]
-     [pd-signal-modal]
-     [pd-color-modal]]))
+     ;[confirm-trash-modal]
+     ;[pd-light-modal]
+     ;[pd-signal-modal]
+     ;[pd-color-modal]
+     ]))

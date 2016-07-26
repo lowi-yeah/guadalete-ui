@@ -262,7 +262,6 @@
            (let [node-id (str (random-uuid))
                  color* (make-color)
                  links (make-color-links node-id color*)]
-                (dispatch [:color/make color*])
                 {:id       node-id
                  :ilk      "color"
                  :position (vec-map position)

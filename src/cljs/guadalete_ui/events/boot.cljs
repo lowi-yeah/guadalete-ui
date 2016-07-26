@@ -1,7 +1,6 @@
 (ns guadalete-ui.events.boot
   (:require
-    [re-frame.core :refer [dispatch def-event def-event-fx def-fx path trim-v after]]
-    [guadalete-ui.fx.sente-fx]
+    [re-frame.core :refer [dispatch def-event def-event-fx def-fx]]
     [guadalete-ui.util :refer [pretty kw* mappify]]
     [guadalete-ui.console :as log]))
 

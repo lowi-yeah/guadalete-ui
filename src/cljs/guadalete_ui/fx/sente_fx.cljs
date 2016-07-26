@@ -6,8 +6,7 @@
     [guadalete-ui.util :refer [pretty]]))
 
 (defn request->sente-options
-  [{:as   request
-    :keys [topic data timeout on-success on-failure]
+  [{:keys [topic data timeout on-success on-failure]
     :or   {timeout    8000
            data       {}
            on-success [:sente-no-on-success]

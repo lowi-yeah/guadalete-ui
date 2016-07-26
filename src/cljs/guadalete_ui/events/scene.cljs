@@ -2,7 +2,7 @@
   (:require
     [re-frame.core :refer [dispatch def-event def-event-fx def-fx]]
     [differ.core :as differ]
-    [guadalete-ui.util :refer [pretty kw* mappify]]
+    [guadalete-ui.util :refer [pretty]]
     [guadalete-ui.console :as log]))
 
 

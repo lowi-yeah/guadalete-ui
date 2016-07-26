@@ -202,134 +202,13 @@
       db)))
 
 
-;//
-;//   _ _ ___ ___ _ __
-;//  | '_/ _ \ _ \ '  \
-;//  |_| \___\___/_|_|_|
-;//
-(def-event
-  :room/update
-  (fn [db [_ update]]
-    (dispatch [:item/update :room update])
-    db))
-
-
-;//                _      _
-;//   _ __  ___ __| |__ _| |
-;//  | '  \/ _ \ _` / _` | |
-;//  |_|_|_\___\__,_\__,_|_|
-;//
-(def-event
-  :modal/open
-  (fn [db [_ data]]
-    (let [modal-id (:id data)
-          options (or (:options data) {})]
-      (log/debug "open moddal" modal-id options)
-      (modal/open modal-id options)
-      db)))
-
-(def-event
-  :modal/approve
-  (fn [db [_ modal-id]]
-    (log/debug ":modal/approve" modal-id)
-    (condp = modal-id
-      ;:new-light (do (dispatch [:light/make]))
-      (comment "nothing yet"))
-    db))
-
-(def-event
-  :modal/deny
-  (fn [db _]
-    (dissoc db :pd/modal-node-data :new/light)))
-
-(def-event
-  :modal/register-node
-  (fn [db [_ {:keys [item-id]}]]
-    (if (= item-id "nil")
-      db
-      (let [scene (modal-scene db)
-            nodes (get scene :nodes)
-            node (modal-node db)
-            type (keyword (:type node))
-            item (get-in db [type item-id])
-            scene-items (get scene type)
-            node* (assoc node :item-id item-id)
-            nodes* (assoc nodes (kw* (:id node*)) node*)
-            scene* (assoc scene :nodes nodes*)
-            db* (assoc-in db [:scene (:id scene)] scene*)]
-        (dispatch [:scene/update scene*])
-        db*))))
 
 ;//   _ _      _   _
 ;//  | (_)__ _| |_| |_
 ;//  | | / _` | ' \  _|
 ;//  |_|_\__, |_||_\__|
 ;//      |___/
-;
-(def-event
-  :light/prepare-new
-  (fn [db [_ room-id]]
-    (let [channels (sort (into [] (dmx/assignable db)))
-          new-light {:id           (str (random-uuid))
-                     :name         (dickens/generate-name)
-                     :room-id      room-id
-                     :num-channels 1
-                     :transport    :dmx
-                     ; obacht:
-                     ; nested arrays, since each color can be assigned multiple channels
-                     :channels     [[(first channels)]]
-                     :color        {:h 0 :s 0 :v 0}}
 
-          room (get-in db [:room room-id])
-          room-lights* (conj (:light room) (:id new-light))
-          room* (assoc room :light room-lights*)]
-
-      (dispatch [:item/create :light new-light])
-      (dispatch [:room/update room*])
-
-      ; obacht: hackish
-      ; delay the modal-dispatch so the room update won't kill it instantly
-      (js/setTimeout #(dispatch [:modal/open {:id :edit-light}]) 300)
-      (assoc db :current/light-id (:id new-light)))))
-
-(def-event
-  :light/edit
-  (fn [db [_ light-id]]
-    (dispatch [:modal/open {:id :edit-light}])
-    (assoc db :current/light-id light-id)))
-
-(defn remove-channels
-  "Internal helper to remove channel-assignments during :light/update-new"
-  [light old-count new-count]
-  (into []
-        (map
-          (fn [index] (get-in light [:channels index]))
-          (range new-count))))
-
-(defn add-channels
-  "Internal helper to remove channel-assignments during :light/update-new"
-  [light additional db]
-  (let [assignables (sort (into [] (dmx/assignable db)))
-        num-channels (int (:num-channels light))
-        channels (:channels light)
-        range (range num-channels (+ num-channels additional))
-        channels* (into channels (map (fn [i] [(nth assignables (- i 1))]) range))]
-    (into [] channels*)))
-
-(def-event
-  :light/update
-  (fn [db [_ update]]
-    (let [original (get-in db [:light (:id update)])
-          num-update-channels (int (:num-channels update))
-          num-original-channels (int (:num-channels original))]
-      (if (not (= num-update-channels num-original-channels))
-        (let [channels* (cond
-                          (< num-update-channels num-original-channels) (remove-channels update num-original-channels num-update-channels)
-                          (> num-update-channels num-original-channels) (add-channels original (- num-update-channels num-original-channels) db)
-                          :default (:channels update))]
-          (dispatch [:item/update :light (assoc update :channels channels*)]))
-        (dispatch [:item/update :light update]))
-      db)))
 
 (def-event
   :light/prepare-trash

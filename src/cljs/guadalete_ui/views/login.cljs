@@ -42,9 +42,10 @@
             password (reagent/atom "sfx123")]
            (fn []
                [:div#login
-                [:div#login-bg]
+                ;[:div#login-bg]
                 [:div.ui.middle.aligned.center.aligned.grid
                  [:div.column
+                  [:img.margin-bottom {:src "images/logo.svg"}]
                   [:form.ui.large.form
                    [:div.ui.segment
                     [:div.field

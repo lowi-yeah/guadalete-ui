@@ -88,5 +88,5 @@
             [:i.large.add.circle.icon]]]
           [:div#view.pusher
            (view @view-rctn)]
-          ;[modals]
+          [modals]
           ])})))
