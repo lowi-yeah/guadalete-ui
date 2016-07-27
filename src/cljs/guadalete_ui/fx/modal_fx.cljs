@@ -8,4 +8,7 @@
 (def-fx
   :modal
   (fn modal-effect [[type id]]
-    (dispatch [:modal/open type id])))
+    (log/debug ":modalmodal" type id)
+    (if (= :close id)
+      (dispatch [:modal/close type])
+      (dispatch [:modal/open type id]))))

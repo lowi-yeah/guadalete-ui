@@ -1,5 +1,6 @@
 (ns guadalete-ui.views.segments.light
   (:require
+    [clojure.string :refer [lower-case]]
     [re-frame.core :refer [dispatch subscribe]]
     [guadalete-ui.items :refer [light-type]]
     ))
@@ -21,8 +22,12 @@
 (defn light-segment
   "Segement for rendering the light pane of a room."
   [room-rctn]
-  (let [lights (:light @room-rctn)]
-    [:div.side-margins
+  (let [lights (sort
+                 #(compare
+                   (-> %1 (get :name) (lower-case))
+                   (-> %2 (get :name) (lower-case)))
+                 (:light @room-rctn))]
+    [:div.side-margins.margin-bottom
      [:table.ui.celled.table.inverted
       [:thead
        [:tr

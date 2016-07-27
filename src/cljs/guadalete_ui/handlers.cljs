@@ -203,22 +203,6 @@
 
 
 
-;//   _ _      _   _
-;//  | (_)__ _| |_| |_
-;//  | | / _` | ' \  _|
-;//  |_|_\__, |_||_\__|
-;//      |___/
-
-
-(def-event
-  :light/prepare-trash
-  (fn [db [_ light-id]]
-    (dispatch [:modal/open {:id      :trash-item
-                            :item    {:type :light
-                                      :id   light-id}
-                            :options {:closable true}}])
-    db))
-
 ;//      _                _
 ;//   ____)__ _ _ _  __ _| |___
 ;//  (_-< / _` | ' \/ _` | (_-<

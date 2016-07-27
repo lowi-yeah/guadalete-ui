@@ -20,6 +20,15 @@
                       :type :light}]
       (modal/open modal-id {})
       (assoc db :modal/item modal-data))))
+
+(def-event
+  :modal/close
+  (fn [db [_ type]]
+    (let [modal-id (str (name type) "-modal")]
+      (modal/close modal-id)
+      (dissoc db :modal/item))))
+
+
 ;
 ;(def-event
 ;  :modal/approve

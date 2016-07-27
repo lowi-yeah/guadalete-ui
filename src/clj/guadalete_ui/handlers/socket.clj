@@ -147,9 +147,11 @@
       (?reply-fn response))))
 
 (defmethod event-handler :light/trash
-  [{:keys [?data]}]
-  (let [light-id ?data]
+  [{:keys [?reply-fn ?data]}]
+  (let [light-id  ?data]
     (log/debug ":light/trash" light-id)
+    (when ?reply-fn
+      (?reply-fn (str ":light/trash" light-id)))
     ;(db/trash-light (:conn db) light-id)
     ))
 

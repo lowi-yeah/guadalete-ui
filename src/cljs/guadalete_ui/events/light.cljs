@@ -75,6 +75,14 @@
    :on-success [:success-light-update]
    :on-failure [:failure-light-update]})
 
+(defn- trash-light-effect
+  "Creates a sente-effect for removing a light fromthe backend"
+  [id]
+  {:topic      :light/trash
+   :data       id
+   :on-success [:success-light-trash]
+   :on-failure [:failure-light-trash]})
+
 
 ;// re-frame          _     _                 _ _
 ;//   _____ _____ _ _| |_  | |_  __ _ _ _  __| | |___ _ _ ___
@@ -144,9 +152,62 @@
   (fn [{:keys [db]} [_ response]]
     (let [light (:ok response)
           error-msg (:error response)]
-      (log/debug "updated light" light error-msg)
-      {:db db}
-      )))
+      {:db db})))
+
+(def-event-fx
+  ;; Handler called after the light has been updated sucessfully
+  :failure-light-update
+  (fn [{:keys [db]} [_ response]]
+    (let []
+      (log/warn "update light failed" response)
+      {:db db})))
+
+;; UPDATE
+;; ********************************
+(def-event-fx
+  :light/trash
+  (fn [{:keys [db]} [_ light-id]]
+    (let [light (get-in db [:light light-id])
+          lights* (dissoc (:light db) light-id)
+          room (get-in db [:room (:room-id light)])
+          room-lights (:light room)
+          room-lights* (->> room-lights
+                            (remove #(= light-id %))
+                            (into []))
+          room* (assoc room :light room-lights*)
+          db* (-> db
+                  (assoc :light lights*)
+                  (assoc-in [:room (:id room)] room*))
+          ]
+      (log/debug "room-lights" (count room-lights))
+      (log/debug "room-lights*" (count room-lights*))
+      {:db    db*
+       :sente (trash-light-effect light-id)
+       :modal [:light :close]})))
+
+(def-event-fx
+  :success-light-trash
+  (fn [{:keys [db]} [_ response]]
+    (let [light (:ok response)
+          error-msg (:error response)]
+      {:db db})))
+
+(def-event-fx
+  :failure-light-trash
+  (fn [{:keys [db]} [_ response]]
+    (let []
+      (log/warn "trash light failed" response)
+      {:db db})))
+
+
+
+(def-event-fx
+  ;; Handler called after the light has been updated sucessfully
+  :success-light-update
+  (fn [{:keys [db]} [_ response]]
+    (let [light (:ok response)
+          error-msg (:error response)]
+      {:db db})))
 
 (def-event-fx
   ;; Handler called after the light has been updated sucessfully

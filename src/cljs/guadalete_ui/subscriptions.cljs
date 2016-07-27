@@ -140,6 +140,7 @@
     (let [modal-data-rctn (subscribe [:modal-data*])
           item-rctn (subscribe [:modal-item-dynamic] [modal-data-rctn])]
       @item-rctn)))
+
 ;//   _ _      _   _
 ;//  | (_)__ _| |_| |_
 ;//  | | / _` | ' \  _|
