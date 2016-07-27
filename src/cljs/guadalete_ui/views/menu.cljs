@@ -27,6 +27,7 @@
 (defn- scene-menu []
   (fn [room-rctn]
     (let [scenes (:scene @room-rctn)
+          _ (log/debug "menu: subscribing to current scene")
           scene-rctn (subscribe [:current/scene])]
       [:div.ui.tier-3.inverted.menu
        (doall

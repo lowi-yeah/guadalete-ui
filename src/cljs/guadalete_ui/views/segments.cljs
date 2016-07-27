@@ -12,36 +12,13 @@
             [guadalete-ui.views.widgets :refer [signal-sparkline]]
             [guadalete-ui.views.segments.light :refer [light-segment]]
             ))
-;(defn scenes
-;      "Scene section"
-;      []
-;      (fn []
-;          (let []
-;               [:div#login
-;                [:div#login-bg]
-;                [:div.ui.middle.aligned.center.aligned.grid
-;                 [:div.column
-;                  [:form.ui.large.form
-;                   [:div.ui.segment
-;                    [:div.field
-;                     [:div.ui.left.icon.input
-;                      [:i.user.icon]
-;                      [initial-focus-wrapper
-;                       [name-form name]]]]
-;                    [:div.field
-;                     [:div.ui.left.icon.input
-;                      [:i.lock.icon]
-;                      [password-form password]]]
-;                    [:div.ui.fluid.large.submit.button
-;                     {:on-click #(re-frame/dispatch [:login @name @password])}
-;                     "Login"]
-;                    ]]]]])))
 
 (defmulti segment (fn [type _] type))
 
 (defmethod segment :scene
   [_ room-rctn]
-  (let [scene-rctn (subscribe [:current/scene])]
+  (let [_ (log/debug "scene segment subscribing to current scene.")
+        scene-rctn (subscribe [:current/scene])]
     [pd room-rctn scene-rctn]))
 
 (defn- color-type [num-channels]

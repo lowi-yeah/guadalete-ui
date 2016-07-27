@@ -60,6 +60,7 @@
     (create-class
       {:component-did-mount
        (fn [_]
+         ;; init the sidebar upon mount
          (let [jq-root (js/$ "#root")
                jq-nav (js/$ "#nav")]
            (.sidebar jq-nav
@@ -76,6 +77,7 @@
        :reagent-render
        (fn []
          [:div#root.attached.segment.pushable
+          (log/debug "view-rctn" @view-rctn)
           [:div#nav.ui.visible.thin.sidebar.inverted.vertical.menu
            (doall
              (for [room @rooms-rctn]

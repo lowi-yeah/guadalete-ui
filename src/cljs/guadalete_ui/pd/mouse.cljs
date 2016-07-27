@@ -18,23 +18,6 @@
        (let [offset (g/+ (:pos-0 n) δ)]
             [id (assoc n :pos (vec-map offset))]))
 
-;//                              _
-;//   _ __  ___ _  _ ______   __| |_____ __ ___ _
-;//  | '  \/ _ \ || (_-< -_) / _` / _ \ V  V / ' \
-;//  |_|_|_\___/\_,_/__\___| \__,_\___/\_/\_/|_||_|
-;//
-(defmulti down* (fn [type data] type))
-
-(defmethod down* :pd [_ data] (dispatch [:pd/mouse-down data]))
-(defmethod down* :node [_ data] (dispatch [:node/mouse-down data]))
-(defmethod down* :link [_ data] (dispatch [:flow/mouse-down data]))
-(defmethod down* :default [type _] (log/error (str "mouse-down: I don't know the type: " type)))
-
-(s/defn down :- DB
-        [{:keys [type] :as data} :- MouseEventData
-         db :- DB]
-        (down* type data)
-        db)
 
 ;//
 ;//   _ __  ___ _  _ ______   _  _ _ __

@@ -99,7 +99,6 @@
   :current/scene
   (fn [db _]
     (let [scene-id (:current/scene-id db)
-          _ (log/debug "current scene" scene-id)
           scene (get-in db [:scene scene-id])]
       scene)))
 

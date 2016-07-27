@@ -198,22 +198,3 @@
     (let []
       (log/warn "trash light failed" response)
       {:db db})))
-
-
-
-(def-event-fx
-  ;; Handler called after the light has been updated sucessfully
-  :success-light-update
-  (fn [{:keys [db]} [_ response]]
-    (let [light (:ok response)
-          error-msg (:error response)]
-      {:db db})))
-
-(def-event-fx
-  ;; Handler called after the light has been updated sucessfully
-  :failure-light-update
-  (fn [{:keys [db]} [_ response]]
-    (let []
-      (log/warn "update light failed" response)
-      {:db db})))
-

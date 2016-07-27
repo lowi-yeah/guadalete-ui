@@ -3,6 +3,7 @@
                    [cljs.core :refer [or]])
   (:require [cljs.core.async :as async :refer [<! >! chan close! put! to-chan timeout]]
             [thi.ng.geom.core :as g]
+            [thi.ng.geom.svg.core :refer [svg-attribs]]
             [thi.ng.geom.core.vector :refer [vec2]]
             [guadalete-ui.console :as log]))
 
@@ -123,3 +124,12 @@ Maps become Objects. Arbitrary keys are encoded to by key->js."
   "true if seq contains elm"
   [seq elm]
   (some #(= elm %) seq))
+
+
+(defn mod-svg
+  [attribs & body]
+  [:svg
+   (svg-attribs
+     attribs
+     {})
+   body])

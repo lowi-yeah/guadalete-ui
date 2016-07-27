@@ -25,7 +25,7 @@
     [guadalete-ui.pd.nodes :refer [nodes]]
 
     [guadalete-ui.console :as log]
-    [guadalete-ui.util :refer [pretty]]
+    [guadalete-ui.util :refer [pretty mod-svg]]
     [guadalete-ui.pd.mouse :as mouse]
     [guadalete-ui.pd.flow :refer [flows]]
     [guadalete-ui.pd.util
@@ -79,18 +79,16 @@
        ;[(editor-wrapper layout-id)
 
        ^{:key "svg"}
-       [svg/svg
-        {:id           "pd-svg"
-         :data-type    "pd"
-         :on-drop      #(drop* %)
-         :on-drag-over #(allow-drop %)
-
-
-         ;:on-click        #(dispatch [:mouse/click (mouse/event-data % mouse-data)])
+       [mod-svg
+        {:id              "pd-svg"
+         :data-type       "pd"
+         :on-drop         #(drop* %)
+         :on-drag-over    #(allow-drop %)
+         :on-click        #(dispatch [:mouse/click (mouse/event-data % mouse-data)])
          ;:on-double-click #(dispatch [:mouse/double-click (mouse/event-data % mouse-data)])
-         ;:on-mouse-down   #(dispatch [:mouse/down (mouse/event-data % mouse-data)])
-         ;:on-mouse-move   #(dispatch [:mouse/move (mouse/event-data % mouse-data)])
-         ;:on-mouse-up     #(dispatch [:mouse/up (mouse/event-data % mouse-data)])
+         :on-mouse-down   #(dispatch [:mouse/down (mouse/event-data % mouse-data)])
+         :on-mouse-move   #(dispatch [:mouse/move (mouse/event-data % mouse-data)])
+         :on-mouse-up     #(dispatch [:mouse/up (mouse/event-data % mouse-data)])
          ;:on-mouse-enter  #(dispatch [:mouse/enter (mouse/event-data % mouse-data)])
          ;:on-mouse-leave  #(dispatch [:mouse/leave (mouse/event-data % mouse-data)])
          }
@@ -99,8 +97,9 @@
         [svg/group {:id    "pan-group"
                     :style {:transform css-matrix}}
          ^{:key "grid"} [grid]
-         ^{:key "flows"} [flows scene-rctn]
-         ^{:key "nodes"} [nodes room-rctn scene-rctn]]]
+         ;^{:key "flows"} [flows scene-rctn]
+         ;^{:key "nodes"} [nodes room-rctn scene-rctn]
+         ]]
        ;[palette (:id @room-rctn) (:id scene)]
        [palette room-rctn scene-rctn]
        ])))
