@@ -22,8 +22,7 @@
 
 (def-event
   :success-scene-update
-  (fn [world response]
-    (log/debug "Scene update success!:" response)
+  (fn [world _response]
     world))
 
 (def-event

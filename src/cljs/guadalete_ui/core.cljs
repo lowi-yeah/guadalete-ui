@@ -21,6 +21,7 @@
     [guadalete-ui.events.pd]
     [guadalete-ui.events.light]
     [guadalete-ui.events.view]
+    [guadalete-ui.events.color]
     [guadalete-ui.handlers]
     [guadalete-ui.subscriptions]
     [guadalete-ui.pd.handlers]

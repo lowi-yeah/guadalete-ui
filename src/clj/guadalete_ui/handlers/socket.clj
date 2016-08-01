@@ -155,9 +155,13 @@
     ))
 
 (defmethod event-handler :color/make
-  [{:keys [?data db-conn]}]
-  (let [color ?data]
-    (db/create-color db-conn color)))
+  [{:keys [?data db-conn ?reply-fn]}]
+  (let [color ?data
+        response (db/create-color db-conn color)]
+    (log/debug "creating color" color)
+    (log/debug "response " response)
+    (when ?reply-fn
+      (?reply-fn response))))
 
 ; DEFAULT
 ; ****************
