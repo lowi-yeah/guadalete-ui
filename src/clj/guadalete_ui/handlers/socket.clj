@@ -110,18 +110,18 @@
 ; SCENE
 ; ****************
 (defmethod event-handler :scene/create
-  [{:keys [?data db-conn]}]
-  (let [[room-id scene] ?data]
-    ;(db/make-scene room-id scene)
-    ))
+  [{:keys [?data db-conn ?reply-fn]}]
+  (let [response (db/create-scene db-conn ?data)]
+    (when ?reply-fn
+      (?reply-fn response))))
 
 (defmethod event-handler :scene/update
   [{:keys [?data db-conn ?reply-fn]}]
-  (let [[id diff flag] ?data
-        flag (or flag :patch)]
-    (log/debug "update scene" ?reply-fn)
-    ;(db/update-scene db-conn id diff flag)
-    ))
+  (let [{:keys [id diff flag]} ?data
+        flag (or flag :patch)
+        response (db/update-scene db-conn id diff flag)]
+    (when ?reply-fn
+      (?reply-fn response))))
 
 (defmethod event-handler :scene/trash
   [{:keys [?data]}]
@@ -142,13 +142,12 @@
   (let [[id diff flag] ?data
         flag (or flag :patch)
         response (db/update-light db-conn id diff flag)]
-    (log/debug "updating light" response)
     (when ?reply-fn
       (?reply-fn response))))
 
 (defmethod event-handler :light/trash
   [{:keys [?reply-fn ?data]}]
-  (let [light-id  ?data]
+  (let [light-id ?data]
     (log/debug ":light/trash" light-id)
     (when ?reply-fn
       (?reply-fn (str ":light/trash" light-id)))

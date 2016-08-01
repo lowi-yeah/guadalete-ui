@@ -20,6 +20,7 @@
     [guadalete-ui.events.node]
     [guadalete-ui.events.pd]
     [guadalete-ui.events.light]
+    [guadalete-ui.events.view]
     [guadalete-ui.handlers]
     [guadalete-ui.subscriptions]
     [guadalete-ui.pd.handlers]

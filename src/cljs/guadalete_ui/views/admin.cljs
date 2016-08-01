@@ -3,10 +3,11 @@
   (:require
     [cljs-utils.core :refer [by-id]]
     [reagent.core :refer [create-class]]
-    [re-frame.core :refer [subscribe]]
+    [re-frame.core :refer [dispatch subscribe]]
     [reagent.core :as reagent]
+    [thi.ng.geom.core.vector :refer [vec2]]
     [guadalete-ui.console :as log]
-    [guadalete-ui.util :refer [pretty]]
+    [guadalete-ui.util :refer [pretty dimensions]]
     [guadalete-ui.views.modal :refer [modals]]
     [guadalete-ui.views.segments :refer [segment]]
     [guadalete-ui.views.sections :refer [section]]
@@ -30,13 +31,19 @@
        (fn [_]
          ;; init the sidebar upon mount
          (let [jq-root (js/$ "#root")
-               jq-nav (js/$ "#nav")]
+               jq-nav (js/$ "#nav")
+               jq-view (js/$ "#view")
+               jq-header (js/$ "#header")]
            (.sidebar jq-nav
                      (js-obj "context" jq-root
                              "closable" false
                              "dimPage" false))
            (.sidebar jq-nav "setting" "transition" "overlay")
-           (.sidebar jq-nav "push page")))
+           (.sidebar jq-nav "push page")
+
+           (dispatch [:view/dimensions {:root   (dimensions jq-root)
+                                        :view   (dimensions jq-view)
+                                        :header (dimensions jq-header)}])))
 
        ;; for more helpful warnings & errors
        :display-name
@@ -45,8 +52,8 @@
        :reagent-render
        (fn []
          [:div#root.attached.segment.pushable
-          (log/debug "section" @section-rctn)
           [:div#nav.ui.visible.thin.sidebar.inverted.vertical.menu
+           [:img {:src "images/logo.svg"}]
            (doall
              (for [room @rooms-rctn]
                (let
@@ -55,7 +62,7 @@
                  ^{:key (str "r-" (:id room))}
                  [:a.item {:href room-link} (:name room)])))
            [:a.item {:on-click #(.modal (js/$ "#new-room.modal") "show")}
-            [:i.large.add.circle.icon]]]
+            [:i.add.circle.icon]]]
           [:div#view.pusher
            (section @section-rctn)
            ]

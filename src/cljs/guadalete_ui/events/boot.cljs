@@ -1,6 +1,7 @@
 (ns guadalete-ui.events.boot
   (:require
     [re-frame.core :refer [dispatch def-event def-event-fx def-fx]]
+    [thi.ng.geom.core.vector :refer [vec2]]
     [guadalete-ui.util :refer [pretty kw* mappify]]
     [guadalete-ui.console :as log]))
 
@@ -22,9 +23,13 @@
     {:db       {:ws/connected? false
                 :loading?      false
                 :user/role     :none
-                :view          {:panel   :blank
-                                :section :dash
-                                :segment :scene}
+                :view          {:panel      :blank
+                                :section    :dash
+                                :segment    :scene
+                                :dimensions {:root   (vec2)
+                                             :view   (vec2)
+                                             :header (vec2)}}
+                :tmp           {}                           ; for storing temporary items
                 :name          "guadalete-ui"
                 :message       ""}
      :dispatch [:do-sync-role]}))
@@ -101,3 +106,9 @@
                 :config config)]
       {:db       db*
        :dispatch [:set-panel role]})))
+
+(def-event
+  :chsk/connect
+  (fn [db f00]
+    (log/debug ":chsk/connect" f00)
+    db))

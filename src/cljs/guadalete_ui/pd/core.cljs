@@ -30,8 +30,7 @@
     [guadalete-ui.pd.flow :refer [flows]]
     [guadalete-ui.pd.util
      :refer
-     [pd-dimensions
-      is-line?
+     [is-line?
       css-matrix-string]]))
 
 
@@ -39,7 +38,7 @@
   "the background grid"
   []
   (fn []
-    (let [dim-rctn (pd-dimensions)
+    (let [dim-rctn (subscribe [:view/pd-dimensions])
           start-x (* -1 (:x @dim-rctn))
           stop-x (* 2 (:x @dim-rctn))
           start-y (* -1 (:y @dim-rctn))
@@ -98,7 +97,7 @@
                     :style {:transform css-matrix}}
          ^{:key "grid"} [grid]
          ;^{:key "flows"} [flows scene-rctn]
-         ;^{:key "nodes"} [nodes room-rctn scene-rctn]
+         ^{:key "nodes"} [nodes room-rctn scene-rctn]
          ]]
        ;[palette (:id @room-rctn) (:id scene)]
        [palette room-rctn scene-rctn]

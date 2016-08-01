@@ -183,6 +183,22 @@ tr.light {
   margin-top: 0.04rem;
 }
 
+//                _           _   _
+//  _ _  __ ___ _(_)__ _ __ _| |_(_)___ _ _
+// | ' \/ _` \ V / / _` / _` |  _| / _ \ ' \
+// |_||_\__,_|\_/|_\__, \__,_|\__|_\___/_||_|
+//                 |___/
+#nav.ui.vertical.menu {
+  img {
+    margin-top: 0.95rem;
+    margin-bottom: 1.5rem;
+  }
+  .item {
+    padding-top: 0.25rem;
+    padding-bottom: 0;    
+    height: 1.5rem;
+  }
+}
 
 //     _     _        _ _
 //  __| |___| |_ __ _(_) |

@@ -133,3 +133,6 @@ Maps become Objects. Arbitrary keys are encoded to by key->js."
      attribs
      {})
    body])
+
+(defn dimensions [jq]
+  (vec2 (.outerWidth jq true) (.outerHeight jq true)))

@@ -38,8 +38,9 @@
 
 (defn- update-item
   "Generic update function called by update-room, update-light & update-sensor"
-  ([connection id diff type] (update-item id diff type :replace))
+  ([_connection id diff type] (update-item id diff type :replace))
   ([connection id diff type flag]
+   (log/debug "update-item" flag diff type id)
    (let [item (get-one connection type id)
          patch (condp = flag
                  :patch (differ/patch item diff)
@@ -90,12 +91,18 @@
         mode* (keyword mode)]
     (assoc scene :mode mode*)))
 
+(defn create-scene [connection scene]
+  (create-item connection :scene scene))
+
 (defn get-scenes [connection]
   (let [scenes (get-all connection :scene)
         scenes* (map mode-keyword scenes)]
     (into [] scenes*)))
 
 (defn update-scene [connection id diff flag]
+  (log/debug "update-scene id" id)
+  (log/debug "update-scene flag" flag)
+  (log/debug "diff" diff)
   (update-item connection id diff :scene flag))
 
 ; Color

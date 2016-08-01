@@ -12,7 +12,9 @@
     [guadalete-ui.pd.util :refer [modal-room modal-scene modal-node]]
     [guadalete-ui.pd.nodes :as node]
     [guadalete-ui.pd.flow :as flow]
-    [guadalete-ui.pd.link :as link]))
+    [guadalete-ui.pd.link :as link]
+    [guadalete-ui.events.scene :as scene]
+    [guadalete-ui.items :refer [reset-scene]]))
 
 
 ;//               _
@@ -29,11 +31,12 @@
           nodes (:nodes scene)
           data* (assoc data :position (offset-position position scene))
           node (make-node ilk data* db)
+          _ (log/debug "made node" node)
           nodes* (assoc nodes (keyword (:id node)) node)
           scene* (assoc scene :nodes nodes*)
           db* (assoc-in db [:scene scene-id] scene*)]
-      {:db       db*
-       :dispatch [:scene/update scene* scene]})))
+      {:db    db*
+       :sente (scene/sync-effect {:old scene :new scene*})})))
 
 
 (def-event
@@ -45,6 +48,16 @@
   :node/mouse-move
   (fn [db [_ data]]
     (node/move data db)))
+
+(def-event-fx
+  :node/mouse-up
+  (fn [{:keys [db]} [_ {:keys [scene-id]}]]
+    (let [scene (get-in db [:scene scene-id])
+          scene* (reset-scene scene)
+          stashed-scene (get-in db [:tmp :scene])]
+      {:db    (-> db
+                  (assoc-in [:scene scene-id] scene*))
+       :sente (scene/sync-effect {:old stashed-scene :new scene*})})))
 
 
 ;//    __ _

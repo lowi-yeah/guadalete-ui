@@ -19,7 +19,6 @@
 (defmethod segment :scene
   [_ room-rctn]
   (let [scene-rctn (subscribe [:view/scene])]
-    (log/debug "scene segment scene-rctn" @scene-rctn)
     [pd room-rctn scene-rctn]))
 
 (defmethod segment :dash

@@ -22,15 +22,6 @@
     (str "matrix(" (clojure.string/join ", " (g/transpose matrix)) ")")))
 
 
-(defn pd-dimensions []
-  (let [jq-view (js/$ "#view")
-        jq-header (js/$ "#header")
-        view (vec2 (.outerWidth jq-view true) (.outerHeight jq-view true))
-        header (vec2 (.outerWidth jq-header true) (.outerHeight jq-header true))
-        offsets (vec2 88 24)
-        width (max 0 (- (:x view) (:x offsets)))
-        height (max 0 (- (:y view) (:y header) (:y offsets)))]
-    (reaction (vec2 width height))))
 
 (defn is-line?
   "checks whether a form represents a grid line.

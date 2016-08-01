@@ -3,20 +3,40 @@
     [re-frame.core :refer [dispatch def-event def-event-fx def-fx]]
     [guadalete-ui.pd.mouse :as mouse]
     [guadalete-ui.util :refer [pretty kw*]]
-    [guadalete-ui.console :as log]))
+    [guadalete-ui.console :as log]
+    [guadalete-ui.items :refer [reset-scene]]
+    [guadalete-ui.events.scene :as scene]
+    [differ.core :as differ]))
 
 (def-event-fx
   :mouse/default-up
-  (fn [{:keys [db]} [_ {:keys [type scene-id node-id position]}]]
+  (fn [{:keys [db]} [_ {:keys [scene-id sync]}]]
     ; This is the standard behaviour upon mouse up.
     ; Canceles everything that might have been going on during move.
     ; Called by modes [:none :pd :move]
-    (let [scene (get-in db [:scene scene-id])
-          scene* (dissoc scene :pos-0 :pos-1 :flow/mouse :mode)
+    (let [scene (-> db
+                    (get-in [:scene scene-id])
+                    (dissoc :pos-0 :pos-1 :flow/mouse :mode))
+          scene* (-> scene
+                     (reset-scene))
           db* (assoc-in db [:scene scene-id] scene*)]
-      {:db       db*
-       :dispatch [:node/reset-all scene-id]})
-    ))
+      (if sync
+        {:db    db*
+         :sente (scene/sync-effect {:old scene :new scene*})}
+        {:db db*}))))
+
+
+
+(def-event-fx
+  :mouse/node-up
+  (fn [{:keys [db]} [_ {:keys [scene-id]}]]
+    (let [scene (-> db
+                    (get-in [:scene scene-id])
+                    (dissoc :pos-0 :pos-1 :flow/mouse :mode))
+          scene* (reset-scene scene)]
+      {:db    (assoc-in db [:scene scene-id] scene*)
+       :sente (scene/sync-effect {:old scene :new scene*})})))
+
 
 (def-event-fx
   :mouse/up
@@ -24,8 +44,8 @@
     (let
       [type (:type data)
        dispatch* (condp = type
-                   :pd [:mouse/default-up data]
-                   :node [:mouse/default-up data]
+                   :pd [:pd/mouse-up data]
+                   :node [:node/mouse-up data]
                    :link [:flow/mouse-up data]
                    nil)]
       (if dispatch*

@@ -3,7 +3,7 @@
     [reagent.ratom :refer [reaction]])
   (:require
     [re-frame.core :refer [def-sub subscribe]]
-    ;[re-frame.interop :refer [make-reaction]]
+    [thi.ng.geom.core.vector :refer [vec2]]
     [clojure.set :refer [difference]]
     [guadalete-ui.items :refer [assemble-item]]
     [guadalete-ui.util :refer [pretty in? kw*]]
@@ -78,6 +78,19 @@
       (if assemble?
         (assemble-item :scene db scene)
         scene))))
+
+(def-sub
+  :view/pd-dimensions
+  (fn [db _]
+    (let [dimensions (get-in db [:view :dimensions])
+          view (vec2 (:view dimensions))
+          header (vec2 (:header dimensions))
+          offsets (vec2 144 24)
+          width (max 0 (- (:x view) (:x offsets)))
+          height (max 0 (- (:y view) (:y header) (:y offsets)))]
+      (vec2 width height))))
+
+
 
 ;//
 ;//   _ _ ___ ___ _ __  ___

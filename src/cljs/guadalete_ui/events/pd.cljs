@@ -4,36 +4,36 @@
     [thi.ng.geom.core :as g]
     [thi.ng.geom.core.vector :refer [vec2]]
     [guadalete-ui.util :refer [pretty kw* vec-map offset-position]]
-    [guadalete-ui.console :as log]))
+    [guadalete-ui.console :as log]
+    [guadalete-ui.items :refer [reset-scene]]
+    [guadalete-ui.events.scene :as scene]))
 
 (def-event
   :pd/mouse-down
-  (fn [db [_ {:keys [scene-id node-id position]}]]
+  (fn [db [_ {:keys [scene-id position]}]]
     (let [scene (get-in db [:scene scene-id])  
-          scene* (assoc scene 
-                   :mode :pan 
-                   :pos-0 (vec-map position)  
-                   :pos-1 (vec-map (:translation scene)))]
-      (assoc-in db [:scene scene-id] scene*))))
+          scene* (assoc scene  :mode :pan )
+          stash-scene (assoc scene  :position position)]
+      (-> db
+          (assoc-in [:scene scene-id] scene*)
+          (assoc-in [:tmp :scene] stash-scene)))))
 
 (def-event
   :pd/mouse-move
   (fn [db [_ {:keys [scene-id position]}]]
-    ;(log/debug ":pd/mouse-move" scene-id position)
     (let [scene (get-in db [:scene scene-id])
-          δ (g/- (vec2 position) (vec2 (:pos-0 scene)))
-          translation* (g/+ (vec2 (:pos-1 scene)) δ)
+          stashed-scene (get-in db [:tmp :scene])
+          δ (g/- (vec2 position) (vec2 (:position stashed-scene)))
+          translation* (g/+ (vec2 (:translation stashed-scene)) δ)
           scene* (assoc scene :translation (vec-map translation*))]
-      (assoc-in db [:scene scene-id] scene*)
-      ;db
-      )))
+      (assoc-in db [:scene scene-id] scene*))))
 
-(def-event
+
+(def-event-fx
   :pd/mouse-up
-  (fn [db [_ {:keys [scene-id position]}]]
+  (fn [{:keys [db]} [_ {:keys [scene-id]}]]
     (let [scene (get-in db [:scene scene-id])
-          scene* (dissoc scene :pos-0 :pos-1 :flow/mouse :mode)]
-      (dispatch [:scene/update scene*])
-      (dispatch [:node/reset-all scene-id])
-      db)
-    db))
+          scene* (reset-scene scene)
+          stashed-scene (get-in db [:tmp :scene])]
+      {:db    (assoc-in db [:scene scene-id] scene*)
+       :sente (scene/sync-effect {:old stashed-scene :new scene*})})))
