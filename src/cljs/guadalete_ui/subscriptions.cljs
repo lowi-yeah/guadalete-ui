@@ -11,20 +11,73 @@
     [guadalete-ui.console :as log]))
 
 
-;//           _              _      _   _
-;//   ____  _| |__ _____ _ _(_)_ __| |_(_)___ _ _  ___
-;//  (_-< || | '_ (_-< _| '_| | '_ \  _| / _ \ ' \(_-<
-;//  /__/\_,_|_.__/__\__|_| |_| .__/\__|_\___/_||_/__/
-;//                           |_|
-(def-sub
-  :main-panel
-  (fn [db _]
-    (:main-panel db)))
-
 (def-sub
   :user/role
   (fn [db _]
     (:user/role db)))
+
+;//       _
+;//  __ ___)_____ __ __
+;//  \ V / / -_) V  V /
+;//   \_/|_\___|\_/\_/
+;// Definitions of the containers
+
+;; The hierarchy goes like this:
+;; panel    ::= blank | login | admin (user to be made)
+;;    blank ::= 'An empty panel'
+;;    login ::= 'A login form'
+;;    admin ::= sidebar section
+;;
+;; sidebar  ::= 'section navigation'
+;; section  ::= dash | room
+;;    dash  ::= 'a dashboard for the most important stats'
+;;    room  ::= segment
+;; segment  ::= scene | lights | sensors
+
+(def-sub
+  :view/panel
+  (fn [db _]
+    (get-in db [:view :panel])))
+
+(def-sub
+  :view/section
+  (fn [db _]
+    (get-in db [:view :section])))
+
+(def-sub
+  :view/segment
+  (fn [db _]
+    (get-in db [:view :segment])))
+
+
+;Dynamic subscriptions need to pass a fn which takes app-db, the static vector, and the dereffed dynamic values.
+(def-sub
+  :view/room-id
+  (fn [db _]
+    (get-in db [:view :room-id])))
+
+(def-sub
+  :view/room
+  (fn [db [_ {:keys [assemble?]}]]
+    (let [room-id-rctn (subscribe [:view/room-id])
+          room (get-in db [:room @room-id-rctn])]
+      (if assemble?
+        (assemble-item :room db room)
+        room))))
+
+(def-sub
+  :view/scene-id
+  (fn [db _]
+    (get-in db [:view :scene-id])))
+
+(def-sub
+  :view/scene
+  (fn [db [_ {:keys [assemble?]}]]
+    (let [scene-id-rctn (subscribe [:view/scene-id])
+          scene (get-in db [:scene @scene-id-rctn])]
+      (if assemble?
+        (assemble-item :scene db scene)
+        scene))))
 
 ;//
 ;//   _ _ ___ ___ _ __  ___
@@ -67,40 +120,38 @@
 ;//  / _| || | '_| '_/ -_) ' \  _|
 ;//  \__|\_,_|_| |_| \___|_||_\__|
 ;//
-(def-sub
-  :current/view
-  (fn [db _]
-    (:current/view db)))
-
-(def-sub
-  :current/segment
-  (fn [db _]
-    (:current/segment db)))
-
-
-(def-sub
-  :current/room
-  (fn [db [_ {:keys [assemble]}]]
-    (let [room-id (reaction (:current/room-id db))
-          room (get-in db [:room @room-id])]
-      (if assemble
-        (assemble-item :room db room)
-        room
-        ))))
-
-(def-sub
-  :current/light
-  (fn [db _]
-    (let [light-id (:current/light-id db)
-          light (get-in db [:light light-id])]
-      light)))
-
-(def-sub
-  :current/scene
-  (fn [db _]
-    (let [scene-id (:current/scene-id db)
-          scene (get-in db [:scene scene-id])]
-      scene)))
+;(def-sub
+;  :current/view
+;  (fn [db _]
+;    (:current/view db)))
+;
+;(def-sub
+;  :current/segment
+;  (fn [db _]
+;    (:current/segment db)))
+;
+;(def-sub
+;  :current/room
+;  (fn [db [_ {:keys [assemble]}]]
+;    (let [room-id (reaction (:current/room-id db))
+;          room (get-in db [:room @room-id])]
+;      (if assemble
+;        (assemble-item :room db room)
+;        room))))
+;
+;(def-sub
+;  :current/light
+;  (fn [db _]
+;    (let [light-id (:current/light-id db)
+;          light (get-in db [:light light-id])]
+;      light)))
+;
+;(def-sub
+;  :current/scene
+;  (fn [db _]
+;    (let [scene-id (:current/scene-id db)
+;          scene (get-in db [:scene scene-id])]
+;      scene)))
 
 (def-sub
   :selected

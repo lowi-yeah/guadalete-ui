@@ -19,11 +19,14 @@
 (def-event
   :pd/mouse-move
   (fn [db [_ {:keys [scene-id position]}]]
+    ;(log/debug ":pd/mouse-move" scene-id position)
     (let [scene (get-in db [:scene scene-id])
           δ (g/- (vec2 position) (vec2 (:pos-0 scene)))
           translation* (g/+ (vec2 (:pos-1 scene)) δ)
           scene* (assoc scene :translation (vec-map translation*))]
-      (assoc-in db [:scene scene-id] scene*))))
+      (assoc-in db [:scene scene-id] scene*)
+      ;db
+      )))
 
 (def-event
   :pd/mouse-up

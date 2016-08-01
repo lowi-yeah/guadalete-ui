@@ -19,14 +19,14 @@
 (def-event-fx
   :boot
   (fn [_ _]
-    {:db       {:ws/connected?   false
-                :loading?        false
-                :user/role       :none
-                :main-panel      :blank-panel
-                :name            "guadalete-ui"
-                :message         ""
-                :current/view    :blank
-                :current/segment :scene}
+    {:db       {:ws/connected? false
+                :loading?      false
+                :user/role     :none
+                :view          {:panel   :blank
+                                :section :dash
+                                :segment :scene}
+                :name          "guadalete-ui"
+                :message       ""}
      :dispatch [:do-sync-role]}))
 
 
@@ -52,7 +52,8 @@
     (let [role* (keyword role)
           next-dispatch (if (= role* (or :admin :user))
                           [:do-sync-state]
-                          [:set-root-panel :anonymous])]
+                          [:set-panel :anonymous])]
+      (log/debug ":success-sync-role" role)
       {:db       (assoc db :user/role role* :ws/connected? true)
        :dispatch next-dispatch})))
 
@@ -70,30 +71,33 @@
 ;//
 (def-event-fx
   :do-sync-state
-  (fn [world [_ role]]
+  (fn [{:keys [db]} [_ role]]
     (let [sente-effect {:topic      :sync/state
                         :data       {:role role}
                         :timeout    8000                    ;; optional see API docs
                         :on-success [:success-sync-state]
                         :on-failure [:failure-sync-state]}]
-      {:db    (:db world)
+      {:db    db
        :sente sente-effect})))
 
 (def-event-fx
   :success-sync-state
   (fn [{:keys [db]} [_ state]]
+    (log/debug ":success-sync-state" state)
     (let [role (:user/role db)
           rooms-map (mappify :id (:room state))
           lights-map (mappify :id (:light state))
           scenes-map (mappify :id (:scene state))
           colors-map (mappify :id (:color state))
           signals-map (mappify :id (:signal state))
-          config (:config state)]
-      {:db       (assoc db
-                   :room rooms-map
-                   :light lights-map
-                   :signal signals-map
-                   :color colors-map
-                   :scene scenes-map
-                   :config config)
-       :dispatch [:set-root-panel role]})))
+          config (:config state)
+          db* (assoc db
+                :loading? false
+                :room rooms-map
+                :light lights-map
+                :signal signals-map
+                :color colors-map
+                :scene scenes-map
+                :config config)]
+      {:db       db*
+       :dispatch [:set-panel role]})))

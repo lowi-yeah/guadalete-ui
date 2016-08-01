@@ -54,22 +54,20 @@
 ;//  (_-< -_)  _| || | '_ \
 ;//  /__\___|\__|\_,_| .__/
 ;//                  |_|
-
-
 (def-event
-  :set-root-panel
-  (fn [db _]
-    (condp = (:user/role db)
-      :none (assoc db :main-panel :blank-panel)
-      :anonymous (assoc db :main-panel :login-panel)
-      :admin (assoc db :main-panel :root-panel))))
+  :set-panel
+  (fn [db [_ role]]
+    (let [panel (condp = role
+                  :none :blank
+                  :anonymous :login
+                  :admin :root)]
+      (assoc-in db [:view :panel] panel))))
 
 ;//   _          _
 ;//  | |___ __ _(_)_ _
 ;//  | / _ \ _` | | ' \
 ;//  |_\___\__, |_|_||_|
 ;//        |___/
-
 (defn- ajax-login
   "POST the login information via ajax"
   [name pwd]
@@ -80,10 +78,9 @@
                                   :csrf-token (:csrf-token @chsk-state)}
               :resp-type         :text
               :timeout-ms        8000
-              :with-credentials? false                      ; Enable if using CORS (requires xhr v2+)
-              }
+              :with-credentials? false}
              (fn async-callback [resp-map]
-               (dispatch [:chsk/reconnect]))))
+               (dispatch [:chsk/connect]))))
 
 (def-event
   :login
@@ -122,28 +119,36 @@
                  (when (= :scene (:current/segment db))
                    (dispatch [:view/scene [room-id]]))
                  (-> db
-                     (assoc :current/view :room)
-                     (assoc :current/room-id room-id)
-                     (dissoc :current/scene-id)))
+                     (assoc-in [:view :section] :room)
+                     (assoc-in [:view :room-id] room-id)
+                     (assoc-in [:view :scene-id] nil)))
       (-> db
-          (assoc :current/view :room)
-          (assoc :current/segment segment)
-          (assoc :current/room-id room-id)))))
+          (assoc-in [:view :section] :room)
+          (assoc-in [:view :segment] segment)
+          (assoc-in [:view :room-id] room-id)))))
 
 (def-event
   :view/scene
   (fn [db [_ [room-id scene-id]]]
     (let [scene-id* (or scene-id (first-scene-id db room-id))]
-
-      ; obacht: hack
-      ; recursicely dispatch as long as the database has not been loaded
-      (when (nil? scene-id*) (dispatch [:view/scene [room-id scene-id]]))
+      (log/debug "view scene. room-id:" room-id "| scene-id:" scene-id*)
 
       (-> db
-          (assoc :current/view :room)
-          (assoc :current/segment :scene)
-          (assoc :current/room-id room-id)
-          (assoc :current/scene-id scene-id*)))))
+          (assoc-in [:view :section] :room)
+          (assoc-in [:view :segment] :scene)
+          (assoc-in [:view :room-id] room-id)
+          (assoc-in [:view :scene-id] scene-id*)))))
+
+(def-event
+  :view/dash
+  (fn [db [_ room-id]]
+    (let []
+      (log/debug ":view/dash" room-id)
+      (-> db
+          (assoc-in [:view :section] :room)
+          (assoc-in [:view :segment] :dash)
+          (assoc-in [:view :room-id] room-id)))))
+
 
 
 ;//                _      _

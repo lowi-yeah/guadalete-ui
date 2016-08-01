@@ -11,15 +11,23 @@
             [guadalete-ui.pd.color :refer [render-color]]
             [guadalete-ui.views.widgets :refer [signal-sparkline]]
             [guadalete-ui.views.segments.light :refer [light-segment]]
+            [guadalete-ui.views.editor :refer [editor]]
             ))
 
 (defmulti segment (fn [type _] type))
 
 (defmethod segment :scene
   [_ room-rctn]
-  (let [_ (log/debug "scene segment subscribing to current scene.")
-        scene-rctn (subscribe [:current/scene])]
+  (let [scene-rctn (subscribe [:view/scene])]
+    (log/debug "scene segment scene-rctn" @scene-rctn)
     [pd room-rctn scene-rctn]))
+
+(defmethod segment :dash
+  [_ room-rctn]
+  (let []
+    [:div#dash
+     [:h2 "dash!"]
+     [:pre.code (pretty @room-rctn)]]))
 
 (defn- color-type [num-channels]
   (condp = num-channels
@@ -37,14 +45,14 @@
   [_ room-rctn]
   [:div.side-margins
    [:h1 "debug"]
-   [:pre.code (pretty @room-rctn)]
-   ])
+   [:pre.code (pretty @room-rctn)]])
 
 (defmethod segment :dmx
   [_]
   (let [dmx-rctn (subscribe [:dmx/all])]
     [:div#dmx.ui.flexing.relative
      [dmx dmx-rctn]]))
+
 
 (defmethod segment :signal
   [_]
@@ -67,3 +75,9 @@
               [:td
                [signal-sparkline signal]
                ]])))]]]))
+
+(defmethod segment :debug
+  [_]
+  (let [db-rctn (subscribe [:db])]
+    [:div#db.ui.flexing.relative
+     [editor @db-rctn]]))

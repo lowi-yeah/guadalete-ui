@@ -13,10 +13,6 @@
 
 
 
-(defn- move-node [[id n] δ]
-       "Move a node by the specified centre."
-       (let [offset (g/+ (:pos-0 n) δ)]
-            [id (assoc n :pos (vec-map offset))]))
 
 
 ;//
@@ -56,6 +52,12 @@
 ;//  |_|_|_\___/\_,_/__\___| |_|_|_\___/\_/\___|
 ;//
 
+
+(defn- move-node [[id n] δ]
+  "Move a node by the specified centre."
+  (let [offset (g/+ (:pos-0 n) δ)]
+    [id (assoc n :pos (vec-map offset))]))
+
 (defn- selected-node
        "Returns the first node ith a selected attribute."
        [nodes]
@@ -64,8 +66,8 @@
 
 (defmulti move* (fn [type data] type))
 
-(defmethod move* nil [_ data] (comment "no nothing"))
-(defmethod move* :none [_ data] (comment "no nothing"))
+(defmethod move* nil [_ _] (comment "no nothing"))
+(defmethod move* :none [_ _] (comment "no nothing"))
 (defmethod move* :pan [_ data] (dispatch [:pd/mouse-move data]))
 (defmethod move* :move [_ data] (dispatch [:node/mouse-move data]))
 (defmethod move* :link [_ data] (dispatch [:flow/mouse-move data]))

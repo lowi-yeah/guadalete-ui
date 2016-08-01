@@ -13,9 +13,9 @@
 (defn blank-panel [] [:div#blank])
 
 (defmulti panels identity)
-(defmethod panels :blank-panel [] [blank-panel])
-(defmethod panels :root-panel [] [root-panel])
-(defmethod panels :login-panel [] [login-panel])
+(defmethod panels :blank [] [blank-panel])
+(defmethod panels :root [] [root-panel])
+(defmethod panels :login [] [login-panel])
 (defmethod panels :default [] [blank-panel])
 
 ;//              _
@@ -25,5 +25,6 @@
 ;//
 (defn main-panel []
   (fn []
-    (let [main-panel-rctn (re-frame/subscribe [:main-panel])]
-      (panels @main-panel-rctn))))
+    (let [panel-rctn (re-frame/subscribe [:view/panel])]
+      (log/debug "panel-rctn" @panel-rctn)
+      (panels @panel-rctn))))
