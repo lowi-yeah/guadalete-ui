@@ -3,7 +3,7 @@
     [reagent.ratom :refer [reaction]])
   (:require
     [clojure.string :as string]
-    [reagent.core :as r]
+    [reagent.core :refer [create-class dom-node]]
     [re-frame.core :refer [dispatch subscribe]]
     [thi.ng.geom.core :as g]
     [thi.ng.geom.svg.core :as svg]
@@ -14,7 +14,8 @@
     [guadalete-ui.pd.color :refer [make-color render-color]]
     [guadalete-ui.items :refer [find-unused-light find-unused-signal]]
     [guadalete-ui.pd.link :as link :refer [links]]
-    [guadalete-ui.views.widgets :refer [sparky]]))
+    [guadalete-ui.views.widgets :refer [sparky]]
+    [guadalete-ui.pd.layout :refer [node-width line-height node-height]]))
 
 ;(events/listen (r/dom-node this) "dblclick"
 ;               #(double-click % room-id (:id scene)))
@@ -31,10 +32,20 @@
 ;//  \__,_|_| \__,_|\_/\_/
 ;//
 
-(def node-size 36)
-(def node-width 92)
-(def node-height 28)
-(def line-height 14)
+
+(defn- node-title []
+  (fn [title]
+    [svg/group
+     {:class "title"}
+     [svg/rect (vec2 0 0) node-width line-height
+      {:class "bg"
+       :rx    1}]
+     [svg/text
+      (vec2 4 10)
+      title
+      {:class       "node-title"
+       :text-anchor "left"}]
+     ]))
 
 (defn- default-node
   []
@@ -50,13 +61,13 @@
        [svg/rect (vec2) 96 32 {:rx 2 :class "bg"}]
        [svg/text (vec2 8 21) (:name n) {}]])))
 
-(defn- node-name []
+(defn- light-name []
   (fn [name]
     (let [words (string/split name #" ")
           ;char-counts (map #(count %) words)
           ]
       [svg/group
-       {:transform (str "translate(28 12)")}
+       {:transform (str "translate(4 " (* 2 line-height) ")")}
        [:text
         {:x           0
          :y           0
@@ -71,42 +82,53 @@
             ))]])))
 
 (defn- light-node
-  []
-  (fn [room-id scene-id node item]
-    (let [id (:id node)
-          position (:position node)
-          type (keyword (:type node))
-          radius 18
-          ]
-      [svg/group
-       {:id            id
-        :class         (if (:selected node) "light node selected" "light node")
-        :transform     (str "translate(" (:x position) " " (:y position) ")")
-        :data-type     "node"
-        :data-ilk      (:ilk node)
-        :data-scene-id scene-id}
+  [scene-id node item]
+  (let [id (:id node)]
+    (create-class
+      {:component-did-mount
+       (fn [_this]
+         (let [offset-top (* 2 line-height)
+               text-height (-> (str "#" id " .node-text") (js/$) (.height))
+               height (+ offset-top text-height)]
+           (-> (str "#" id " > .bg")
+               (js/$)
+               (.height height))
+           (-> (str "#" id " .click-target")
+               (js/$)
+               (.height height))))
 
-       [svg/rect (vec2) node-width node-height
-        {:rx    2
-         :class "bg"}]
+       :reagent-render
+       (fn [scene-id node item]
+         (let [position (:position node)
+               link-offset 2]
+           [svg/group
+            {:id            id
+             :class         (if (:selected node) "light node selected" "light node")
+             :transform     (str "translate(" (:x position) " " (:y position) ")")
+             :data-type     "node"
+             :data-ilk      (:ilk node)
+             :data-scene-id scene-id}
 
-       [svg/group
-        {:class "node-content"}
-        [:use.icon {:xlink-href "/images/bulb-on.svg#main"
-                    :width      radius
-                    :height     radius
-                    :x          4
-                    :y          4}]
-        [node-name (:name item)]]
+            [svg/rect (vec2) node-width node-height
+             {:rx    2
+              :class "bg"}]
 
-       [links scene-id node]])))
+            [node-title "Light"]
+
+            [svg/group
+             {:class "node-content"}
+             [light-name (:name item)]]
+
+            [svg/rect (vec2 0 0) node-width node-height
+             {:rx    1
+              :class "click-target"}]
+
+            [links scene-id node link-offset]]))})))
 
 (defn- color-node
   []
-  (fn [room-id scene-id node item]
+  (fn [scene-id node item]
     (let [
-          outlet (first (:outlets node))
-          outlet-size (vec2 18 8)
           id (:id node)
           position (:position node)
           height (* line-height (+ 3 (count (name (:type item)))))
@@ -114,6 +136,7 @@
           ;to make the rendering a bit nicer, take the brightness value and set it as the alpha channel
           ;that way not a black splot gets rendered when the birightness is low, but rather a transparent one
           hacked-color (render-color item)
+          link-offset 2.5
           ]
       [svg/group
        {:id            id
@@ -127,29 +150,27 @@
         {:class "bg"
          :rx    1}]
 
-       [svg/rect (vec2 0 0) node-width line-height
+       [node-title "Color"]
+
+       [svg/rect (vec2 0 line-height) node-width (/ line-height 2)
         {:fill hacked-color
          :rx   1}]
-
-       [svg/text
-        (vec2 4 (+ line-height 8))
-        (str (:type item))
-        {:class       "node-text"
-         :text-anchor "left"}]
 
        [svg/rect (vec2 0 0) node-width height
         {:rx    1
          :class "click-target"}]
 
-       [links scene-id node]])))
+       [links scene-id node link-offset]])))
 
 (defn- signal-node []
-  (fn [room-id scene-id node item]
+  (fn [scene-id node item]
     (let [outlet (first (:outlets node))
           outlet-size (vec2 18 8)
           id (:id node)
           position (:position node)
-          height (* line-height 3)]
+          height (* line-height 4)
+          link-offset 3.5
+          ]
 
       [svg/group
        {:id            id
@@ -163,25 +184,31 @@
         {:class "bg"
          :rx    1}]
 
-       [sparky item]
+       [node-title "Signal"]
+
+       [sparky item
+        {:position  (vec2 0 (* line-height 2))
+         :dimension (vec2 node-width line-height)}]
 
        [svg/text
-        (vec2 4 12)
+        (vec2 4 (+ 12 line-height))
         (str (:name item))
         {:class       "node-text"
          :text-anchor "left"}]
+
        [svg/rect (vec2 0 0) node-width height
         {:rx    1
          :class "click-target"}]
-       [links scene-id node]])))
+
+       [links scene-id node link-offset]])))
 
 
 (defn node
   [room-id scene-id n item]
   (condp = (kw* (:ilk n))
-    :signal [signal-node room-id scene-id n item]
-    :light [light-node room-id scene-id n item]
-    :color [color-node room-id scene-id n item]
+    :signal [signal-node scene-id n item]
+    :light [light-node scene-id n item]
+    :color [color-node scene-id n item]
     ;:output [output-node n]
     [default-node n]))
 
@@ -203,9 +230,6 @@
 ;//  | '  \/ _` | / / -_)
 ;//  |_|_|_\__,_|_\_\___|
 ;//
-
-
-
 (defn- color-in-link [type name node-id]
   {:id        (str type "-" node-id)
    :type      type
@@ -339,8 +363,7 @@
     (assoc-in db [:scene scene-id] scene*)))
 
 (defn move [{:keys [scene-id id position] :as data} db]
-  (let [id-key (keyword id)
-        scene (get-in db [:scene scene-id])
+  (let [scene (get-in db [:scene scene-id])
         nodes (get-in db [:scene scene-id :nodes])
         node (selected-node nodes)
         δ (g/- (vec2 position) (vec2 (:pos-0 scene)))

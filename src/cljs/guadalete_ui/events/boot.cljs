@@ -34,7 +34,6 @@
                 :message       ""}
      :dispatch [:do-sync-role]}))
 
-
 ;//                             _
 ;//   ____  _ _ _  __   _ _ ___| |___
 ;//  (_-< || | ' \/ _| | '_/ _ \ / -_)
@@ -77,6 +76,7 @@
 (def-event-fx
   :do-sync-state
   (fn [{:keys [db]} [_ role]]
+    (log/debug "syncing state")
     (let [sente-effect {:topic      :sync/state
                         :data       {:role role}
                         :timeout    8000                    ;; optional see API docs
@@ -109,6 +109,7 @@
 
 (def-event
   :chsk/connect
-  (fn [db f00]
-    (log/debug ":chsk/connect" f00)
+  (fn [db _]
+    ;; redirect back to / after login.
+    (.assign js/location "/")
     db))
