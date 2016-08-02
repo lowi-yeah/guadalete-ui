@@ -131,8 +131,6 @@
   :view/scene
   (fn [db [_ [room-id scene-id]]]
     (let [scene-id* (or scene-id (first-scene-id db room-id))]
-      (log/debug "view scene. room-id:" room-id "| scene-id:" scene-id*)
-
       (-> db
           (assoc-in [:view :section] :room)
           (assoc-in [:view :segment] :scene)
@@ -143,7 +141,6 @@
   :view/dash
   (fn [db [_ room-id]]
     (let []
-      (log/debug ":view/dash" room-id)
       (-> db
           (assoc-in [:view :section] :room)
           (assoc-in [:view :segment] :dash)

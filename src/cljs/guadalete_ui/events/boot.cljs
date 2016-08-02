@@ -57,7 +57,6 @@
           next-dispatch (if (= role* (or :admin :user))
                           [:do-sync-state]
                           [:set-panel :anonymous])]
-      (log/debug ":success-sync-role" role)
       {:db       (assoc db :user/role role* :ws/connected? true)
        :dispatch next-dispatch})))
 
@@ -76,7 +75,6 @@
 (def-event-fx
   :do-sync-state
   (fn [{:keys [db]} [_ role]]
-    (log/debug "syncing state")
     (let [sente-effect {:topic      :sync/state
                         :data       {:role role}
                         :timeout    8000                    ;; optional see API docs
@@ -88,7 +86,6 @@
 (def-event-fx
   :success-sync-state
   (fn [{:keys [db]} [_ state]]
-    (log/debug ":success-sync-state" state)
     (let [role (:user/role db)
           rooms-map (mappify :id (:room state))
           lights-map (mappify :id (:light state))

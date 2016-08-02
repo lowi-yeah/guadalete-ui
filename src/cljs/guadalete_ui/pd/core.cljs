@@ -84,7 +84,7 @@
          :on-drop         #(drop* %)
          :on-drag-over    #(allow-drop %)
          :on-click        #(dispatch [:mouse/click (mouse/event-data % mouse-data)])
-         ;:on-double-click #(dispatch [:mouse/double-click (mouse/event-data % mouse-data)])
+         :on-double-click #(dispatch [:mouse/double-click (mouse/event-data % mouse-data)])
          :on-mouse-down   #(dispatch [:mouse/down (mouse/event-data % mouse-data)])
          :on-mouse-move   #(dispatch [:mouse/move (mouse/event-data % mouse-data)])
          :on-mouse-up     #(dispatch [:mouse/up (mouse/event-data % mouse-data)])

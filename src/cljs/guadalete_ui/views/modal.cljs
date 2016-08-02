@@ -5,7 +5,7 @@
     [clojure.string :as string]
     [clojure.set :refer [union]]
     [cljs.core.async :refer [<! >! put! chan close!]]
-    [reagent.core :as reagent :refer [dom-node]]
+    [reagent.core :as reagent :refer [create-class dom-node]]
     [re-frame.core :refer [dispatch subscribe]]
     [thi.ng.color.core :refer [as-css]]
     [guadalete-ui.views.modal.light :refer [light-modal]]
@@ -93,10 +93,10 @@
                            (js/$)
                            (.dropdown)))})
          [:select.ui.dropdown
-          {:name      "item"
+          {:name  "item"
            ;; obacht!
            ;:on-change #(light-modal-change % @node-rctn)
-           :value     (:item-id @node-rctn)}
+           :value (:item-id @node-rctn)}
 
           ;(if (nil? @item-rctn)
           ;  ^{:key (str "light-select-nil")}
@@ -192,3 +192,69 @@
      ;[pd-signal-modal]
      ;[pd-color-modal]
      ]))
+
+
+
+
+
+;//
+;//   _ _  _____ __ __  _ _  _____ __ __  _ _  _____ __ __
+;//  | ' \/ -_) V  V / | ' \/ -_) V  V / | ' \/ -_) V  V /
+;//  |_||_\___|\_/\_/  |_||_\___|\_/\_/  |_||_\___|\_/\_/
+;//
+
+(defn- signal-change [ev data]
+
+  (let [new-signal-id (-> ev
+                (.-currentTarget)
+                (.-value))
+        data* (assoc data :new-id new-signal-id)]
+    (dispatch [:pd/register-node data*])))
+
+(defn- pd-signal
+  "Modal for pd signal nodes"
+  []
+  (let [id (str (random-uuid))]
+    (create-class
+      {:component-did-mount
+       (fn [_]
+         (-> (str "#" id) (js/$) (.dropdown)))
+       :reagent-render
+       (fn []
+         (let [data-rctn (subscribe [:modal/data])
+               options-rctn (subscribe [:modal/same-ilk-items])]
+           [:div#signal-modal
+            [:div.header "Signal"]
+            [:div.content.ui.form
+             [:select.ui.dropdown
+              {:id        id
+               :name      "item"
+               ;; obacht!
+               :on-change #(signal-change % @data-rctn)
+               :value     (:item-id @data-rctn)}
+              (doall (for [an-option (vals @options-rctn)]
+                       ^{:key (str "select-" (:id an-option))}
+                       [:option
+                        {:value (:id an-option)}
+                        (:name an-option)]))]]]))})))
+
+(defn- pd-color []
+  (fn []
+    [:h2 "Kolor!"]))
+
+(defn modal []
+  (fn []
+    (let [data-rctn (subscribe [:modal/data])
+          modal-type (:modal-type @data-rctn)
+          data-rctn (subscribe [:modal/data])]
+      [:div#modal.thing.ui.basic.modal.small
+       [:div.content
+        (condp = modal-type
+          :pd/signal [pd-signal]
+          :pd/color [pd-color]
+          [:div.empty])
+
+        [:pre.code (pretty @data-rctn)]
+        ]
+       [:div.actions
+        [:div.ui.button.cancel "close"]]])))

@@ -99,18 +99,15 @@
     ;; do nothing for the moment
     world))
 
-(def-event
+(def-event-fx
   :mouse/double-click
-  (fn [db [_ {:keys [room-id ilk scene-id id] :as data}]]
-    (condp = (kw* ilk)
-      :light (do
-               (dispatch [:modal/open {:id :pd-light-node}])
-               (assoc db :pd/modal-node-data {:room-id room-id :scene scene-id :node id}))
-      :signal (do
-                (dispatch [:modal/open {:id :pd-signal-node}])
-                (assoc db :pd/modal-node-data {:room-id room-id :scene scene-id :node id}))
-      :color (do
-               (dispatch [:modal/open {:id :pd-color-node}])
-               (assoc db :pd/modal-node-data {:room-id room-id :scene scene-id :node id}))
-      db)))
+  (fn [{:keys [db]} [_ {:keys [scene-id id ilk]}]]
+    (let [item-id (get-in db [:scene scene-id :nodes (keyword id) :item-id])
+          data {:scene-id   scene-id
+                :node-id    id
+                :item-id    item-id
+                :ilk        ilk
+                :modal-type (keyword (str "pd/" (name ilk)))}]
+      {:db    (assoc db :modal data)
+       :modal :show})))
 

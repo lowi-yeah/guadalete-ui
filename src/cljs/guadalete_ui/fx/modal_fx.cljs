@@ -7,8 +7,16 @@
 
 (def-fx
   :modal
-  (fn modal-effect [[type id]]
-    (log/debug ":modalmodal" type id)
-    (if (= :close id)
-      (dispatch [:modal/close type])
-      (dispatch [:modal/open type id]))))
+  (fn modal-effect [command]
+    (let [jq-node (js/$ (str "#modal"))
+          options {
+                   ;:onDeny        deny-modal
+                   ;:onApprove     #(approve-modal modal-id)
+                   :closable      true
+                   :dimPage       true
+                   :detachable    false
+                   :context       "#root"
+                   :allowMultiple false}
+          js-options (clj->js options)]
+      (.modal jq-node js-options)
+      (.modal jq-node (name command)))))

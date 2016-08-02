@@ -128,44 +128,6 @@
   (fn [db _]
     (dmx/all db)))
 
-;//                           _
-;//   __ _  _ _ _ _ _ ___ _ _| |_
-;//  / _| || | '_| '_/ -_) ' \  _|
-;//  \__|\_,_|_| |_| \___|_||_\__|
-;//
-;(def-sub
-;  :current/view
-;  (fn [db _]
-;    (:current/view db)))
-;
-;(def-sub
-;  :current/segment
-;  (fn [db _]
-;    (:current/segment db)))
-;
-;(def-sub
-;  :current/room
-;  (fn [db [_ {:keys [assemble]}]]
-;    (let [room-id (reaction (:current/room-id db))
-;          room (get-in db [:room @room-id])]
-;      (if assemble
-;        (assemble-item :room db room)
-;        room))))
-;
-;(def-sub
-;  :current/light
-;  (fn [db _]
-;    (let [light-id (:current/light-id db)
-;          light (get-in db [:light light-id])]
-;      light)))
-;
-;(def-sub
-;  :current/scene
-;  (fn [db _]
-;    (let [scene-id (:current/scene-id db)
-;          scene (get-in db [:scene scene-id])]
-;      scene)))
-
 (def-sub
   :selected
   (fn [db _]
@@ -186,23 +148,39 @@
 ; The Signals are dereferenced and passed to the handler-fn.
 ; Dynamic subscriptions need to pass a fn which takes app-db, the static vector, and the dereffed dynamic values.
 (def-sub
-  :modal-item-dynamic
-  (fn modal-item-dynamic [db _ [modal-data]]
-    (let [id (:id modal-data)
-          type (:type modal-data)]
-      (get-in db [type id]))))
+  :modal/item-dynamic
+  (fn modal-item-dynamic [db _ [data]]
+    (let [id (:item-id data)
+          ilk (:ilk data)]
+      (get-in db [ilk id]))))
 
 (def-sub
-  :modal-data*
+  :modal/items-dynamic
+  (fn modal-item-dynamic [db _ [data]]
+    (let [ilk (:ilk data)]
+      (get db ilk))))
+
+(def-sub
+  :modal/data
   (fn [db _]
-    (:modal/item db)))
+    (get db :modal)))
 
 (def-sub
   :modal/item
   (fn [_ _]
-    (let [modal-data-rctn (subscribe [:modal-data*])
-          item-rctn (subscribe [:modal-item-dynamic] [modal-data-rctn])]
+    (let [data-rctn (subscribe [:modal/data])
+          item-rctn (subscribe [:modal/item-dynamic] [data-rctn])]
       @item-rctn)))
+
+(def-sub
+  :modal/same-ilk-items
+  (fn [_ _]
+    (let [data-rctn (subscribe [:modal/data])
+          items-rctn (subscribe [:modal/items-dynamic] [data-rctn])]
+      @items-rctn)))
+
+
+
 
 ;//   _ _      _   _
 ;//  | (_)__ _| |_| |_

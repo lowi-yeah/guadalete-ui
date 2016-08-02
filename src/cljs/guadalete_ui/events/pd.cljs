@@ -37,3 +37,12 @@
           stashed-scene (get-in db [:tmp :scene])]
       {:db    (assoc-in db [:scene scene-id] scene*)
        :sente (scene/sync-effect {:old stashed-scene :new scene*})})))
+
+(def-event-fx
+  :pd/register-node
+  (fn [{:keys [db]} [_ {:keys [scene-id node-id new-id]}]]
+    (let [scene (get-in db [:scene scene-id])
+          scene* (assoc-in scene [:nodes (kw* node-id) :item-id] new-id)]
+      {:db    (assoc-in db [:scene scene-id] scene*)
+       :sente (scene/sync-effect {:old scene :new scene*})})))
+

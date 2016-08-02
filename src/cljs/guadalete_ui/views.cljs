@@ -26,5 +26,4 @@
 (defn main-panel []
   (fn []
     (let [panel-rctn (re-frame/subscribe [:view/panel])]
-      (log/debug "panel-rctn" @panel-rctn)
       (panels @panel-rctn))))

@@ -8,17 +8,17 @@
     [thi.ng.geom.core.vector :refer [vec2]]
     [guadalete-ui.console :as log]
     [guadalete-ui.util :refer [pretty dimensions]]
-    [guadalete-ui.views.modal :refer [modals]]
+    [guadalete-ui.views.modal :refer [modal]]
     [guadalete-ui.views.segments :refer [segment]]
     [guadalete-ui.views.sections :refer [section]]
     [guadalete-ui.views.menu :refer [main-menu secondary-menu]]))
+
 
 ;//               _
 ;//   _ _ ___ ___| |_
 ;//  | '_/ _ \ _ \  _|
 ;//  |_| \___\___/\__|
 ;//
-
 (defn root-panel
   "Root component for :admin.
   Using a Form-3 component here, as an eternal js library (semantic-ui) has to be initialized.
@@ -66,5 +66,5 @@
           [:div#view.pusher
            (section @section-rctn)
            ]
-          ;[modals]
+          [modal]
           ])})))

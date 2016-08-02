@@ -11,24 +11,12 @@
 ;//  | '  \/ _ \ _` / _` | |
 ;//  |_|_|_\___\__,_\__,_|_|
 ;//
-(def-event
-  :modal/open
-  (fn [db [_ type item-id]]
-    (let [modal-id (str (name type) "-modal")
-          item (get-in db [type item-id])
-          modal-data {:id   item-id
-                      :type :light}]
-      (modal/open modal-id {})
-      (assoc db :modal/item modal-data))))
 
-(def-event
+(def-event-fx
   :modal/close
-  (fn [db [_ type]]
-    (let [modal-id (str (name type) "-modal")]
-      (modal/close modal-id)
-      (dissoc db :modal/item))))
-
-
+  (fn [{:keys [db]} [_ type]]
+    {:db (dissoc db :modal)
+     :modal :close}))
 ;
 ;(def-event
 ;  :modal/approve
