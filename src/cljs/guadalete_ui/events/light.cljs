@@ -115,12 +115,16 @@
               room (get-in db [:room room-id])
               room-lights* (conj (:light room) (:id light))
               room* (assoc room :light room-lights*)
+              modal-data {:item-id    (:id light)
+                          :modal-type :light}
               db* (-> db
                       (assoc-in [:room room-id] room*)
-                      (assoc-in [:light (:id light)] light))]
+                      (assoc-in [:light (:id light)] light)
+                      (assoc :modal modal-data)
+                      )]
           {:db       db*
            :dispatch [:room/update room* room]
-           :modal    [:light (:id light)]})
+           :modal    :show})
         (do
           (log/error "error during light creation:" error-msg)
           {:db db})))))

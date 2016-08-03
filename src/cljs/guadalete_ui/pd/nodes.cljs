@@ -259,7 +259,7 @@
          (into {}))))
 
 (defmulti make
-          (fn [ilk data db] ilk))
+          (fn [ilk _ _] ilk))
 
 (defmethod make :light
   [_ {:keys [position] :as data} db]

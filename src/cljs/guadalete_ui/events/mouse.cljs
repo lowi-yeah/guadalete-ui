@@ -101,9 +101,10 @@
 
 (def-event-fx
   :mouse/double-click
-  (fn [{:keys [db]} [_ {:keys [scene-id id ilk]}]]
+  (fn [{:keys [db]} [_ {:keys [room-id scene-id id ilk]}]]
     (let [item-id (get-in db [:scene scene-id :nodes (keyword id) :item-id])
-          data {:scene-id   scene-id
+          data {:room-id    room-id
+                :scene-id   scene-id
                 :node-id    id
                 :item-id    item-id
                 :ilk        ilk

@@ -12,10 +12,17 @@
 ;//  |_|_|_\___\__,_\__,_|_|
 ;//
 
+(def-event
+  :modal/update
+  (fn [db [_ new-data]]
+    (assoc db :modal new-data)))
+
+
+
 (def-event-fx
   :modal/close
   (fn [{:keys [db]} [_ type]]
-    {:db (dissoc db :modal)
+    {:db    (dissoc db :modal)
      :modal :close}))
 ;
 ;(def-event

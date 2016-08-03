@@ -58,8 +58,6 @@
 ;//  | '  \/ _` | | ' \
 ;//  |_|_|_\__,_|_|_||_|
 ;//
-
-
 (defn- unused-lights
   "Finds a light inside a room which is not yet in use by the given scene."
   [room scene]

@@ -113,6 +113,7 @@ Maps become Objects. Arbitrary keys are encoded to by key->js."
     :else n))
 
 (defn offset-position [pos scene]
+  (log/debug "offset-position" pos scene)
   (let [pos* (vec2 pos)
         translation (vec2 (:translation scene))]
     (g/- pos* translation)))

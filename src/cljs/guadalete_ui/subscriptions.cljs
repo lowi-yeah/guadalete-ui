@@ -102,6 +102,21 @@
   (fn [db _]
     (vals (:room db))))
 
+(def-sub
+  :room
+  (fn [db [_ room-id]]
+    (get-in db [:room room-id])))
+
+;//
+;//   _____ ___ _ _  ___
+;//  (_-< _/ -_) ' \/ -_)
+;//  /__\__\___|_||_\___|
+;//
+(def-sub
+  :scene
+  (fn [db [_ scene-id]]
+    (get-in db [:scene scene-id])))
+
 ;//      _                _
 ;//   ____)__ _ _ _  __ _| |
 ;//  (_-< / _` | ' \/ _` | |
@@ -197,8 +212,9 @@
                            (map (fn [[id l]] (:item-id l)))
                            (filter (fn [id] id))
                            (into #{}))
-          unused (difference all-light-ids used-light-ids)]
-      (into [] unused))))
+          unused (difference all-light-ids used-light-ids)
+          lights (map #(get-in db [:light %]) unused)]
+      (into [] lights))))
 
 
 ;//           _
