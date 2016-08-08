@@ -41,9 +41,10 @@
     [svg/group
      {:class "in-links"}
      (doall
-       (for [l links]
-         (let [text-position (vec2 handle-text-padding (* offset line-height))
-               handle-position (vec2 (* -1 handle-width) (* (- offset 0.64) line-height))]
+       (for [index (-> links count range)]
+         (let [l (nth links index)
+               text-position (vec2 handle-text-padding (* (+ index offset) line-height))
+               handle-position (vec2 (* -1 handle-width) (* (+ index (- offset 0.64)) line-height))]
            ^{:key (str "link-" (:id l))}
            [svg/group {}
             [link-handle l :in scene-id node-id handle-position]
@@ -56,9 +57,10 @@
     [svg/group
      {:class "out-links"}
      (doall
-       (for [l links]
-         (let [text-position (vec2 (- node-width handle-text-padding) (* offset line-height))
-               handle-position (vec2 node-width (* (- offset 0.64) line-height))]
+       (for [index (-> links count range)]
+         (let [l (nth links index)
+               text-position (vec2 (- node-width handle-text-padding) (* (+ index offset) line-height))
+               handle-position (vec2 node-width (* (+ index (- offset 0.64)) line-height))]
            ^{:key (str "link-" (:id l))}
            [svg/group {}
             [link-handle l :out scene-id node-id handle-position]
@@ -84,8 +86,7 @@
       [svg/group
        {}
        (if (not-empty in-links) [in* in-links scene-id (:id node) offset])
-       (if (not-empty out-links) [out* out-links scene-id (:id node) (+ offset (count in-links))])
-       ])))
+       (if (not-empty out-links) [out* out-links scene-id (:id node) (+ offset (count in-links))])])))
 
 
 

@@ -6,5 +6,5 @@
 (def node-height 28)
 (def line-height 14)
 (def handle-width 6)
-(def handle-height 12)
+(def handle-height 10)
 (def handle-text-padding 4)

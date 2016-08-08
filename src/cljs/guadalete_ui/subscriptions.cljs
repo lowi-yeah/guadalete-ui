@@ -176,6 +176,11 @@
       (get db ilk))))
 
 (def-sub
+  :modal/node-dynamic
+  (fn [db _ [{:keys [scene-id node-id]}]]
+    (get-in db [:scene scene-id :nodes (keyword node-id)])))
+
+(def-sub
   :modal/data
   (fn [db _]
     (get db :modal)))
@@ -186,6 +191,13 @@
     (let [data-rctn (subscribe [:modal/data])
           item-rctn (subscribe [:modal/item-dynamic] [data-rctn])]
       @item-rctn)))
+
+(def-sub
+  :modal/node
+  (fn [_ _]
+    (let [data-rctn (subscribe [:modal/data])
+          node-rctn (subscribe [:modal/node-dynamic] [data-rctn])]
+      @node-rctn)))
 
 (def-sub
   :modal/same-ilk-items

@@ -150,10 +150,11 @@
         {:class "bg"
          :rx    1}]
 
-       [node-title "Color"]
+       [node-title (str "Color: " (:type item))]
 
        [svg/rect (vec2 0 line-height) node-width (/ line-height 2)
         {:fill hacked-color
+         :class "indicator"
          :rx   1}]
 
        [svg/rect (vec2 0 0) node-width height

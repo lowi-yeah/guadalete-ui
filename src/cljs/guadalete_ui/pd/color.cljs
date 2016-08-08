@@ -269,10 +269,10 @@
       (pressumably the color-modal)"
       []
       (fn [color-item-rctn channel]
-          (condp = (:type @color-item-rctn)
-                 "w" [white-widget (:color @color-item-rctn) channel]
-                 "ww" [two-tone-widget (:color @color-item-rctn) channel]
-                 "rgb" [rgb-widget (:color @color-item-rctn) channel]
+          (condp = (kw* (:type @color-item-rctn))
+                 :v [white-widget (:color @color-item-rctn) channel]
+                 :sv [two-tone-widget (:color @color-item-rctn) channel]
+                 :hsv [rgb-widget (:color @color-item-rctn) channel]
                  [blank-widget])))
 
 (defn render-color

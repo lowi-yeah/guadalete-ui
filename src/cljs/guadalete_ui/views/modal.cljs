@@ -53,14 +53,6 @@
       [:div.ui.button.deny "cancel"]
       [:div.ui.button.approve "make!"]]]))
 
-(defn- color-type-change [ev node]
-  (let [new-type (-> ev
-                     (.-currentTarget)
-                     (.-value))
-        node-color (color/from-id (:item-id node))
-        node-color* (assoc node-color :type new-type)
-        color-id* (color/make-id (:color node-color*) (:type node-color*))]
-    (dispatch [:modal/register-node {:item-id color-id*}])))
 
 
 
@@ -99,43 +91,7 @@
 (defn pd-color-modal
   "Modal for pd color nodes"
   []
-  (fn []
-    (let [node-rctn (subscribe [:pd/modal-node])
-          item-rctn (subscribe [:pd/modal-item])
-          channel (chan)
-          color (if @item-rctn
-                  @(as-css (render-color @item-rctn))
-                  "#3B3F44")]
-      [:div#pd-color-node.ui.basic.modal.small
-       [:div.content
-        [:div.flex-row-container
-         [:div.color-indicator
-          {:style {:background-color color}}]
-         [:div.ui.form.flexing
-          [:select.ui.dropdown
-           {:name      "color"
-            :value     (:type @item-rctn)
-            :on-change #(color-type-change % @node-rctn)}
-           [:option {:value "w"} "White"]
-           [:option {:value "ww"} "Two tone white"]
-           [:option {:value "rgb"} "RGB"]]]]
-
-        [(with-meta identity
-                    {:component-did-mount
-                     (fn [_]
-                       (go-loop []
-                                (let [c (<! channel)
-                                      color-id (color/make-id c (:type @item-rctn))]
-                                  (if (not= (:item-id @node-rctn) color-id)
-                                    (dispatch [:modal/register-node {:item-id color-id}])))
-                                (recur)))
-                     ;:component-will-unmount #(close! channel)
-                     })
-         [color-widget item-rctn channel]]]
-
-       [:div.actions
-        [:div.ui.button.deny
-         "close"]]])))
+  )
 
 
 (defn confirm-trash-modal []
@@ -172,6 +128,13 @@
     (dispatch [:pd/register-node data*])
     (dispatch [:modal/update data**])))
 
+
+(defn- color-type-change [ev data]
+  (let [new-type (-> ev
+                     (.-currentTarget)
+                     (.-value))
+        data* (assoc data :new-type new-type)]
+    (dispatch [:color/change-type data*])))
 
 ;//      _                _
 ;//   ____)__ _ _ _  __ _| |
@@ -211,8 +174,46 @@
 ;//  \__\___/_\___/_|
 ;//
 (defn- pd-color []
-  (fn []
-    [:h2 "Kolor!"]))
+  (let [channel (chan)
+        id (str (random-uuid))
+        data-rctn (subscribe [:modal/data])
+        node-rctn (subscribe [:modal/node])
+        item-rctn (subscribe [:modal/item])]
+
+    (create-class
+      {
+       :component-did-mount
+       (fn [_]
+         (-> (str "#" id) (js/$) (.dropdown)))
+       ;(fn [_]
+       ;(go-loop []
+       ;         (let [c (<! channel)
+       ;               color-id (color/make-id c (:type @item-rctn))]
+       ;           (if (not= (:item-id @node-rctn) color-id)
+       ;             (dispatch [:modal/register-node {:item-id color-id}])))
+       ;         (recur)))
+       :reagent-render
+       (fn []
+         (let [color "#3B3F44"]
+           [:div#color-modal
+            [:div.header.centred.margin-bottom
+             [:h2 "Adjust color"]
+             [:pre.code (pretty @item-rctn)]]
+            [:div.content.centred
+             [:div.color-indicator
+              {:style {:background-color color}}]
+             [:div.flex-row-container
+              [:div.ui.form.flexing
+               [:select.ui.dropdown
+                {:id        id
+                 :name      "color"
+                 :value     (:type @item-rctn)
+                 :on-change #(color-type-change % @data-rctn)}
+                [:option {:value :v} "White"]
+                [:option {:value :sv} "Two tone white"]
+                [:option {:value :hsv} "RGB"]]]]
+             ;[color-widget item-rctn channel]
+             ]]))})))
 
 ;//   _ _      _   _
 ;//  | (_)__ _| |_| |_
@@ -238,10 +239,7 @@
                ]
            [:div#light-modal
             [:div.header.centred.margin-bottom
-             [:h2 "Select light"]
-             [:pre.code "data:\n" (pretty @data-rctn)]
-             [:pre.code "item:\n" (:name @item-rctn) " | " (:id @item-rctn)]
-             ]
+             [:h2 "Select light"]]
             [:div.content.ui.form.centred
              [:select.ui.dropdown
               {:id        id
@@ -253,9 +251,7 @@
                        ^{:key (str "select-" (:id an-option))}
                        [:option
                         {:value (:id an-option)}
-                        (:name an-option)]))]]
-
-            ]))})))
+                        (:name an-option)]))]]]))})))
 
 (defn modal []
   (fn []

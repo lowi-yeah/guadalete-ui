@@ -109,6 +109,9 @@
 (defn create-color [connection color]
   (create-item connection :color color))
 
+(defn update-color [connection id diff flag]
+  (update-item connection id diff :color flag))
+
 ; Signal
 ; ****************
 (defn get-signals [connection]
