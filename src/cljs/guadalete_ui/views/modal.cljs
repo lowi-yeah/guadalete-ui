@@ -220,6 +220,59 @@
 ;//  | | / _` | ' \  _|
 ;//  |_|_\__, |_||_\__|
 ;//      |___/
+
+(defn change-light-name [ev light-rctn]
+  (let [name* (-> ev .-target .-value)]
+    (dispatch [:light/update (assoc @light-rctn :name name*)])))
+
+(defn- light* []
+  (let [id (str (random-uuid))]
+    (create-class
+      {:component-did-mount
+       (fn [_] (-> (str "#" id) (js/$) (.dropdown)))
+
+       :reagent-render
+       (fn []
+         (let [data-rctn (subscribe [:modal/data])
+               light-rctn (subscribe [:modal/item])
+               ]
+           [:div#light-modal
+            [:div.header.centred.margin-bottom
+             [:h2 "Edit light"]]
+            [:div.content.ui.form
+             ; name
+             ; ----------------
+             [:div.flex-row-container
+              [:label "Name"]
+              [:div.ui.input.margin-bottom.flexing
+               [:input {:type      "text"
+                        :value     (:name @light-rctn)
+                        :on-change #(change-light-name % light-rctn)}]]]
+
+             ; transport
+             ; ----------------
+             ;[:div.flex-row-container
+             ; [:label "Transport"]
+             ; [:select.ui.dropdown.margin-bottom
+             ;  {:name      "transport"
+             ;   :on-change #(change-light-transport % new-light-rctn)
+             ;   :value     (:transport @new-light-rctn)
+             ;   }
+             ;  [:option {:value "dmx"} "DMX"]
+             ;  [:option {:value "mqtt"} "MQTT"]]
+             ; ]
+
+             ;[transport-dmx new-light-rctn available-dmx-rctn]
+             ;(condp = (:transport @new-light-rctn)
+             ;       :dmx
+             ;       :mqtt [transport-mqtt new-light-rctn]
+             ;       (comment "do nothing."))
+             ]
+
+            [:pre.debug (pretty @light-rctn)]
+
+            ]))})))
+
 (defn- pd-light []
   (let [id (str (random-uuid))]
     (create-class
@@ -263,6 +316,7 @@
           :pd/signal [pd-signal]
           :pd/color [pd-color]
           :pd/light [pd-light]
+          :light [light*]
           [:div.empty])]
        [:div.actions
         [:div.ui.button.cancel "close"]]])))

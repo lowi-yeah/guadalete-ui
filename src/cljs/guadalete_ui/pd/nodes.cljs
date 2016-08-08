@@ -61,24 +61,44 @@
        [svg/rect (vec2) 96 32 {:rx 2 :class "bg"}]
        [svg/text (vec2 8 21) (:name n) {}]])))
 
+(defn- split-name*
+  "recursice helper for split name"
+  [words lines]
+
+
+
+  (if (= 0 (count words))
+    (do
+      (reverse lines))
+    (let [max-length 14
+          [line & lines*] lines
+          [word & words*] words
+          joined (string/trim (str line " " word))]
+      (if (<= max-length (count joined))
+        ;; too long. keep seperate
+        (split-name* words* (conj lines word))
+        ;; short enough. join
+        (split-name* words* (conj lines* joined))))))
+
+(defn- split-name [name]
+  (split-name* (string/split name #" ") [""]))
+
 (defn- light-name []
   (fn [name]
-    (let [words (string/split name #" ")
-          ;char-counts (map #(count %) words)
-          ]
+    (let [lines (split-name name)]
       [svg/group
-       {:transform (str "translate(4 " (* 2 line-height) ")")}
+       {:transform (str "translate(4 " line-height ")")}
        [:text
         {:x           0
          :y           0
          :class       "node-text"
          :text-anchor "left"}
         (doall
-          (for [index (range (count words))
-                :let [word (nth words index)
-                      offset (str (* index 1.2) "em")]]
+          (for [index (range (count lines))
+                :let [line (nth lines index)
+                      offset "1rem"]]
             ^{:key (str (random-uuid))}
-            [:tspan {:x "0" :dy offset} word]
+            [:tspan {:x "0" :dy offset} line]
             ))]])))
 
 (defn- light-node
@@ -153,9 +173,9 @@
        [node-title (str "Color: " (:type item))]
 
        [svg/rect (vec2 0 line-height) node-width (/ line-height 2)
-        {:fill hacked-color
+        {:fill  hacked-color
          :class "indicator"
-         :rx   1}]
+         :rx    1}]
 
        [svg/rect (vec2 0 0) node-width height
         {:rx    1

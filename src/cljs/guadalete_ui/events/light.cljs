@@ -134,8 +134,24 @@
 (def-event-fx
   :light/edit
   (fn [{:keys [db]} [_ light-id]]
-    {:db    db
-     :modal [:light light-id]}))
+    (let [data {:item-id    light-id
+                :ilk        :light
+                :modal-type :light}]
+      {:db    (assoc db :modal data)
+       :modal :show})))
+
+;(def-event-fx
+;  :mouse/double-click
+;  (fn [{:keys [db]} [_ {:keys [room-id scene-id id ilk]}]]
+;    (let [item-id (get-in db [:scene scene-id :nodes (keyword id) :item-id])
+;          data {:room-id    room-id
+;                :scene-id   scene-id
+;                :node-id    id
+;                :item-id    item-id
+;                :ilk        ilk
+;                :modal-type (keyword (str "pd/" (name ilk)))}]
+;      {:db    (assoc db :modal data)
+;       :modal :show})))
 
 ;; UPDATE
 ;; ********************************
