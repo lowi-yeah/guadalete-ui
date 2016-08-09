@@ -10,29 +10,18 @@
     [thi.ng.geom.core.vector :refer [vec2]]
     [thi.ng.color.core :as color]
     [guadalete-ui.console :as log]
-    [guadalete-ui.util :refer [pretty kw* vec-map]]
+    [guadalete-ui.util :refer [pretty kw* vec-map in?]]
     [guadalete-ui.pd.color :refer [make-color render-color]]
     [guadalete-ui.items :refer [find-unused-light find-unused-signal]]
     [guadalete-ui.pd.link :as link :refer [links]]
     [guadalete-ui.views.widgets :refer [sparky]]
     [guadalete-ui.pd.layout :refer [node-width line-height node-height]]))
 
-;(events/listen (r/dom-node this) "dblclick"
-;               #(double-click % room-id (:id scene)))
-
-;(defn- double-click [ev room-id layout-id]
-;       (.preventDefault ev)
-;       (log/debug "DOUBLECLICK!")
-;       (let [id (target-id (.-target ev))]
-;            (dispatch [:pd/double-click-node [room-id layout-id id]])))
-
 ;//      _
 ;//   __| |_ _ __ ___ __ __
 ;//  / _` | '_/ _` \ V  V /
 ;//  \__,_|_| \__,_|\_/\_/
 ;//
-
-
 (defn- node-title []
   (fn [title]
     [svg/group
@@ -49,11 +38,11 @@
 
 (defn- default-node
   []
-  (fn [n]
+  (fn [n selected?]
     (let [position (:position n)]
       [svg/group
        {:id        (:id n)
-        :class     (if (:selected n) "node selected" "node")
+        :class     (if selected? "node selected" "node")
         :transform (str "translate(" (:x position) " " (:y position) ")")
         :data-type "node"
         :data-ilk  "none"
@@ -64,9 +53,6 @@
 (defn- split-name*
   "recursice helper for split name"
   [words lines]
-
-
-
   (if (= 0 (count words))
     (do
       (reverse lines))
@@ -98,11 +84,10 @@
                 :let [line (nth lines index)
                       offset "1rem"]]
             ^{:key (str (random-uuid))}
-            [:tspan {:x "0" :dy offset} line]
-            ))]])))
+            [:tspan {:x "0" :dy offset} line]))]])))
 
 (defn- light-node
-  [scene-id node item]
+  [scene-id node item selected?]
   (let [id (:id node)]
     (create-class
       {:component-did-mount
@@ -118,12 +103,12 @@
                (.height height))))
 
        :reagent-render
-       (fn [scene-id node item]
+       (fn [scene-id node item selected?]
          (let [position (:position node)
                link-offset 2]
            [svg/group
             {:id            id
-             :class         (if (:selected node) "light node selected" "light node")
+             :class         (if selected? "light node selected" "light node")
              :transform     (str "translate(" (:x position) " " (:y position) ")")
              :data-type     "node"
              :data-ilk      (:ilk node)
@@ -147,7 +132,7 @@
 
 (defn- color-node
   []
-  (fn [scene-id node item]
+  (fn [scene-id node item selected?]
     (let [
           id (:id node)
           position (:position node)
@@ -160,7 +145,7 @@
           ]
       [svg/group
        {:id            id
-        :class         (if (:selected node) "color node selected" "color node")
+        :class         (if selected? "color node selected" "color node")
         :transform     (str "translate(" (:x position) " " (:y position) ")")
         :data-type     "node"
         :data-scene-id scene-id
@@ -184,7 +169,7 @@
        [links scene-id node link-offset]])))
 
 (defn- signal-node []
-  (fn [scene-id node item]
+  (fn [scene-id node item selected?]
     (let [outlet (first (:outlets node))
           outlet-size (vec2 18 8)
           id (:id node)
@@ -195,7 +180,7 @@
 
       [svg/group
        {:id            id
-        :class         (if (:selected node) "signal node selected" "signal node")
+        :class         (if selected? "signal node selected" "signal node")
         :transform     (str "translate(" (:x position) " " (:y position) ")")
         :data-type     "node"
         :data-scene-id scene-id
@@ -224,27 +209,28 @@
        [links scene-id node link-offset]])))
 
 
-(defn node
-  [room-id scene-id n item]
-  (condp = (kw* (:ilk n))
-    :signal [signal-node scene-id n item]
-    :light [light-node scene-id n item]
-    :color [color-node scene-id n item]
+(defn node*
+  [scene-id node item selected?]
+  (condp = (kw* (:ilk node))
+    :signal [signal-node scene-id node item selected?]
+    :light [light-node scene-id node item selected?]
+    :color [color-node scene-id node item selected?]
     ;:output [output-node n]
-    [default-node n]))
+    [default-node node selected?]))
 
 (defn nodes
   "Renders all nodes into the editor"
   []
-  (fn [room-rctn scene-rctn]
+  (fn [scene-rctn]
     [svg/group
      {:id "nodes"}
-     (doall (for [n (vals (:nodes @scene-rctn))]
-              (let [ilk (kw* (:ilk n))
-                    item-rctn (subscribe [:pd/node-item {:ilk ilk :id (:item-id n)}])]
-                ^{:key (str "n-" (:id n))}
-                [node (:id @room-rctn) (:id @scene-rctn) n @item-rctn])))]))
-
+     (let [selected-node-ids-rctn (subscribe [:pd/selected-nodes])]
+       (doall (for [node (vals (:nodes @scene-rctn))]
+                (let [ilk (kw* (:ilk node))
+                      item-rctn (subscribe [:pd/node-item {:ilk ilk :id (:item-id node)}])
+                      selected? (in? @selected-node-ids-rctn (:id node))]
+                  ^{:key (str "n-" (:id node))}
+                  [node* (:id @scene-rctn) node @item-rctn selected?]))))]))
 
 ;//              _
 ;//   _ __  __ _| |_____
@@ -366,22 +352,7 @@
 ;//  | '  \/ _ \ V / -_)
 ;//  |_|_|_\___/\_/\___|
 ;//
-(defn select [{:keys [scene-id id position] :as data} db]
-  (let [id-key (keyword id)
-        scene (get-in db [:scene scene-id])
-        nodes (get-in db [:scene scene-id :nodes])
-        node (get nodes id-key)
-        node* (assoc node
-                :selected true
-                :pos-0 (vec-map (:position node)))
-        nodes* (-> nodes
-                   (reset-all*)
-                   (assoc id-key node*))
-        scene* (assoc scene
-                 :mode :move
-                 :pos-0 (vec-map position)
-                 :nodes nodes*)]
-    (assoc-in db [:scene scene-id] scene*)))
+
 
 (defn move [{:keys [scene-id id position] :as data} db]
   (let [scene (get-in db [:scene scene-id])

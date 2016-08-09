@@ -11,11 +11,10 @@
 (def-event
   :pd/mouse-down
   (fn [db [_ {:keys [scene-id position]}]]
-    (let [scene (get-in db [:scene scene-id])  
-          scene* (assoc scene  :mode :pan )
+    (let [scene (get-in db [:scene scene-id])
           stash-scene (assoc scene  :position position)]
       (-> db
-          (assoc-in [:scene scene-id] scene*)
+          (assoc-in [:tmp :mode] :pan )
           (assoc-in [:tmp :scene] stash-scene)))))
 
 (def-event
@@ -33,10 +32,11 @@
   :pd/mouse-up
   (fn [{:keys [db]} [_ {:keys [scene-id]}]]
     (let [scene (get-in db [:scene scene-id])
-          scene* (reset-scene scene)
           stashed-scene (get-in db [:tmp :scene])]
-      {:db    (assoc-in db [:scene scene-id] scene*)
-       :sente (scene/sync-effect {:old stashed-scene :new scene*})})))
+      {:db    (-> db
+                  (assoc-in [:tmp :mode] :none)
+                  (assoc-in [:tmp :scene] nil))
+       :sente (scene/sync-effect {:old stashed-scene :new scene})})))
 
 (def-event-fx
   :pd/register-node

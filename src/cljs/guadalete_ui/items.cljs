@@ -98,5 +98,4 @@
                   (get :nodes)
                   (reset-nodes))]
     (-> scene
-        (assoc :nodes nodes)
-        (dissoc :mode))))
+        (assoc :nodes nodes))))

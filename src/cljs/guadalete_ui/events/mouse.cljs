@@ -25,8 +25,6 @@
          :sente (scene/sync-effect {:old scene :new scene*})}
         {:db db*}))))
 
-
-
 (def-event-fx
   :mouse/node-up
   (fn [{:keys [db]} [_ {:keys [scene-id]}]]
@@ -37,17 +35,16 @@
       {:db    (assoc-in db [:scene scene-id] scene*)
        :sente (scene/sync-effect {:old scene :new scene*})})))
 
-
 (def-event-fx
   :mouse/up
   (fn [{:keys [db]} [_ data]]
-    (let
-      [type (:type data)
-       dispatch* (condp = type
-                   :pd [:pd/mouse-up data]
-                   :node [:node/mouse-up data]
-                   :link [:flow/mouse-up data]
-                   nil)]
+    (let [mode (get-in db [:tmp :mode])
+          dispatch* (condp = mode
+                      :pan [:pd/mouse-up data]
+                      :move [:node/mouse-up data]
+                      :link [:flow/mouse-up data]
+                      nil)]
+      (log/debug "mouse up" mode dispatch*)
       (if dispatch*
         {:db       db
          :dispatch dispatch*}
@@ -69,7 +66,7 @@
 (def-event-fx
   :mouse/move
   (fn [{:keys [db]} [_ data]]
-    (let [mode (get-in db [:scene (:scene-id data) :mode])
+    (let [mode (get-in db [:tmp :mode])
           dispatch* (condp = (kw* mode)
                       :none (comment "no nothing")
                       :pan [:pd/mouse-move data]

@@ -17,11 +17,6 @@
 (defn- dropdown-id [light-rctn index]
   (str "drop-" (:id @light-rctn) "-" index))
 
-
-(defn- close [modal-id]
-  (let [jq-node (js/$ (str "#" (name modal-id) ".modal"))]
-    (.modal jq-node "hide")))
-
 (defn- change-light-name [ev light-rctn]
   (let [name* (-> ev .-target .-value)]
     (log/debug "change-light-name" name*)
@@ -36,13 +31,6 @@
         channels* (assoc channels index values)]
     (dispatch [:light/update (assoc @new-light-rctn :channels channels*)])))
 
-(defn- light-modal-change [ev node]
-  (let [item-id (-> ev
-                    (.-currentTarget)
-                    (.-value))]
-    (dispatch [:modal/register-node {:item-id item-id}])
-    (close :pd-light-node)))
-
 (defn- init-dropdown
   "Internal helper for initializing a semantic-ui dropdown"
   [this]
@@ -55,10 +43,6 @@
   (-> (js/$ (str "#" (dropdown-id light-rctn index)))
       (.dropdown
         (js-obj "onChange" #(light-channel-change % light-rctn index)))))
-
-(defn- change-light-transport [ev new-light-rctn]
-  (let [transport* (-> ev .-target .-value kw*)]
-    (dispatch [:light/update (assoc @new-light-rctn :transport transport*)])))
 
 (defn- change-light-channel-count [ev new-light-rctn]
   (let [num-channels* (-> ev .-target .-value int)]
@@ -76,7 +60,6 @@
     (create-class
       {:component-did-mount
        #(init-channel-dropdown % new-light-rctn index)
-
        :reagent-render
        (fn [light-rctn index label available-dmx-rctn]
          (let [channel-dmx (set (get-in @light-rctn [:channels index]))
@@ -130,69 +113,64 @@
   []
   (fn [new-light-rctn available-dmx-rctn]
     (create-class
-      {:component-did-mount init-dropdown
+      {:component-did-mount
+       init-dropdown
        :reagent-render
-                            (fn []
-                              [:div#dmx-config
-                               [:div.flex-row-container
-                                [:label "Color"]
-                                [:select.ui.dropdown.margin-bottom.flexing
-                                 {:name      "num-channels"
-                                  :on-change #(change-light-channel-count % new-light-rctn)
-                                  :value     (or (:num-channels @new-light-rctn) "")}
-                                 [:option {:value 1} "White"]
-                                 [:option {:value 2} "Two-tone"]
-                                 [:option {:value 3} "RGB"]
-                                 [:option {:value 4} "RGBW"]]]
-                               [channel-selectors new-light-rctn available-dmx-rctn]])})))
-
-(defn- transport-mqtt
-  "Component for configuring the DMX channels of a light"
-  []
-  (fn [new-light-rctn]
-    [:p "mqtt configuration goes here…"]))
-
+       (fn []
+         [:div#dmx-config
+          [:div.flex-row-container
+           [:label "Color"]
+           [:select.ui.dropdown.margin-bottom.flexing
+            {:name      "num-channels"
+             :on-change #(change-light-channel-count % new-light-rctn)
+             :value     (or (:num-channels @new-light-rctn) "")}
+            [:option {:value 1} "White"]
+            [:option {:value 2} "Two-tone"]
+            [:option {:value 3} "RGB"]
+            [:option {:value 4} "RGBW"]]]
+          [channel-selectors new-light-rctn available-dmx-rctn]])})))
 
 (defn light-modal []
-  (fn []
-    (let [light-rctn (subscribe [:modal/item])
-          available-dmx-rctn (subscribe [:dmx/available])]
-      [:div#light-modal.thing.ui.basic.modal.small
-       [:div.content.ui.form
-        [:div.flex-row-container.right
-         [:div.circular.ui.icon.button.trash
-          {:on-click #(dispatch [:light/trash (:id @light-rctn)])}
-          [:i.trash.outline.icon]]]
+  (create-class
+    {:component-did-mount
+     (fn [_] ())
+     :reagent-render
+     (fn []
+       (let [light-rctn (subscribe [:modal/item])
+             available-dmx-rctn (subscribe [:dmx/available])]
+         [:div#pd-light-modal
+          [:div.content.ui.form
+           [:div.flex-row-container.right
+            [:div.circular.ui.icon.button.trash
+             {:on-click #(dispatch [:light/trash (:id @light-rctn)])}
+             [:i.trash.outline.icon]]]
 
-        ; name
-        ; ----------------
-        [:div.flex-row-container
-         [:label "Name"]
-         [:div.ui.input.margin-bottom.flexing
-          [:input {:type      "text"
-                   :value     (:name @light-rctn)
-                   :on-change #(change-light-name % light-rctn)}]]]
+           ; name
+           ; ----------------
+           [:div.flex-row-container
+            [:label "Name"]
+            [:div.ui.input.margin-bottom.flexing
+             [:input {:type      "text"
+                      :value     (:name @light-rctn)
+                      :on-change #(change-light-name % light-rctn)}]]]
 
-        ;; transport
-        ;; ----------------
-        ;[:div.flex-row-container
-        ; [:label "Transport"]
-        ; [:select.ui.dropdown.margin-bottom
-        ;  {:name      "transport"
-        ;   :on-change #(change-light-transport % new-light-rctn)
-        ;   :value     (:transport @new-light-rctn)
-        ;   }
-        ;  [:option {:value "dmx"} "DMX"]
-        ;  [:option {:value "mqtt"} "MQTT"]]
-        ; ]
-        ;
-        [transport-dmx light-rctn available-dmx-rctn]
-        ;(condp = (:transport @light-rctn)
-        ;  :dmx
-        ;  :mqtt [transport-mqtt light-rctn]
-        ;  (comment "do nothing."))
-        ]
-       [:div.actions
-        [:div.ui.button.cancel "close"]
-        ]
-       [:pre.debug (pretty @light-rctn)]])))
+           ;; transport
+           ;; ----------------
+           ;[:div.flex-row-container
+           ; [:label "Transport"]
+           ; [:select.ui.dropdown.margin-bottom
+           ;  {:name      "transport"
+           ;   :on-change #(change-light-transport % new-light-rctn)
+           ;   :value     (:transport @new-light-rctn)
+           ;   }
+           ;  [:option {:value "dmx"} "DMX"]
+           ;  [:option {:value "mqtt"} "MQTT"]]
+           ; ]
+           ;
+           [transport-dmx light-rctn available-dmx-rctn]
+           ;(condp = (:transport @light-rctn)
+           ;  :dmx
+           ;  :mqtt [transport-mqtt light-rctn]
+           ;  (comment "do nothing."))
+           ]
+          [:pre.debug (pretty @light-rctn)]]))}))

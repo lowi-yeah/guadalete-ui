@@ -3,12 +3,20 @@
     [clojure.string :refer [lower-case]]
     [re-frame.core :refer [dispatch subscribe]]
     [guadalete-ui.items :refer [light-type]]
-    ))
+    [guadalete-ui.pd.color :refer [render-color]]
+    [guadalete-ui.console :as log]))
 
 (defn- color-indicator []
   (fn [light]
-    (let [color-item {:color (:color light)}])
-    [:div.color-indicator]))
+    (let [color (:color light)
+          color-type (condp = (:num-channels light)
+                       1 "v"
+                       2 "sv"
+                       3 "hsv"
+                       4 "hsv")
+          c (render-color (assoc color :type color-type))]
+      [:div.color-indicator
+       {:style {:background c}}])))
 
 (defn- color-string
   "Returns a human readable representation of the state"

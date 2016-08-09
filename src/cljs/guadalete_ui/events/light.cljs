@@ -116,12 +116,13 @@
               room-lights* (conj (:light room) (:id light))
               room* (assoc room :light room-lights*)
               modal-data {:item-id    (:id light)
+                          :ilk    :light
                           :modal-type :light}
               db* (-> db
                       (assoc-in [:room room-id] room*)
                       (assoc-in [:light (:id light)] light)
-                      (assoc :modal modal-data)
-                      )]
+                      (assoc :modal modal-data))]
+
           {:db       db*
            :dispatch [:room/update room* room]
            :modal    :show})

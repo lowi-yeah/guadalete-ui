@@ -2,12 +2,66 @@
 
   (:require
     [re-frame.core :refer [dispatch def-event def-event-fx def-fx]]
-    [guadalete-ui.pd.mouse :as mouse]
-    [guadalete-ui.util :refer [pretty kw*]]
-    [guadalete-ui.console :as log]
-    [guadalete-ui.pd.nodes :as node]
-    [guadalete-ui.events.scene :as scene]))
+    [thi.ng.geom.core :as g]
+    [thi.ng.geom.core.vector :refer [vec2]]
+    [guadalete-ui.events.scene :as scene]
+    [guadalete-ui.util :refer [pretty kw* vec-map]]
+    [guadalete-ui.console :as log]))
 
+;//                                           _
+;//   _ __  ___ _  _ ______   _____ _____ _ _| |_ ___
+;//  | '  \/ _ \ || (_-< -_) / -_) V / -_) ' \  _(_-<
+;//  |_|_|_\___/\_,_/__\___| \___|\_/\___|_||_\__/__/
+;//
+
+(def-event
+  :node/mouse-down
+  ;; upon mousedown on a node, mark it as selected by storing its
+  ;; id in db/tmp/nodes
+  (fn [db [_ {:keys [scene-id id position]}]]
+    (let [selected-nodes (get-in db [:tmp :nodes])
+          node (get-in db [:scene scene-id :nodes (kw* id)])
+          node-data {:id id :position (vec-map (:position node))}
+          selected-nodes* (conj selected-nodes node-data)
+          scene (get-in db [:scene scene-id])]
+      (-> db
+          (assoc-in [:tmp :nodes] selected-nodes*)
+          (assoc-in [:tmp :mode] :move)
+          (assoc-in [:tmp :pos] position)
+          (assoc-in [:tmp :scene] scene)))))
+
+
+(defn- move-node
+  "helper function for adjusting the position of a single node during 'move'"
+  [db mouse-position scene-id {:keys [id position]}]
+  (let [node (get-in db [:scene scene-id :nodes (kw* id)])
+        δ (g/- (vec2 mouse-position) (vec2 (get-in db [:tmp :pos])))
+        position* (g/+ (vec2 position) δ)
+        node* (assoc node :position (vec-map position*))]
+    [(kw* id) node*]))
+
+(def-event
+  :node/mouse-move
+  (fn [db [_ {:keys [scene-id position]}]]
+    (let [selected-ids (get-in db [:tmp :nodes])
+          moved-nodes (into {} (map #(move-node db position scene-id %) selected-ids))
+          scene-nodes (get-in db [:scene scene-id :nodes])
+          scene-nodes* (into scene-nodes moved-nodes)
+          db* (assoc-in db [:scene scene-id :nodes] scene-nodes*)]
+      db*)))
+
+
+(def-event-fx
+  :node/mouse-up
+  (fn [{:keys [db]} [_ {:keys [scene-id]}]]
+    (let [scene (get-in db [:scene scene-id])
+          stashed-scene (get-in db [:tmp :scene])]
+      {:db    (-> db
+                  (assoc-in [:tmp :mode] :none)
+                  (assoc-in [:tmp :scene] nil)
+                  (assoc-in [:tmp :pos] nil)
+                  (assoc-in [:tmp :nodes] #{}))
+       :sente (scene/sync-effect {:old stashed-scene :new scene})})))
 
 (def-event
   :node/reset-all
@@ -16,11 +70,8 @@
     ;(node/reset-all scene-id db)
     db))
 
-
-
 ;; UPDATE COLOR NODE
 ;; ********************************
-
 (defn- color-in-link [type name node-id]
   {:id        (str type "-" node-id)
    :type      type
@@ -72,3 +123,4 @@
           ]
       {:db    db*
        :sente (scene/sync-effect {:old scene :new scene*})})))
+

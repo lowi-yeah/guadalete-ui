@@ -29,7 +29,9 @@
                                 :dimensions {:root   (vec2)
                                              :view   (vec2)
                                              :header (vec2)}}
-                :tmp           {}                           ; for storing temporary items
+                ; for storing temporary items
+                :tmp           {:nodes #{}
+                                :mode :none}
                 :name          "guadalete-ui"
                 :message       ""}
      :dispatch [:do-sync-role]}))

@@ -49,7 +49,6 @@
   (fn [db _]
     (get-in db [:view :segment])))
 
-
 ;Dynamic subscriptions need to pass a fn which takes app-db, the static vector, and the dereffed dynamic values.
 (def-sub
   :view/room-id
@@ -155,9 +154,7 @@
 ;//  | '  \/ _ \ _` / _` | |
 ;//  |_|_|_\___\__,_\__,_|_|
 ;//
-
-
-;Dynamic subscriptions allow you to create subscriptions that depend on Ratoms or Reactions (lets call them Signals).
+; Dynamic subscriptions allow you to create subscriptions that depend on Ratoms or Reactions (lets call them Signals).
 ; These subscriptions will be rerun when the Ratom or Reaction changes.
 ; You subscribe as usual with a vector like [:todos-list], and pass an additional vector of Signals.
 ; The Signals are dereferenced and passed to the handler-fn.
@@ -206,9 +203,6 @@
           items-rctn (subscribe [:modal/items-dynamic] [data-rctn])]
       @items-rctn)))
 
-
-
-
 ;//   _ _      _   _
 ;//  | (_)__ _| |_| |_
 ;//  | | / _` | ' \  _|
@@ -228,13 +222,19 @@
           lights (map #(get-in db [:light %]) unused)]
       (into [] lights))))
 
-
 ;//           _
 ;//   _ __ __| |
 ;//  | '_ \ _` |
 ;//  | .__\__,_|
 ;//  |_|
 ;// => see pd.subscriptions
+
+;//   _
+;//  | |_ ___ _ __  _ __ ___ _ _ __ _ _ _ _  _
+;//  |  _/ -_) '  \| '_ \ _ \ '_/ _` | '_| || |
+;//   \__\___|_|_|_| .__\___/_| \__,_|_|  \_, |
+;//                |_|                    |__/
+(def-sub :pd/tmp (fn [db _] (:tmp db)))
 
 ;//   _   _                 _        _          _      _        _
 ;//  | |_| |_  ___  __ __ __ |_  ___| |___   __| |__ _| |_ __ _| |__ __ _ ______

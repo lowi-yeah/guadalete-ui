@@ -88,11 +88,8 @@
        (if (not-empty in-links) [in* in-links scene-id (:id node) offset])
        (if (not-empty out-links) [out* out-links scene-id (:id node) (+ offset (count in-links))])])))
 
-
-
 (defn ->get [db scene-id node-id link-id]
-  (let [link (get-in db [:scene scene-id :nodes (kw* node-id) :links (kw* link-id)])]
-    (assoc link :node-id node-id :scene-id scene-id)))
+  (get-in db [:scene scene-id :nodes (kw* node-id) :links (kw* link-id)]))
 
 (defn ->update [db scene-id node-id link-id link*]
   (assoc-in db

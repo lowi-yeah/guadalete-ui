@@ -96,9 +96,8 @@
         [svg/group {:id    "pan-group"
                     :style {:transform css-matrix}}
          ^{:key "grid"} [grid]
-         ;^{:key "flows"} [flows scene-rctn]
-         ^{:key "nodes"} [nodes room-rctn scene-rctn]
+         ^{:key "flows"} [flows scene-rctn]
+         ^{:key "nodes"} [nodes  scene-rctn]
          ]]
-       ;[palette (:id @room-rctn) (:id scene)]
        [palette room-rctn scene-rctn]
        ])))

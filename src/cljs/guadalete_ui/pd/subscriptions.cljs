@@ -67,3 +67,14 @@
           ; load the items
           items (map (fn [id] (get-in db [ilk id])) item-ids*)]
       items)))
+
+(def-sub
+  :pd/selected-nodes
+  (fn [db _]
+    (->>
+      (get-in db [:tmp :nodes])
+      (map #(get % :id))
+      (into []))))
+
+
+
