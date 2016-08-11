@@ -3,6 +3,7 @@
     [thi.ng.math.macros :as mm])
   (:require
     [reagent.core :as r]
+    [reagent.core :refer [create-class dom-node]]
     [re-frame.core :refer [dispatch subscribe]]
     [thi.ng.geom.core :as g]
     [thi.ng.geom.svg.core :as svg]
@@ -10,22 +11,45 @@
     [guadalete-ui.console :as log]
     [guadalete-ui.util :refer [pretty abs vec-map kw*]]
     [thi.ng.math.core :as math :refer [PI HALF_PI TWO_PI]]
-    [guadalete-ui.pd.link :as link]))
+    [guadalete-ui.pd.link :as link]
+    [guadalete-ui.pd.layout
+     :refer [link-offset node-width line-height node-height handle-width handle-height handle-text-padding]]))
 
 ;//      _
 ;//   __| |_ _ __ ___ __ __
 ;//  / _` | '_/ _` \ V  V /
 ;//  \__,_|_| \__,_|\_/\_/
 ;//
-(defn- get-node-position [{:keys [node-id id]} scene-rctn]
-  (let [jq-node (js/$ (str "#" (name node-id)))
-        node-pos (js->clj (.position jq-node))
-        node-vec (vec2 (get node-pos "left") (get node-pos "top"))
-        jq-link (js/$ (str "#" id))
-        link-vec (vec2 (.attr jq-link "x") (.attr jq-link "y"))
+(defn- get-link-position [{:keys [node-id id] :as data} scene-rctn]
+  (log/debug "get-link-position" data)
+  (log/debug "scene-rctn" @scene-rctn)
+  (let [node (get-in @scene-rctn [:nodes (kw* node-id)])
+        offset (link-offset node)
+        _ (log/debug "offset" offset)
+        node-vec (vec2 (:position node))
+        link (get-in node [:links (kw* id)])
+
+        link-vec (if (= (:direction link) "in")
+                   (vec2 (* -0.5 handle-width) (+ (* (+ (:index link) (- offset 0.64)) line-height) (/ handle-height 2)))
+                   (vec2 (+ (* 0.5 handle-width) node-width) (+ (/ handle-height 2) (* (+ (:index link) (- offset 0.64)) line-height))))
         translation-vec (vec2 (:translation @scene-rctn))
-        static-offset (vec2 -8 4)]
-    (g/- (g/+ node-vec link-vec static-offset) translation-vec)))
+
+
+        _ (log/debug "node-vec" (str node-vec))
+        _ (log/debug "link " (str link-vec))
+        _ (log/debug "translation-vec " (str translation-vec))
+
+        ;jq-node (js/$ (str "#" (name node-id)))
+        ;node-pos (.position jq-node)
+        ;node-vec (vec2 (get node-pos "left") (get node-pos "top"))
+        ;jq-link (js/$ (str "#" id))
+        ;link-vec (vec2 (.attr jq-link "x") (.attr jq-link "y"))
+
+        static-offset (vec2 0 0)
+        ]
+
+    (g/- (g/+ node-vec link-vec static-offset) translation-vec)
+    ))
 
 
 (defn- svg-cubic-bezier [from to]
@@ -35,63 +59,51 @@
                     (/ 2)
                     (abs)
                     (max 32))
-
         c0 (g/+ from (vec2 delta-x 0))
-        c1 (g/- to (vec2 delta-x 0))
-        ;delta-y (-> to
-        ;            (g/- from)
-        ;            (:y)
-        ;            (/ 2)
-        ;            (abs)
-        ;            (max 32))
-        ;c0 (g/+ from (vec2 0 delta-y))
-        ;c1 (g/- to (vec2 0 delta-y))
-        ]
+        c1 (g/- to (vec2 delta-x 0))]
     (str "M" (:x from) "," (:y from) " C" (:x c0) "," (:y c0) " " (:x c1) "," (:y c1) " " (:x to) "," (:y to))))
 
-;(defn- flow
-;  "internal helper for rendering a single flow (ie. bezier curve between two links"
-;  []
-;  (fn [f scene]
-;    (let [from (get-position :from f scene)
-;          to (get-position :to f scene)
-;          bezier-string (svg-cubic-bezier from to)]
-;      ^{:key "mouse-flow"}
-;      [:path
-;       {:id    "mouse-flow"
-;        :class "flow"
-;        :d     bezier-string}])
-;    ))
-;
-;
-;(defn flows*
-;  "Internal helper for rendering all flows"
-;  []
-;  (fn [scene]
-;    [svg/group {}
-;     (doall (for [f (vals (:flows scene))]
-;              (let []
-;                ^{:key (str "f-" (:id f))}
-;                [flow f scene])))
-;     ]))
+(defn- flow
+  "internal helper for rendering a single flow (ie. bezier curve between two links)"
+  []
+  (fn [flow scene-rctn]
+    (let [id (str "f-" (:id flow))
+          from-vec (get-link-position (:from flow) scene-rctn)
+          to-vec (get-link-position (:to flow) scene-rctn)
+          bezier-string (svg-cubic-bezier from-vec to-vec)
+          ]
+      ^{:key id}
+      [:path
+       {:id    id
+        :class "flow"
+        :d     bezier-string}])))
 
+(defn flows*
+  "Internal helper for rendering all flows"
+  []
+  (fn [scene-rctn]
+    [svg/group {}
+     (doall (for [f (vals (:flows @scene-rctn))]
+              (let []
+                ^{:key (str "f-" (:id f))}
+                [flow f scene-rctn])))
+     ]))
 
-;;mouse-pos
 
 (defn- mouse-flow [scene-rctn flow mouse-pos]
   (let [{:keys [from to]} flow
         mouse-pos* (g/- (vec2 mouse-pos) (vec2 (:translation @scene-rctn)))
         from-vec (if (= :mouse from)
                    mouse-pos*
-                   (get-node-position from scene-rctn))
+                   (get-link-position from scene-rctn))
         to-vec (if (= :mouse to)
                  mouse-pos*
-                 (get-node-position to scene-rctn))
+                 (get-link-position to scene-rctn))
         bezier-string (svg-cubic-bezier from-vec to-vec)]
     ^{:key "mouse-flow"}
     [:path
      {:id    "mouse-flow"
-      :class "flow"
+      :class (str "flow " (if (:valid? flow) (name (:valid? flow))))
       :d     bezier-string}]))
 
 (defn flows
@@ -103,7 +115,7 @@
       [svg/group
        {:id "flows"}
        (if (:flow @tmp-rctn) [mouse-flow scene-rctn (:flow @tmp-rctn) (:mouse-pos @tmp-rctn)])
-       ;[flows* scene-rctn]
+       [flows* scene-rctn]
        ])))
 
 

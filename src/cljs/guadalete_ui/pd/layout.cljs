@@ -1,4 +1,5 @@
-(ns guadalete-ui.pd.layout)
+(ns guadalete-ui.pd.layout
+  (:require [guadalete-ui.console :as log]))
 
 
 (def node-size 36)
@@ -8,3 +9,13 @@
 (def handle-width 6)
 (def handle-height 10)
 (def handle-text-padding 4)
+
+(defn link-offset [node]
+  (log/debug "(:type node)" node)
+  (condp = (:ilk node)
+    "signal" 3.5
+    "color" 2.5
+    "light" 2.5
+    1
+    )
+  )

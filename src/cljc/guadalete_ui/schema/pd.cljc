@@ -14,11 +14,10 @@
   {:x s/Num
    :y s/Num})
 
-
 ;//   _ _      _
-;//  | (_)_ _ | |_____
-;//  | | | ' \| / (_-<
-;//  |_|_|_||_|_\_\__/
+;//  | (_)_ _ | |__
+;//  | | | ' \| / /
+;//  |_|_|_||_|_\_\
 ;//
 (def LinkReference
   "A reference for looking up a Link"
@@ -33,6 +32,7 @@
   {:ilk                   (s/eq "color")
    :id                    s/Str
    :direction             (s/eq "out")
+   :index                 s/Num
    (s/optional-key :name) s/Str})
 
 (def ValueOutLink
@@ -40,6 +40,7 @@
   {:ilk                   (s/eq "value")
    :id                    s/Str
    :direction             (s/eq "out")
+   :index                 s/Num
    (s/optional-key :type) s/Str
    (s/optional-key :name) s/Str})
 
@@ -50,6 +51,7 @@
   {:ilk                   (s/eq "color")
    :id                    s/Str
    :direction             (s/eq "in")
+   :index                 s/Num
    (s/optional-key :name) s/Str})
 
 (def ValueInLink
@@ -57,6 +59,7 @@
   {:ilk                   (s/eq "value")
    :id                    s/Str
    :direction             (s/eq "in")
+   :index                 s/Num
    (s/optional-key :type) s/Str
    (s/optional-key :name) s/Str})
 
@@ -87,18 +90,21 @@
 ;//
 (def FlowReference
   "A flow between two pd nodes.
-  Between links of two nodes, to be more precise."
+  (Between links of two nodes, to be more precise.)"
   {:from LinkReference
    :to   LinkReference})
 
 (s/defschema ValueFlow
   "A schema for flows between value links"
-  {:from ValueOutLink :to ValueInLink})
+  {:from                ValueOutLink
+   :to                  ValueInLink
+   (s/optional-key :id) s/Str})
 
 (s/defschema ColorFlow
   "A schema for flows between value links"
-  {:from ColorOutLink :to ColorInLink})
-
+  {:from                ColorOutLink
+   :to                  ColorInLink
+   (s/optional-key :id) s/Str})
 
 (s/defschema Flow
   "An assembled flow between two pd nodes.

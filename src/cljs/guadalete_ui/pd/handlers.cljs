@@ -21,6 +21,7 @@
 ;//  |_||_\___\__,_\___|
 ;//
 (defn- make-node [db {:keys [scene-id ilk position] :as data}]
+  (log/debug "make node" data)
   (let [scene (get-in db [:scene scene-id])
         nodes (:nodes scene)
         data* (assoc data :position (offset-position position scene))

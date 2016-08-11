@@ -237,28 +237,31 @@
 ;//  | '  \/ _` | / / -_)
 ;//  |_|_|_\__,_|_\_\___|
 ;//
-(defn- color-channel-link [channel name node-id]
+(defn- color-channel-link [channel name node-id index]
   {:id        (str channel "-" node-id)
    :type      channel
    :name      name
    :ilk       "value"
-   :direction "in"})
+   :direction "in"
+   :index     index})
 
 (defn- make-color-links
   "Helper function for creating the in/out links for a given color.
   The number input-links corresponds to the number of color channels (h,s,v)"
   [node-id color]
+  (log/debug "make-color-links")
   (let [out-link [{:id        (str "out-" node-id)
                    :ilk       "color"
                    :name      "out"
-                   :direction "out"}]
+                   :direction "out"
+                   :index     (-> color (:type) (name) (count))}]
         in-links (condp = (:type color)
-                   :v [(color-channel-link "v" "brightness" node-id)]
-                   :sv [(color-channel-link "v" "brightness" node-id)
-                        (color-channel-link "s" "saturation" node-id)]
-                   :hsv [(color-channel-link "v" "brightness" node-id)
-                         (color-channel-link "s" "saturation" node-id)
-                         (color-channel-link "h" "hue" node-id)]
+                   :v [(color-channel-link "v" "brightness" node-id 0)]
+                   :sv [(color-channel-link "v" "brightness" node-id 0)
+                        (color-channel-link "s" "saturation" node-id 1)]
+                   :hsv [(color-channel-link "v" "brightness" node-id 0)
+                         (color-channel-link "s" "saturation" node-id 1)
+                         (color-channel-link "h" "hue" node-id 2)]
                    :default (log/error (str "Unknown color type " (:type color) ". Must be either :v :sv or :hsv")))]
     (->> (map (fn [l] [(:id l) l]) (concat out-link in-links))
          (into {}))))
@@ -277,6 +280,7 @@
      :position (vec-map position)
      :links    {(keyword link-id)
                 {:id        link-id
+                 :index     0
                  :ilk       "color"
                  :direction "in"}}}))
 
@@ -302,6 +306,7 @@
      :links    {(keyword link-id)
                 {:id        link-id
                  :ilk       "value"
+                 :index     0
                  :direction "out"}}}))
 
 ;//   _        _
