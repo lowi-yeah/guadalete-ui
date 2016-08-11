@@ -80,9 +80,9 @@
    :state     "normal"
    :direction "in"})
 
-(defn- get-link-by-type [links type node-id name]
+(defn- get-link-by-channel [links channel node-id name]
   (let [existing-link (->> links
-                           (filter #(= type (kw* (:type %))))
+                           (filter #(= channel (:channel %)))
                            (first))]
     (or existing-link (color-in-link type name node-id))))
 
@@ -90,22 +90,23 @@
 
 (defmethod update-links :v
   [_ node-id in-links]
-  [(get-link-by-type in-links "v" node-id "brightness")])
+  [(get-link-by-channel in-links "v" node-id "brightness")])
 
 (defmethod update-links :sv
   [_ node-id in-links]
-  [(get-link-by-type in-links "v" node-id "brightness")
-   (get-link-by-type in-links "s" node-id "saturation")])
+  [(get-link-by-channel in-links "v" node-id "brightness")
+   (get-link-by-channel in-links "s" node-id "saturation")])
 
 (defmethod update-links :hsv
   [_ node-id in-links]
-  [(get-link-by-type in-links "v" node-id "brightness")
-   (get-link-by-type in-links "s" node-id "saturation")
-   (get-link-by-type in-links "h" node-id "hue")])
+  [(get-link-by-channel in-links "v" node-id "brightness")
+   (get-link-by-channel in-links "s" node-id "saturation")
+   (get-link-by-channel in-links "h" node-id "hue")])
 
 (def-event-fx
   :node/update-color
   (fn [{:keys [db]} [_ {:keys [item-id scene-id node-id]}]]
+    (log/debug "updating color" )
     (let [scene (get-in db [:scene scene-id])
           color (get-in db [:color item-id])
           node (get-in scene [:nodes (kw* node-id)])

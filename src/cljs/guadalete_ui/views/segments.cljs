@@ -42,9 +42,8 @@
 
 (defmethod segment :switch
   [_ room-rctn]
-  [:div.side-margins
-   [:h1 "debug"]
-   [:pre.code (pretty @room-rctn)]])
+  [:div#db.ui.flexing.relative
+   [editor @room-rctn]])
 
 (defmethod segment :dmx
   [_]

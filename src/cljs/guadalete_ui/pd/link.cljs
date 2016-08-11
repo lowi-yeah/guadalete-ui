@@ -24,16 +24,13 @@
 ;//  |_| \___|_||_\__,_\___|_|
 ;//
 (defn- link-handle []
-  (fn [l direction scene-id node-id position]
+  (fn [l scene-id node-id position]
     [svg/rect position handle-width handle-height
      {:id            (:id l)
       :class         (str "link " (:direction l))
       :data-scene-id scene-id
       :data-node-id  node-id
       :data-type     "link"
-      :data-state    (name (:state l))
-      ;:on-mouse-enter #(dispatch [:link/mouse-enter (merge {:scene-id scene-id} (mouse/dispatch-data %))])
-      ;:on-mouse-leave #(dispatch [:link/mouse-exit (merge {:scene-id scene-id} (mouse/dispatch-data %))])
       }]))
 
 (defn- in* []
@@ -47,7 +44,7 @@
                handle-position (vec2 (* -1 handle-width) (* (+ index (- offset 0.64)) line-height))]
            ^{:key (str "link-" (:id l))}
            [svg/group {}
-            [link-handle l :in scene-id node-id handle-position]
+            [link-handle l scene-id node-id handle-position]
             [svg/text
              text-position
              (str (:name l))]])))]))
@@ -63,7 +60,7 @@
                handle-position (vec2 node-width (* (+ index (- offset 0.64)) line-height))]
            ^{:key (str "link-" (:id l))}
            [svg/group {}
-            [link-handle l :out scene-id node-id handle-position]
+            [link-handle l scene-id node-id handle-position]
             [svg/text
              text-position
              (str (:name l))

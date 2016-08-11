@@ -12,73 +12,6 @@
             [guadalete-ui.pd.util :refer [pd-screen-offset]]))
 
 
-
-;//
-;//   _ __  ___ _  _ ______   _  _ _ __
-;//  | '  \/ _ \ || (_-< -_) | || | '_ \
-;//  |_|_|_\___/\_,_/__\___|  \_,_| .__/
-;//                               |_|
-(defn default-up
-      "This is the standard behaviour upon mouse up.
-      Canceles everything that might have been going on during move.
-      Called by modes [:none :pd :move]"
-      [{:keys [type scene-id node-id position]} db]
-      (let [scene (get-in db [:scene scene-id])
-            scene* (dissoc scene :pos-0 :pos-1 :flow/mouse :mode)]
-           (dispatch [:scene/update scene*])
-           (dispatch [:node/reset-all scene-id])
-           db))
-
-(defmulti up* (fn [type data] type))
-;(defmethod up* :pd [_ data] (dispatch [:pd/mouse-up data]))
-(defmethod up* :pd [_ data] (dispatch [:mouse/default-up data]))
-(defmethod up* :node [_ data] (dispatch [:mouse/default-up data]))
-(defmethod up* :link [_ data] (dispatch [:flow/mouse-up data]))
-;(defmethod up* :flow [_ data] (dispatch [:flow/mouse-up data]))
-(defmethod up* :default [type _] (log/error (str "mouse up: I don't know the type: " type)))
-
-(s/defn up :- DB
-        [{:keys [type] :as data} :- MouseEventData
-         db :- DB]
-        (up* type data)
-        db)
-
-
-;//
-;//   _ __  ___ _  _ ______   _ __  _____ _____
-;//  | '  \/ _ \ || (_-< -_) | '  \/ _ \ V / -_)
-;//  |_|_|_\___/\_,_/__\___| |_|_|_\___/\_/\___|
-;//
-
-
-(defn- move-node [[id n] δ]
-  "Move a node by the specified centre."
-  (let [offset (g/+ (:pos-0 n) δ)]
-    [id (assoc n :pos (vec-map offset))]))
-
-(defn- selected-node
-       "Returns the first node ith a selected attribute."
-       [nodes]
-       (let [[_ node] (first (filter (fn [[k v]] (:selected v)) nodes))]
-            node))
-
-(defmulti move* (fn [type data] type))
-
-(defmethod move* nil [_ _] (comment "no nothing"))
-(defmethod move* :none [_ _] (comment "no nothing"))
-(defmethod move* :pan [_ data] (dispatch [:pd/mouse-move data]))
-(defmethod move* :move [_ data] (dispatch [:node/mouse-move data]))
-(defmethod move* :link [_ data] (dispatch [:flow/mouse-move data]))
-(defmethod move* :default [type _] (log/error (str "mouse move: I don't know the type: " type)))
-
-(s/defn move :- DB
-        [data :- MouseEventData
-         db :- DB]
-        (let [mode (get-in db [:scene (:scene-id data) :mode])]
-             (move* mode data)
-             db))
-
-
 ;//                   _
 ;//   _____ _____ _ _| |_
 ;//  / -_) V / -_) ' \  _|
@@ -97,7 +30,6 @@
             (if (nil? id)
               (target-id (.parent (js/$ target)))
               id)))
-
 
 (defn- node-id*
        "Recursive helper for node-id"
@@ -130,11 +62,6 @@
              :ilk      ilk*
              :type     :node}))
 
-(defn- ->page
-       "Helper function for getting the event position relative to the page."
-       [ev]
-       (vec2 (.-pageX ev) (.-pageY ev)))
-
 (defn event-target
       "Returns a map containing information to access the specific item type.
       E.g. if a 'link' is the target the node id and link type will be attached"
@@ -162,7 +89,6 @@
             pos (vec2 (int (.-x ev*)) (int (.-y ev*)))
             offset (pd-screen-offset)]
            {:position (g/- pos offset)}))
-
 
 (defn- event-data
        [ev data]

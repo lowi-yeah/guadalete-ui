@@ -237,12 +237,11 @@
 ;//  | '  \/ _` | / / -_)
 ;//  |_|_|_\__,_|_\_\___|
 ;//
-(defn- color-in-link [type name node-id]
-  {:id        (str type "-" node-id)
-   :type      type
+(defn- color-channel-link [channel name node-id]
+  {:id        (str channel "-" node-id)
+   :type      channel
    :name      name
-   :ilk       "signal"
-   :state     "normal"
+   :ilk       "value"
    :direction "in"})
 
 (defn- make-color-links
@@ -251,16 +250,15 @@
   [node-id color]
   (let [out-link [{:id        (str "out-" node-id)
                    :ilk       "color"
-                   :state     "normal"
                    :name      "out"
                    :direction "out"}]
         in-links (condp = (:type color)
-                   :v [(color-in-link "v" "brightness" node-id)]
-                   :sv [(color-in-link "v" "brightness" node-id)
-                        (color-in-link "s" "saturation" node-id)]
-                   :hsv [(color-in-link "v" "brightness" node-id)
-                         (color-in-link "s" "saturation" node-id)
-                         (color-in-link "h" "hue" node-id)]
+                   :v [(color-channel-link "v" "brightness" node-id)]
+                   :sv [(color-channel-link "v" "brightness" node-id)
+                        (color-channel-link "s" "saturation" node-id)]
+                   :hsv [(color-channel-link "v" "brightness" node-id)
+                         (color-channel-link "s" "saturation" node-id)
+                         (color-channel-link "h" "hue" node-id)]
                    :default (log/error (str "Unknown color type " (:type color) ". Must be either :v :sv or :hsv")))]
     (->> (map (fn [l] [(:id l) l]) (concat out-link in-links))
          (into {}))))
@@ -280,7 +278,6 @@
      :links    {(keyword link-id)
                 {:id        link-id
                  :ilk       "color"
-                 :state     "normal"
                  :direction "in"}}}))
 
 (defmethod make :color
@@ -304,8 +301,7 @@
      :item-id  item-id
      :links    {(keyword link-id)
                 {:id        link-id
-                 :ilk       "signal"
-                 :state     "normal"
+                 :ilk       "value"
                  :direction "out"}}}))
 
 ;//   _        _

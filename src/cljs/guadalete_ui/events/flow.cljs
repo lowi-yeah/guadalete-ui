@@ -6,15 +6,50 @@
     [guadalete-ui.pd.flow :as flow]
     [guadalete-ui.util :refer [pretty kw* vec-map]]
     [guadalete-ui.pd.link :as link]
-    [guadalete-ui.console :as log]))
+    [guadalete-ui.console :as log]
 
-(defn- decorate-link
-  "Decorates a given link with data required for properly renderingit .
-  Called during 'begin'"
-  [db scene-id node-id link-id]
-  (let [link (link/->get db scene-id node-id link-id)
-        link* (assoc link :state :active)]
-    (link/->update db scene-id node-id link-id link*)))
+    ; schema
+    [schema.core :as s]
+    [guadalete-ui.schema.pd :refer [Flow ValueFlow ColorFlow FlowReference
+                                    ColorOutLink ValueOutLink ColorInLink ValueInLink
+                                    InLink OutLink Link]]))
+
+;//   _        _
+;//  | |_  ___| |_ __ ___ _ _ ___
+;//  | ' \/ -_) | '_ \ -_) '_(_-<
+;//  |_||_\___|_| .__\___|_| /__/
+;//             |_|
+(defn- validate-flow
+  "Internal helper for validating a flow. I.e. whether both tips form a valid connection.
+  Only checks for semantic validity (ie. whether the the :from and :to links match to form a valid connection."
+  [flow]
+  (let [{:keys [from to]} flow]
+    (log/debug "validate-flow" flow)
+    ;(log/debug "AssembledFlow" AssembledFlow)
+    ;(log/debug "eplain" (s/explain AssembledFlow))
+
+
+    (try
+      (do
+
+        ;(log/debug "s/validate OutLink")
+        ;(s/validate OutLink from)
+        ;(log/debug "s/validate InLink")
+        ;(s/validate InLink to)
+        ;(log/debug "s/validate Links")
+        ;(s/validate Link from)
+        ;(s/validate Link to)
+
+        (log/debug "s/validate Flow")
+        (s/validate Flow flow)
+
+        ;(s/validate ColorLink to)
+        ;(s/validate Link to)
+        ;return value:
+        :valid)
+      (catch js/Error e
+        (log/debug "validation error!" e)
+        :invalid))))
 
 
 ;//    __ _
@@ -25,7 +60,6 @@
 (def-event
   :flow/mouse-down
   (fn [db [_ {:keys [scene-id node-id id position]}]]
-    (log/debug ":flow/mouse-down")
     (let [scene (get-in db [:scene scene-id])
           node-link (link/->get db scene-id node-id id)
           flow (condp = (kw* (:direction node-link))
@@ -46,7 +80,6 @@
 (def-event-fx
   :flow/mouse-move
   (fn [{:keys [db]} [_ {:keys [scene-id position type] :as data}]]
-    (log/debug ":flow/mouse-move")
     (let [dispatch* (if (= :link (kw* type))
                       [:flow/check-connection data]
                       [:flow/reset-target data])]
@@ -57,7 +90,6 @@
   :flow/mouse-up
   (fn [{:keys [db]} [_ {:keys [scene-id position type] :as data}]]
     (let []
-      (log/debug ":flow/mouse-up")
       {:db (-> db
                (assoc-in [:tmp :mode] :none)
                (assoc-in [:tmp :scene] nil)
@@ -66,11 +98,46 @@
                (assoc-in [:tmp :flow] nil))})))
 
 (def-event
+  ;; called during flow/mouse-move, when the mouse is above a nide link.
+  ;; checks whether the first link tip mathches the current link, so that a valid link would be created.
   :flow/check-connection
-  (fn [db [_ data]]
-    ;(flow/check-connection data db)
-    ;(log/debug "checking flow connection")
-    db))
+  (fn [db [_ {:keys [scene-id node-id id]}]]
+    (let [{:keys [from to] :as mouse-flow} (get-in db [:tmp :flow])
+          flow-tip (if (= :mouse from) to from)
+          flow-direction (if (= :mouse to) :downstream :upstream)
+          mouse-link (get-in db [:scene scene-id :nodes (:node-id flow-tip) :links (kw* (:id flow-tip))])
+          link (get-in db [:scene scene-id :nodes (kw* node-id) :links (kw* id)])
+
+          ;; make sure the link (potential flow tip) ends in a different node than the one it originates from
+          different-nodes? (not= (:node-id flow-tip) (kw* node-id))
+
+          ;; make sure the link (potential flow tip) matches the direction of the mouse flow.
+          ;; ie. make sure that the link is :in in case of a :downstream flow and vice versa…
+          direction-ok? (or
+                          (and (= flow-direction :downstream) (= (:direction link) "in"))
+                          (and (= flow-direction :upstream) (= (:direction link) "out")))
+
+          ]
+
+      ;(log/debug ":flow/check-connection" link)
+      ;(log/debug "flow-tip" flow-tip)
+      ;(log/debug ":flow/different-nodes" different-nodes?)
+      ;(log/debug ":flow/direction-ok?" direction-ok?)
+      ;(log/debug "mouse-flow" mouse-flow)
+      ;(log/debug "tmp-flow" tmp-flow)
+      ;(log/debug "ids" (:id flow-tip) id)
+      ;(log/debug "valid?" valid?)
+
+      (if (and different-nodes? direction-ok?)
+        (let [tmp-flow (if (= :mouse from)
+                         {:from link :to mouse-link}
+                         {:from mouse-link :to link})
+              valid? (validate-flow tmp-flow)]
+          (log/debug "valid?" valid?)
+          db)
+        ;; invalid
+        db)
+      )))
 
 (def-event
   :flow/reset-target

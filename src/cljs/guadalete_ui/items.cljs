@@ -77,25 +77,25 @@
 ;//  | '_/ -_)_-< -_)  _|
 ;//  |_| \___/__\___|\__|
 ;//
-(defn- reset-link [[id link]] [id (assoc link :state :normal)])
-(defn- reset-links [links] (into {} (map reset-link links)))
-(defn- reset-node
-  "Resets a node (selection, links, tmp-positions…)"
-  [[id node]]
-  (let [links* (reset-links (:links node))
-        node* (-> node
-                  (dissoc :pos-0)
-                  (assoc :selected false :links links*))]
-    [id node*]))
-
-(defn- reset-nodes [nodes]
-  (into {} (map reset-node) nodes))
-
-(defn reset-scene
-  "'Resets' a scene, ie. unselects all nodes and removes other flags that are only needed for frontend rendering."
-  [scene]
-  (let [nodes (-> scene
-                  (get :nodes)
-                  (reset-nodes))]
-    (-> scene
-        (assoc :nodes nodes))))
+;(defn- reset-link [[id link]] [id (assoc link :state :normal)])
+;(defn- reset-links [links] (into {} (map reset-link links)))
+;(defn- reset-node
+;  "Resets a node (selection, links, tmp-positions…)"
+;  [[id node]]
+;  (let [links* (reset-links (:links node))
+;        node* (-> node
+;                  (dissoc :pos-0)
+;                  (assoc :selected false :links links*))]
+;    [id node*]))
+;
+;(defn- reset-nodes [nodes]
+;  (into {} (map reset-node) nodes))
+;
+;(defn reset-scene
+;  "'Resets' a scene, ie. unselects all nodes and removes other flags that are only needed for frontend rendering."
+;  [scene]
+;  (let [nodes (-> scene
+;                  (get :nodes)
+;                  (reset-nodes))]
+;    (-> scene
+;        (assoc :nodes nodes))))

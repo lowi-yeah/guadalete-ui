@@ -13,8 +13,7 @@
 
     [guadalete-ui.pd.link :as link]
     [guadalete-ui.pd.color :refer [make-color]]
-    [guadalete-ui.events.scene :as scene]
-    [guadalete-ui.items :refer [reset-scene]]))
+    [guadalete-ui.events.scene :as scene]))
 
 ;//               _
 ;//   _ _  ___ __| |___

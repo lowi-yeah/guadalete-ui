@@ -5,7 +5,6 @@
     [thi.ng.geom.core.vector :refer [vec2]]
     [guadalete-ui.util :refer [pretty kw* vec-map offset-position]]
     [guadalete-ui.console :as log]
-    [guadalete-ui.items :refer [reset-scene]]
     [guadalete-ui.events.scene :as scene]))
 
 (def-event
