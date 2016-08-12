@@ -57,7 +57,7 @@
                          generate-string)]
             (doseq [uid uids]
                    (try
-                     ;(log/debug "zend!" message**)
+                     (log/debug "zend!" uid topic message**)
                      (zend! uid [topic message**])
                      (catch Exception e
                        (log/debug "EXCEPTION" e))))))

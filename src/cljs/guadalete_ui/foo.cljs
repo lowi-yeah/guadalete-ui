@@ -1,0 +1,48 @@
+(ns guadalete-ui.foo)
+
+(def scene
+  {
+   :flows       {},
+   :id          "scene1",
+   :mode        "none",
+   :name        "scene1",
+   :nodes       {
+                 :44e6051f-92d9-4687-ae0f-ae665aa885bf {
+                                                        :id       "44e6051f-92d9-4687-ae0f-ae665aa885bf",
+                                                        :ilk      "signal",
+                                                        :item-id  "cloudCover",
+                                                        :links    {
+                                                                   :1f81eebb-8ee7-4d33-847f-d8e209aa06d1 {
+                                                                                                          :direction "out",
+                                                                                                          :id        "1f81eebb-8ee7-4d33-847f-d8e209aa06d1",
+                                                                                                          :ilk       "value",
+                                                                                                          :index     0}},
+                                                        :position {
+                                                                   :x 81,
+                                                                   :y 30}},
+                 :a7360f36-595c-4487-bdc9-06b7f0a4d5cb {
+                                                        :id       "a7360f36-595c-4487-bdc9-06b7f0a4d5cb",
+                                                        :ilk      "color",
+                                                        :item-id  "00bc5787-12b0-48c5-b50d-10bc52a5ee51",
+                                                        :links    {
+                                                                   :out-a7360f36-595c-4487-bdc9-06b7f0a4d5cb {
+                                                                                                              :direction "out",
+                                                                                                              :id        "out-a7360f36-595c-4487-bdc9-06b7f0a4d5cb",
+                                                                                                              :ilk       "color",
+                                                                                                              :index     1,
+                                                                                                              :name      "out"},
+                                                                   :v-a7360f36-595c-4487-bdc9-06b7f0a4d5cb   {
+                                                                                                              :direction "in",
+                                                                                                              :id        "v-a7360f36-595c-4487-bdc9-06b7f0a4d5cb",
+                                                                                                              :ilk       "value",
+                                                                                                              :index     0,
+                                                                                                              :name      "brightness",
+                                                                                                              :type      "v"}},
+                                                        :position {
+                                                                   :x 409,
+                                                                   :y 114}}},
+   :on?         false,
+   :translation {
+                 :x 0,
+                 :y 0}}
+  )

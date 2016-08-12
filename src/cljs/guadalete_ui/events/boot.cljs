@@ -30,8 +30,9 @@
                                              :view   (vec2)
                                              :header (vec2)}}
                 ; for storing temporary items
-                :tmp           {:nodes #{}
-                                :mode :none}
+                :tmp           {:nodes    #{}
+                                :selected #{}
+                                :mode     :none}
                 :name          "guadalete-ui"
                 :message       ""}
      :dispatch [:do-sync-role]}))

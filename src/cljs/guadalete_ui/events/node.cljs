@@ -18,14 +18,17 @@
   :node/mouse-down
   ;; upon mousedown on a node, mark it as selected by storing its
   ;; id in db/tmp/nodes
-  (fn [db [_ {:keys [scene-id id position]}]]
-    (let [selected-nodes (get-in db [:tmp :nodes])
+  (fn [db [_ {:keys [scene-id id position modifiers]}]]
+    (let [selected-items (if (:shift modifiers) (get-in db [:tmp :selected]) #{})
           node (get-in db [:scene scene-id :nodes (kw* id)])
-          node-data {:id id :position (vec-map (:position node))}
-          selected-nodes* (conj selected-nodes node-data)
+          node-reference {:scene-id scene-id
+                          :id       id
+                          :type     :node
+                          :position (vec-map (:position node))}
+          selected-items* (conj selected-items node-reference)
           scene (get-in db [:scene scene-id])]
       (-> db
-          (assoc-in [:tmp :nodes] selected-nodes*)
+          (assoc-in [:tmp :selected] selected-items*)
           (assoc-in [:tmp :mode] :move)
           (assoc-in [:tmp :pos] position)
           (assoc-in [:tmp :scene] scene)))))
@@ -43,7 +46,8 @@
 (def-event
   :node/mouse-move
   (fn [db [_ {:keys [scene-id position]}]]
-    (let [selected-ids (get-in db [:tmp :nodes])
+    (let [selected-ids (->> (get-in db [:tmp :selected])
+                            (filter #(= :node (:type %))))
           moved-nodes (into {} (map #(move-node db position scene-id %) selected-ids))
           scene-nodes (get-in db [:scene scene-id :nodes])
           scene-nodes* (into scene-nodes moved-nodes)
@@ -59,8 +63,7 @@
       {:db    (-> db
                   (assoc-in [:tmp :mode] :none)
                   (assoc-in [:tmp :scene] nil)
-                  (assoc-in [:tmp :pos] nil)
-                  (assoc-in [:tmp :nodes] #{}))
+                  (assoc-in [:tmp :pos] nil))
        :sente (scene/sync-effect {:old stashed-scene :new scene})})))
 
 (def-event
@@ -106,7 +109,7 @@
 (def-event-fx
   :node/update-color
   (fn [{:keys [db]} [_ {:keys [item-id scene-id node-id]}]]
-    (log/debug "updating color" )
+    (log/debug "updating color")
     (let [scene (get-in db [:scene scene-id])
           color (get-in db [:color item-id])
           node (get-in scene [:nodes (kw* node-id)])

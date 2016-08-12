@@ -78,12 +78,8 @@
           item-rctn (subscribe [:pd/modal-item])
           select-options-rctn (subscribe [:pd/modal-select-options])
           ]
-      (log/debug "node" @node-rctn)
-      (log/debug "item" @item-rctn)
       [:div#pd-signal-node.ui.basic.modal.small
        [:div.header "Signal"]
-       [:pre.code (pretty @node-rctn)]
-       [:pre.code (pretty @item-rctn)]
        [:div.actions
         [:div.ui.button.deny
          "close"]]])))

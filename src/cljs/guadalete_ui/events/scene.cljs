@@ -14,6 +14,7 @@
         data {:id   id
               :flag flag
               :diff diff}]
+    (log/debug "sync scene" (pretty diff))
     {:topic      :scene/update
      :data       data
      :on-success [:success-scene-update]
@@ -22,7 +23,8 @@
 
 (def-event
   :success-scene-update
-  (fn [world _response]
+  (fn [world response]
+    (log/debug ":success-scene-update" response)
     world))
 
 (def-event

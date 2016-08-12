@@ -1,11 +1,8 @@
 (ns guadalete-ui.events.mouse
   (:require
     [re-frame.core :refer [dispatch def-event def-event-fx def-fx]]
-    [guadalete-ui.pd.mouse :as mouse]
     [guadalete-ui.util :refer [pretty kw*]]
-    [guadalete-ui.console :as log]
-    [guadalete-ui.events.scene :as scene]
-    [differ.core :as differ]))
+    [guadalete-ui.console :as log]))
 
 (def-event-fx
   :mouse/up
@@ -14,7 +11,8 @@
           dispatch* (condp = mode
                       :pan [:pd/mouse-up data]
                       :move [:node/mouse-up data]
-                      :link [:flow/mouse-up data]
+                      :link [:link/mouse-up data]
+                      :flow [:flow/mouse-up data]
                       nil)]
       (if dispatch*
         {:db       db
@@ -29,7 +27,8 @@
        dispatch* (condp = type
                    :pd [:pd/mouse-down data]
                    :node [:node/mouse-down data]
-                   :link [:flow/mouse-down data]
+                   :link [:link/mouse-down data]
+                   :flow [:flow/mouse-down data]
                    (log/error (str "mouse-down: I don't know the type: " type)))]
       {:db       db
        :dispatch dispatch*})))
@@ -42,7 +41,8 @@
                       :none (comment "no nothing")
                       :pan [:pd/mouse-move data]
                       :move [:node/mouse-move data]
-                      :link [:flow/mouse-move data]
+                      :link [:link/mouse-move data]
+                      :flow [:flow/mouse-move data]
                       nil (comment "no nothing")
                       (log/error (str "mouse move: I don't know the mode: " mode)))]
       (if dispatch*

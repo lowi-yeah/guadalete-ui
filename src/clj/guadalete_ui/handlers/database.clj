@@ -49,7 +49,7 @@
        (do
          (-> (r/table type)
              (r/get id)
-             (r/update patch)
+             (r/replace patch)
              (r/run connection))
          {:ok patch})
        (catch ExceptionInfo ex

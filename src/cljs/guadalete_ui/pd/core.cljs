@@ -67,15 +67,22 @@
 (defn pd []
   "A PDish editor for wiring up scenes"
   (fn [room-rctn scene-rctn]
-    (let [css-matrix (css-matrix-string (:translation @scene-rctn))
+    (let [selected-rctn (subscribe [:pd/selected-items])
+          css-matrix (css-matrix-string (:translation @scene-rctn))
           mouse-data {:room-id  (:id @room-rctn)
                       :scene-id (:id @scene-rctn)}]
-
       [:div#pd
        ;[:button#reset.btn-floating
        ; {:on-click #(dispatch [:pd/reset-view])}
        ; [:i.mdi-device-gps-fixed]]
        ;[(editor-wrapper layout-id)
+
+       [:button#trash-btn.ui.circular.icon.button
+        {:class    (if (empty? @selected-rctn) "hidden" "")
+         :on-click #(dispatch [:pd/trash-selected (:id @scene-rctn)])}
+        [:i.trash.icon]]
+
+
 
        ^{:key "svg"}
        [mod-svg
@@ -97,7 +104,7 @@
                     :style {:transform css-matrix}}
          ^{:key "grid"} [grid]
          ^{:key "flows"} [flows scene-rctn]
-         ^{:key "nodes"} [nodes  scene-rctn]
+         ^{:key "nodes"} [nodes scene-rctn]
          ]]
        [palette room-rctn scene-rctn]
        ])))

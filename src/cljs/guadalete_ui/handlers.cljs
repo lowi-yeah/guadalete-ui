@@ -90,10 +90,17 @@
 
 (def-event
   :chsk/reconnect
-  (fn [db]
+  (fn [db _]
     (log/debug ":chsk/reconnekkt")
     (chsk-reconnect!)
     (assoc db :ws/connected? false)))
+
+(def-event
+  :ws/handshake
+  (fn [db [_ foo]]
+    (log/debug ":ws/handshake" foo)
+    db))
+
 
 
 ;//       _
@@ -215,6 +222,7 @@
 (def-event
   :signal/value
   (fn [db [_ message]]
+    (log/debug ":signal/value" (str message))
     (let [id (get message "id")
           [timestamp value] (get message "data")
           signal (get-in db [:signal id])

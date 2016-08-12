@@ -78,7 +78,6 @@
   (routes/app-routes)
   (mount-root)
   ;(swallow-backspace)
-  ;(socket/event-loop)
-  )
+  (socket/event-loop))
 
 (init)

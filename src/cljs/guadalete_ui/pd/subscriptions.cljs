@@ -69,10 +69,28 @@
       items)))
 
 (def-sub
+  :pd/selected-items
+  (fn [db _]
+    (->>
+      (get-in db [:tmp :selected])
+      (map #(get % :id))
+      (into []))))
+
+(def-sub
   :pd/selected-nodes
   (fn [db _]
     (->>
-      (get-in db [:tmp :nodes])
+      (get-in db [:tmp :selected])
+      (filter #(= (:type %) :node))
+      (map #(get % :id))
+      (into []))))
+
+(def-sub
+  :pd/selected-flows
+  (fn [db _]
+    (->>
+      (get-in db [:tmp :selected])
+      (filter #(= (:type %) :flow))
       (map #(get % :id))
       (into []))))
 

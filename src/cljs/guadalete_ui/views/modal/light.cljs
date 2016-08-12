@@ -173,4 +173,4 @@
            ;  :mqtt [transport-mqtt light-rctn]
            ;  (comment "do nothing."))
            ]
-          [:pre.debug (pretty @light-rctn)]]))}))
+          ]))}))

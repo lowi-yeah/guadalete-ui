@@ -51,13 +51,14 @@
          :else (log/debug "Unmatched event: %s" (str event))))
 
 ;; Wrap for logging, catching, etc.:
-(defn- event-handler* [{:as ev-msg :keys [id ?data event]}]
+(defn- event-handler* [{:keys [event]}]
   (event-handler event))
 
 (defn event-loop
   "Handle inbound events."
   []
-  (go-loop []
-           (let [ev-msg (<! (:ch-chsk sente-client))]
-             (event-handler* ev-msg)
-             (recur))))
+  (go-loop
+    []
+    (let [ev-msg (<! (:ch-chsk sente-client))]
+      (event-handler* ev-msg)
+      (recur))))
