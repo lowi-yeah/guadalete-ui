@@ -85,18 +85,12 @@
 
 ; Scene
 ; ****************
-(defn- mode-keyword [scene]
-  (let [mode (:mode scene)
-        mode* (keyword mode)]
-    (assoc scene :mode mode*)))
-
 (defn create-scene [connection scene]
   (create-item connection :scene scene))
 
 (defn get-scenes [connection]
-  (let [scenes (get-all connection :scene)
-        scenes* (map mode-keyword scenes)]
-    (into [] scenes*)))
+  (let [scenes (get-all connection :scene)]
+    (into [] scenes)))
 
 (defn update-scene [connection id diff flag]
   (update-item connection id diff :scene flag))
@@ -145,6 +139,7 @@
         scenes (get-scenes connection)
         colors (get-colors connection)
         signals (get-signals connection)]
+    (log/debug "DB everything! scenes: " scenes)
     {:room   rooms
      :light  lights
      :scene  scenes

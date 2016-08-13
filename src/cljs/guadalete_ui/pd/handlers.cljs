@@ -26,7 +26,7 @@
         nodes (:nodes scene)
         data* (assoc data :position (offset-position position scene))
         node (node/make ilk data* db)
-        nodes* (assoc nodes (keyword (:id node)) node)
+        nodes* (assoc nodes (kw* (:id node)) node)
         scene* (assoc scene :nodes nodes*)
         db* (assoc-in db [:scene scene-id] scene*)]
     {:db    db*
@@ -43,7 +43,7 @@
                 :position (offset-position position scene)
                 :color color)
         node (node/make ilk data* db)
-        nodes* (assoc nodes (keyword (:id node)) node)
+        nodes* (assoc nodes (kw* (:id node)) node)
         scene* (assoc scene :nodes nodes*)
         db* (-> db
                 (assoc-in [:scene scene-id] scene*)

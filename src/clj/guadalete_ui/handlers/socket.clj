@@ -66,15 +66,15 @@
           state* (assoc state :config (frontend-config))
           values-channel (signal-values redis-conn (db/signal-ids db-conn))]
 
-      (go
-        (let [signal-values (<! values-channel)]
-          (send-fn uid [:signals/values (generate-string signal-values)])
-          ;(send-fn uid [:signals/values (generate-string signal-values)])
-          ;(send-fn uid [:signal/values signal-values])
-
-          ;(doseq [i (range 100)]
-          ;  (send-fn uid [:fast-push/is-fast (str "hello " i "!!")]))
-          ))
+      ;(go
+      ;  (let [signal-values (<! values-channel)]
+      ;    (send-fn uid [:signals/values (generate-string signal-values)])
+      ;    ;(send-fn uid [:signals/values (generate-string signal-values)])
+      ;    ;(send-fn uid [:signal/values signal-values])
+      ;
+      ;    ;(doseq [i (range 100)]
+      ;    ;  (send-fn uid [:fast-push/is-fast (str "hello " i "!!")]))
+      ;    ))
 
       (?reply-fn state*))))
 

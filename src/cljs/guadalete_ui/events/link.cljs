@@ -39,11 +39,15 @@
   :link/mouse-down
   (fn [db [_ {:keys [scene-id node-id id position]}]]
     (let [scene (get-in db [:scene scene-id])
+
+          _ (log/debug ":link/mouse-down" scene)
+
           node-link (link/->get db scene-id node-id id)
           flow (condp = (kw* (:direction node-link))
                  :in {:from :mouse :to {:scene-id scene-id :node-id node-id :id id}}
                  :out {:from {:scene-id scene-id :node-id node-id :id id} :to :mouse}
                  nil)]
+
       (-> db
           (assoc-in [:tmp :flow] flow)
           (assoc-in [:tmp :start-pos] (vec-map position))

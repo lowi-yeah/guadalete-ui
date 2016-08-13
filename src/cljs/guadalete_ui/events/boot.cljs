@@ -89,6 +89,7 @@
 (def-event-fx
   :success-sync-state
   (fn [{:keys [db]} [_ state]]
+    (log/debug ":success-sync-state | (:scene state)" (:scene state))
     (let [role (:user/role db)
           rooms-map (mappify :id (:room state))
           lights-map (mappify :id (:light state))

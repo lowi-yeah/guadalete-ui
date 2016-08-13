@@ -263,7 +263,7 @@
                          (color-channel-link "s" "saturation" node-id 1)
                          (color-channel-link "h" "hue" node-id 2)]
                    :default (log/error (str "Unknown color type " (:type color) ". Must be either :v :sv or :hsv")))]
-    (->> (map (fn [l] [(:id l) l]) (concat out-link in-links))
+    (->> (map (fn [l] [(kw* (:id l)) l]) (concat out-link in-links))
          (into {}))))
 
 (defmulti make
