@@ -89,8 +89,11 @@
   "Internal helper generating a Flow a fiven flow reference"
   [db reference]
   (let [{:keys [from to]} reference
+        all-links (get-in db [:scene (:scene-id to) :nodes (:node-id to) :links])
         from-link (get-in db [:scene (:scene-id from) :nodes (:node-id from) :links (kw* (:id from))])
         to-link (get-in db [:scene (:scene-id to) :nodes (:node-id to) :links (kw* (:id to))])]
+    (log/debug "getting flow reference")
+    (log/debug "links" all-links)
     {:from from-link :to to-link}))
 
 (defn- make-flow

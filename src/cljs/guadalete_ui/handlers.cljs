@@ -60,7 +60,8 @@
     (let [panel (condp = role
                   :none :blank
                   :anonymous :login
-                  :admin :root)]
+                  :admin :root
+                  :blank)]
       (assoc-in db [:view :panel] panel))))
 
 ;//   _          _
@@ -114,21 +115,26 @@
   [db room-id]
   (-> db (get-in [:room room-id :scene]) (first)))
 
+(def-event-fx
+  :view/root
+  (fn [{:keys [db]} _]
+    {:db (-> db
+             (assoc-in [:view :panel] :root)
+             (assoc-in [:view :section] :dash))}))
+
 (def-event
   :view/room
   (fn [db [_ [room-id segment]]]
     (condp = segment
       ; :current is passed, if the room changes but the segment to be shown remains the same
       ; (e.g switching form the secenes segment in roomA to the scenes segment in roomB)
-      :current (do
-                 ; workaround for current/scene-id
-                 ; if current is scene, dispatch ':view/scene' so that the hack below can kick in
-                 (when (= :scene (:current/segment db))
-                   (dispatch [:view/scene [room-id]]))
+      :current (let [scene-id (-> db
+                                  (get-in [:room room-id :scene])
+                                  (first))]
                  (-> db
                      (assoc-in [:view :section] :room)
                      (assoc-in [:view :room-id] room-id)
-                     (assoc-in [:view :scene-id] nil)))
+                     (assoc-in [:view :scene-id] scene-id)))
       (-> db
           (assoc-in [:view :section] :room)
           (assoc-in [:view :segment] segment)

@@ -68,7 +68,15 @@
   :pd/trash-selected
   (fn [{:keys [db]} [_ scene-id]]
     (let [selected-items (get-in db [:tmp :selected])
-          selected-nodes (filter #(= (:type %) :node) selected-items)
+          selected-nodes (->> selected-items
+                              (filter #(= (:type %) :node)))
+          selected-node-ids (->> selected-nodes
+                                 (map #(:id %))
+                                 (set))
+
+          _ (log/debug "selected-nodes" selected-nodes)
+          _ (log/debug "selected-node-ids" selected-node-ids)
+
           ;; get the ids of all flows where one of the selected nodes
           ;; is either the :from or :to tip respectively.
           node-flow-ids (->> selected-nodes
@@ -88,13 +96,25 @@
           scene-flows* (->> scene-flows
                             (remove (fn [[id _]] (in? flow-ids (name id))))
                             (into {}))
-          scene* (-> scene
-                     (assoc :flows scene-flows*))]
 
-      (log/debug "flows before" (count (:flows scene)))
-      (log/debug "flows after" (count (:flows scene*)))
-      (log/debug "scene-flows" (:flows scene))
-      (log/debug "scene*-flows" (:flows scene*))
+          scene-nodes (:nodes scene)
+          scene-nodes* (->> scene-nodes
+                            (remove (fn [[id _]] (in? selected-node-ids (name id))))
+                            (into {}))
+
+          _ (log/debug "scene-flows" (into {} (map #(identity %) scene-flows)))
+          _ (log/debug "scene-flows*" (into {} (map #(identity %) scene-flows*)))
+
+          ;_ (log/debug "scene-flows" (into [] (map #(first %) scene-flows)))
+          ;_ (log/debug "scene-flows*" (into [] (map #(first %) scene-flows*)))
+
+          _ (log/debug "scene-nodes" (into [] (map #(first %) scene-nodes)))
+          _ (log/debug "scene-nodes*" (into [] (map #(first %) scene-nodes*)))
+
+          scene* (-> scene
+                     (assoc :flows scene-flows*)
+                     (assoc :nodes scene-nodes*))]
+
 
       {:db    (assoc-in db [:scene scene-id] scene*)
        :sente (scene/sync-effect {:old scene :new scene*})})))

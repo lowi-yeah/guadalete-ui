@@ -32,15 +32,17 @@
   ;; --------------------
   ;; define routes here
   (defroute "/" []
+            (log/debug "goto root")
             (re-frame/dispatch [:set-panel]))
 
+  (defroute "/root" []
+            (re-frame/dispatch [:view/root]))
+
   (defroute "/room/:id" [id]
-            (log/debug (str "navigating to /room/" id))
             (re-frame/dispatch [:view/room [id :current]]))
   ;(re-frame/dispatch [:view/scene [id]]))
 
   (defroute "/room/:room-id/dash" [room-id]
-            (log/debug (str "navigating to /room/" room-id "/scene"))
             (re-frame/dispatch [:view/dash room-id]))
 
   (defroute "/room/:room-id/scene/:scene-id" [room-id scene-id]

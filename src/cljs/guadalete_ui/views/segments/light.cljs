@@ -15,7 +15,7 @@
                        3 "hsv"
                        4 "hsv")
           c (render-color (assoc color :type color-type))]
-      [:div.color-indicator
+      [:div.small-color-indicator
        {:style {:background c}}])))
 
 (defn- color-string
