@@ -109,9 +109,11 @@
 
 ; SCENE
 ; ****************
-(defmethod event-handler :scene/create
+(defmethod event-handler :scene/make
   [{:keys [?data db-conn ?reply-fn]}]
+  (log/debug ":scene/make" ?data)
   (let [response (db/create-scene db-conn ?data)]
+    (log/debug "\tresponse" response)
     (when ?reply-fn
       (?reply-fn response))))
 
@@ -124,10 +126,11 @@
       (?reply-fn response))))
 
 (defmethod event-handler :scene/trash
-  [{:keys [?data]}]
+  [{:keys [?data db-conn]}]
   (let [scene-id ?data]
-    ;(db/trash-scene scene-id)
-    ))
+    (log/debug "trash scene" scene-id)
+    (db/trash-scene db-conn scene-id)))
+
 
 ; LIGHT
 ; ****************

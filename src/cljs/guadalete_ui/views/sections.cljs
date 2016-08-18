@@ -1,6 +1,6 @@
 (ns guadalete-ui.views.sections
   (:require
-    [re-frame.core :refer [subscribe]]
+    [re-frame.core :refer [dispatch subscribe]]
     [guadalete-ui.views.segments :refer [segment]]
     [guadalete-ui.views.menu :refer [main-menu secondary-menu]]
     [guadalete-ui.console :as log]))
@@ -23,11 +23,16 @@
           segment-rctn (subscribe [:view/segment])]
       [:div.room.flex-container.full-height
        [:div#header.margins
-        [:h4 (:name @room-rctn)]
-        [:div#menus
-         [main-menu room-rctn segment-rctn]
-         [secondary-menu room-rctn segment-rctn]
-         ]]
+        [:h4.floating (:name @room-rctn)]
+        ;[:h4 (:name @room-rctn)]
+        [:button.ui.right.floated.mini.circular.trash.icon.button
+         {:on-click #(dispatch [:room/prepare-trash (:id @room-rctn)])}
+         [:i.mini.trash.icon]]
+        ]
+       [:div#menus.side-margins
+        [main-menu room-rctn segment-rctn]
+        [secondary-menu room-rctn segment-rctn]
+        ]
        [:div.flexing.relative
         (segment @segment-rctn room-rctn)]])))
 

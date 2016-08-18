@@ -1,7 +1,7 @@
 (ns guadalete-ui.views.menu
   (:require
     [reagent.core :refer [create-class]]
-    [re-frame.core :refer [subscribe]]
+    [re-frame.core :refer [subscribe dispatch]]
     [guadalete-ui.console :as log]
     [guadalete-ui.util :refer [pretty]]))
 
@@ -29,8 +29,10 @@
   (fn [room-rctn segment-rctn]
     (let [
           room-id (:id @room-rctn)
-          dash-link (str "#/room/" room-id "/dash")  ; OBACHT the '#' ist important, since without it the whole page gets relaoded
-          scene-link (str "#/room/" room-id "/scene/" (-> @room-rctn (get :scene) first (get :id)))
+          ;; OBACHT the '#' ist important, since without it the whole page gets relaoded
+          dash-link (str "#/room/" room-id "/dash")
+          scene-id (-> @room-rctn (get :scene) first (get :id))
+          scene-link (str "#/room/" room-id "/scene/" scene-id)
           light-link (str "#/room/" room-id "/light")
           switch-link (str "#/room/" room-id "/switch")
           dmx-link (str "#/room/" room-id "/dmx")
@@ -50,16 +52,27 @@
   (fn [room-rctn]
     (let [scenes (:scene @room-rctn)
           scene-rctn (subscribe [:view/scene])]
-      [:div.ui.secondary.inverted.menu.pointing
-       (doall
-         (for [s scenes]
-           (let [scene-link (str "#/room/" (:id @room-rctn) "/scene/" (:id s))
-                 current? (= (:id s) (:id @scene-rctn))]
-             ^{:key (str "s-" (:id s))}
-             [:a.item
-              {:href  scene-link
-               :class (if current? "active")}
-              (:name s)])))])))
+
+      [:div#scene-menu
+       [:div.ui.secondary.inverted.menu.pointing.floating
+        (doall
+          (for [s scenes]
+            (let [scene-link (str "#/room/" (:id @room-rctn) "/scene/" (:id s))
+                  current? (= (:id s) (:id @scene-rctn))]
+              ^{:key (str "s-" (:id s))}
+              [:a.item
+               {:href  scene-link
+                :class (if current? "active")}
+               (:name s)])))
+         [:button#make-scene.ui.mini.circular.icon.button.item
+          {:on-click #(dispatch [:scene/make (:id @room-rctn)])}
+          [:i.mini.add.circle.icon]]
+        ]
+       [:button#edit-scene.ui.right.floated.mini.circular.icon.button
+        {:on-click #(dispatch [:scene/edit (:id @scene-rctn)])}
+        [:i.mini.edit.icon]]
+       ]
+      )))
 
 (defn secondary-menu []
   (fn [room-rctn segment-rctn]

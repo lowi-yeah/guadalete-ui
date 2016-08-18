@@ -23,7 +23,7 @@
   :modal/close
   (fn [{:keys [db]} [_ type]]
     {:db    (dissoc db :modal)
-     :modal :close}))
+     :modal [:close {}]}))
 ;
 ;(def-event
 ;  :modal/approve

@@ -66,7 +66,6 @@
            [:a.item {:on-click #(.modal (js/$ "#new-room.modal") "show")}
             [:i.add.circle.icon]]]
           [:div#view.pusher
-           (section @section-rctn)
-           ]
+           (section @section-rctn)]
           [modal]
           ])})))

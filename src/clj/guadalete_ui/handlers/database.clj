@@ -56,6 +56,21 @@
          (let [msg (.getMessage ex)]
            {:error msg}))))))
 
+(defn- trash-item
+  "Generic update function called by update-room, update-light & update-sensor"
+  ([connection type id]
+   (let [item (get-one connection type id)]
+     (try
+       (do
+         (-> (r/table type)
+             (r/get id)
+             (r/delete)
+             (r/run connection))
+         {:ok id})
+       (catch ExceptionInfo ex
+         (let [msg (.getMessage ex)]
+           {:error msg}))))))
+
 ;//                            _ _      _   _
 ;//   _ _ ___ ___ _ __  ___   | (_)__ _| |_| |_ ___    _____ ___ _ _  ___ ___
 ;//  | '_/ _ \ _ \ '  \(_-<_  | | / _` | ' \  _(_-<_  (_-< _/ -_) ' \/ -_)_-<_ _ _
@@ -94,6 +109,11 @@
 
 (defn update-scene [connection id diff flag]
   (update-item connection id diff :scene flag))
+
+(defn trash-scene [connection id]
+  (trash-item connection :scene id))
+
+
 
 ; Color
 ; ****************
@@ -139,7 +159,6 @@
         scenes (get-scenes connection)
         colors (get-colors connection)
         signals (get-signals connection)]
-    (log/debug "DB everything! scenes: " scenes)
     {:room   rooms
      :light  lights
      :scene  scenes

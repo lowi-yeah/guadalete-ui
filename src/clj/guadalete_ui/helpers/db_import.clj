@@ -12,7 +12,7 @@
 (defn- json-path
        "A little helper to get the absolute path to the json files"
        [file]
-       (str "/Users/lowi/code/github/guadalete-ui/resources/json/" file))
+       (str "/Users/lowi/code/github/guadaleteui/resources/json/" file))
 
 (defn- import!
        "generic function for importing data"

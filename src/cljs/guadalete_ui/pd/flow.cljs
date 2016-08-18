@@ -63,9 +63,6 @@
 (defn- mouse-flow [scene-rctn flow mouse-pos]
   (let [{:keys [from to]} flow
         mouse-pos* (g/- (vec2 mouse-pos) (vec2 (:translation @scene-rctn)))
-
-        _ (log/debug "mouse-flow" flow)
-
         from-vec (if (= :mouse from)
                    mouse-pos*
                    (get-link-position from scene-rctn))

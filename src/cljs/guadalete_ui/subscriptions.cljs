@@ -116,6 +116,14 @@
   (fn [db [_ scene-id]]
     (get-in db [:scene scene-id])))
 
+(def-sub
+  :scene/sibling-ids
+  (fn [db [_ scene-id]]
+    (let [scene (get-in db [:scene scene-id])
+          scene-ids (get-in db [:room (:room-id scene) :scene])]
+      (into [] (remove #(= scene-id %) scene-ids)))))
+
+
 ;//      _                _
 ;//   ____)__ _ _ _  __ _| |
 ;//  (_-< / _` | ' \/ _` | |

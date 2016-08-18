@@ -68,5 +68,5 @@
                 :ilk        ilk
                 :modal-type (keyword (str "pd/" (name ilk)))}]
       {:db    (assoc db :modal data)
-       :modal :show})))
+       :modal [:show {}]})))
 

@@ -82,7 +82,7 @@
          :on-click #(dispatch [:pd/trash-selected (:id @scene-rctn)])}
         [:i.trash.icon]]
 
-
+       [palette room-rctn scene-rctn]
 
        ^{:key "svg"}
        [mod-svg
@@ -106,5 +106,4 @@
          ^{:key "flows"} [flows scene-rctn]
          ^{:key "nodes"} [nodes scene-rctn]
          ]]
-       [palette room-rctn scene-rctn]
        ])))

@@ -10,6 +10,7 @@
     [re-frame.core :refer [dispatch subscribe]]
     [thi.ng.color.core :refer [as-css]]
     [guadalete-ui.views.modal.light :refer [light-modal]]
+    [guadalete-ui.views.modal.scene :refer [scene-modal]]
     [guadalete-ui.util :refer [pretty kw*]]
     [guadalete-ui.console :as log]
     [guadalete-ui.pd.color :as color :refer [color-widget render-color]]))
@@ -248,6 +249,27 @@
                         {:value (:id an-option)}
                         (:name an-option)]))]]]))})))
 
+;//
+;//   _ _ ___ ___ _ __
+;//  | '_/ _ \ _ \ '  \
+;//  |_| \___\___/_|_|_|
+;//
+
+(defn- room-trash-modal
+  "Confirmation modal for room trashing."
+  []
+  (fn []
+    (let [item-rctn (subscribe [:modal/item])]
+      [:div.centred
+       [:h2 (str "Completely remove room '" (:name @item-rctn) "'?")]
+       [:div.actions.margin-top
+        [:div.ui.button.approve
+         [:i.ui.check.icon]
+         "ok"]
+        [:div.ui.button.deny
+         [:i.ui.cancel.icon]
+         "cancel"]]])))
+
 (defn modal []
   (fn []
     (let [data-rctn (subscribe [:modal/data])
@@ -259,6 +281,8 @@
           :pd/color [pd-color]
           :pd/light [pd-light]
           :light [light-modal]
+          :scene [scene-modal]
+          :room/trash [room-trash-modal]
           [:div.empty])]
-       [:div.actions
-        [:div.ui.button.cancel "close"]]])))
+       ;[:div.actions[:div.ui.button.cancel "close"]]
+       ])))

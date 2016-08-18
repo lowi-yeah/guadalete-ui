@@ -124,8 +124,8 @@
                       (assoc :modal modal-data))]
 
           {:db       db*
-           :dispatch [:room/update room* room]
-           :modal    :show})
+           :dispatch [:room/update {:new room* :old room}]
+           :modal    [:show {}]})
         (do
           (log/error "error during light creation:" error-msg)
           {:db db})))))
@@ -139,7 +139,7 @@
                 :ilk        :light
                 :modal-type :light}]
       {:db    (assoc db :modal data)
-       :modal :show})))
+       :modal [:show {}]})))
 
 ;(def-event-fx
 ;  :mouse/double-click
@@ -183,7 +183,7 @@
       (log/warn "update light failed" response)
       {:db db})))
 
-;; UPDATE
+;; TRASH
 ;; ********************************
 (def-event-fx
   :light/trash
