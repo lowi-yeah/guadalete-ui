@@ -13,7 +13,7 @@
 
       [guadalete-ui.helpers.session :as session]
       [guadalete-ui.handlers.database :as db]
-
+      [taoensso.timbre :as log]
       ))
 
 (defn index []
@@ -23,7 +23,8 @@
 (defn- friend-config [db]
        {:allow-anon?         true
         :default-landing-uri "/"
-        :credential-fn       #(creds/bcrypt-credential-fn (db/all-users-as-map (:conn db)) %)
+        :credential-fn       (fn [credentials]
+                                 (creds/bcrypt-credential-fn (db/all-users-as-map (:conn db)) credentials))
         :workflows           [(workflows/interactive-form)]})
 
 (defn ring-handler [{db :db}]

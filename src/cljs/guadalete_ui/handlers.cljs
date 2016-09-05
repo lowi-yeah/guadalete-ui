@@ -1,5 +1,4 @@
 (ns guadalete-ui.handlers
-  ;(:require-macros [reagent.ratom :refer [reaction]])
   (:require
     [re-frame.core :refer [dispatch def-event def-event-fx def-fx path trim-v after]]
     [secretary.core :as secretary]
@@ -62,7 +61,11 @@
                   :anonymous :login
                   :admin :root
                   :blank)]
-      (assoc-in db [:view :panel] panel))))
+      (assoc-in db [:view :panel] panel)
+      ;(assoc-in db [:view :panel] :root)
+
+
+         )))
 
 ;//   _          _
 ;//  | |___ __ _(_)_ _

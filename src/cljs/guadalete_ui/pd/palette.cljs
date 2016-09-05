@@ -89,6 +89,14 @@
            :draggable     true}
           [:i.icon.gdlt.signal]]]
 
+        ; SIGNAL-MIXER
+        ; ****************
+        [:div#palette-mixer.item
+         [:button.ui.circular.icon.button
+          {:on-drag-start #(start-drag % (:id @room-rctn) (:id @scene-rctn) :mixer)
+           :draggable     true}
+          [:i.icon.gdlt.mixer]]]
+
         ; COL0R
         ; ****************
         [:div#palette-color.item

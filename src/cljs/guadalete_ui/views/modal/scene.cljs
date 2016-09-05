@@ -38,6 +38,7 @@
          {:on-click #(dispatch [:scene/trash (:id @scene-rctn)])
           :disabled (empty? @siblings-rctn)}
          [:i.trash.outline.icon]]]
-
-       [:p "scene"]
-       [:pre.code (pretty @siblings-rctn)]])))
+       [:div.actions
+        [:div.ui.button.cancel
+         "close"]]
+       ])))

@@ -73,6 +73,12 @@
    :id   "nil-signal"
    :name "signal"})
 
+(defmethod nil-item :mixer
+  [_]
+  {:type :mixer
+   :id   "nil-mixer"
+   :name "mixer"})
+
 (defn pd-screen-offset []
   (let [jq-svg (js/$ "#pd-svg")
         offset (.offset jq-svg)]

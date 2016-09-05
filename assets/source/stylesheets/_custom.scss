@@ -108,12 +108,18 @@ pre, code, input{
 // |_\__\___/_||_/__/
 
 i.icon {
+
+  background-size: contain;
+  
+
   &.gdlt { 
     // width: $button-floating-size * 0.75;
     // height: $button-floating-size * 0.75;
     // background-size: $button-floating-size * 0.75 $button-floating-size * 0.75;
     // background-repeat: no-repeat;
     // background-position: center;
+
+
 
     &:before {
       content: "" !important;
@@ -125,6 +131,10 @@ i.icon {
 
     &.signal {
       background-image: url(#{$image-path}/signal-icon.svg);
+    }
+
+    &.mixer {
+      background-image: url(#{$image-path}/signal-mixer.svg);
     }
 
     &.color {
@@ -181,6 +191,10 @@ tr.light {
     padding-bottom: 0;    
     height: 1.5rem;
   }
+}
+
+#scene-menu {
+  height: 3.45rem;
 }
 
 //     _     _        _ _

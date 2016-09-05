@@ -95,6 +95,7 @@
           scenes-map (mappify :id (:scene state))
           colors-map (mappify :id (:color state))
           signals-map (mappify :id (:signal state))
+          mixers-map (mappify :id (:mixer state))
           config (:config state)
           db* (assoc db
                 :loading? false
@@ -103,6 +104,7 @@
                 :signal signals-map
                 :color colors-map
                 :scene scenes-map
+                :mixer mixers-map
                 :config config)]
       {:db       db*
        :dispatch [:set-panel role]})))

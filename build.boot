@@ -33,11 +33,7 @@
                   ; evaluate, keep one of them
                   [clj-kafka "0.3.4"]
 
-                  ; ---- workaround for 'No namespace: clojure.core.memoize' error
-                  ; ---- @see https://github.com/cemerick/friend/issues/116
-                  [org.clojure/core.cache "0.6.4"]
-                  [org.clojure/core.memoize "0.5.6" :exclusions [org.clojure/core.cache]]
-                  [com.cemerick/friend "0.2.1"]
+                  [com.cemerick/friend "0.2.3"]
 
                   [differ "0.3.1"]
 

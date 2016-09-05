@@ -22,12 +22,14 @@
 ;//
 (defn- get-link-position [{:keys [node-id id] :as data} scene-rctn]
   (let [node (get-in @scene-rctn [:nodes (kw* node-id)])
-        offset (link-offset node)
         node-vec (vec2 (:position node))
         link (get-in node [:links (kw* id)])
-        link-vec (if (= (:direction link) "in")
-                   (vec2 (* -0.5 handle-width) (+ (* (+ (:index link) (- offset 0.64)) line-height) (/ handle-height 2)))
-                   (vec2 (+ (* 0.5 handle-width) node-width) (+ (/ handle-height 2) (* (+ (:index link) (- offset 0.64)) line-height))))
+        offset (link-offset node link)
+        x (if (= (:direction link) "in")
+            (* -0.5 handle-width)
+            (+ (* 0.5 handle-width) node-width))
+        y (+ (* offset line-height) (/ handle-height 2))
+        link-vec (vec2 x y)
         ]
     (g/+ node-vec link-vec)))
 
@@ -109,6 +111,7 @@
                     (:to mouse-flow)
                     (:from mouse-flow))
         link (link/->get db scene-id (:node-id flow-link) (:id flow-link))]
+    (log/debug "non mouse link" link)
     (assoc link :scene-id scene-id)))
 
 (defn- valid-connection?
@@ -124,11 +127,7 @@
 
 (defn check-connection [{:keys [scene-id node-id id] :as data} db]
   (if (valid-connection? data db)
-    (let [mouse-flow (get-in db [:scene scene-id :flow/mouse])]
-      (-> db
-          (assoc-in [:scene scene-id :flow/mouse :candidate] {:node-id node-id :id id})
-          ;(decorate-link scene-id node-id id)
-          ))
+    (assoc-in db [:scene scene-id :flow/mouse :candidate] {:node-id node-id :id id})
     db))
 
 (defn reset-target [{:keys [scene-id node-id id] :as data} db]

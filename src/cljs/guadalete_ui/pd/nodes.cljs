@@ -15,7 +15,8 @@
     [guadalete-ui.items :refer [find-unused-light find-unused-signal]]
     [guadalete-ui.pd.link :as link :refer [links]]
     [guadalete-ui.views.widgets :refer [sparky]]
-    [guadalete-ui.pd.layout :refer [node-width line-height node-height]]))
+    [guadalete-ui.pd.layout :refer [node-width line-height node-height]]
+    ))
 
 ;//      _
 ;//   __| |_ _ __ ___ __ __
@@ -156,6 +157,7 @@
          :rx    1}]
 
        [node-title (str "Color: " (:type item))]
+       ;[node-title (str (:id item))]
 
        [svg/rect (vec2 0 line-height) node-width (/ line-height 2)
         {:fill  hacked-color
@@ -170,9 +172,7 @@
 
 (defn- signal-node []
   (fn [scene-id node item selected?]
-    (let [outlet (first (:outlets node))
-          outlet-size (vec2 18 8)
-          id (:id node)
+    (let [id (:id node)
           position (:position node)
           height (* line-height 4)
           link-offset 3.5
@@ -208,6 +208,32 @@
 
        [links scene-id node link-offset]])))
 
+(defn- mixer-node []
+  (fn [scene-id node item selected?]
+    (let [id (:id node)
+          position (:position node)
+          height (* line-height 4.5)
+          link-offset 2
+          ]
+
+      [svg/group
+       {:id            id
+        :class         (if selected? "signal node selected" "signal node")
+        :transform     (str "translate(" (:x position) " " (:y position) ")")
+        :data-type     "node"
+        :data-scene-id scene-id
+        :data-ilk      (:ilk node)}
+
+       [svg/rect (vec2 0 0) node-width height
+        {:class "bg"
+         :rx    1}]
+       [node-title "Mixer"]
+
+       [svg/rect (vec2 0 0) node-width height
+        {:rx    1
+         :class "click-target"}]
+
+       [links scene-id node link-offset]])))
 
 (defn node*
   [scene-id node item selected?]
@@ -215,6 +241,7 @@
     :signal [signal-node scene-id node item selected?]
     :light [light-node scene-id node item selected?]
     :color [color-node scene-id node item selected?]
+    :mixer [mixer-node scene-id node item selected?]
     ;:output [output-node n]
     [default-node node selected?]))
 
@@ -237,32 +264,53 @@
 ;//  | '  \/ _` | / / -_)
 ;//  |_|_|_\__,_|_\_\___|
 ;//
-(defn- color-channel-link [channel name node-id index]
-  {:id        (str channel "-" node-id)
-   :type      channel
-   :name      name
+(defn- color-channel-link [channel channel-name node-id index]
+  {:id        (str node-id "-" (name channel))
+   :channel   channel
+   :name      channel-name
    :ilk       "value"
    :direction "in"
    :index     index})
 
 (defn- make-color-links
   "Helper function for creating the in/out links for a given color.
-  The number input-links corresponds to the number of color channels (h,s,v)"
+  The number of input-links corresponds to the number of color channels (h,s,v)"
   [node-id color]
-  (log/debug "make-color-links")
-  (let [out-link [{:id        (str "out-" node-id)
+  (let [color-id (:id color)
+        out-link [{:id        (str "out-" node-id)
                    :ilk       "color"
                    :name      "out"
                    :direction "out"
                    :index     (-> color (:type) (name) (count))}]
         in-links (condp = (:type color)
-                   :v [(color-channel-link "v" "brightness" node-id 0)]
-                   :sv [(color-channel-link "v" "brightness" node-id 0)
-                        (color-channel-link "s" "saturation" node-id 1)]
-                   :hsv [(color-channel-link "v" "brightness" node-id 0)
-                         (color-channel-link "s" "saturation" node-id 1)
-                         (color-channel-link "h" "hue" node-id 2)]
+                   :v [(color-channel-link :brightness "brightness" color-id 0)]
+                   :sv [(color-channel-link :brightness "brightness" color-id 0)
+                        (color-channel-link :saturation "saturation" color-id 1)]
+                   :hsv [(color-channel-link :brightness "brightness" color-id 0)
+                         (color-channel-link :saturation "saturation" color-id 1)
+                         (color-channel-link :hue "hue" color-id 2)]
                    :default (log/error (str "Unknown color type " (:type color) ". Must be either :v :sv or :hsv")))]
+    (->> (map (fn [l] [(kw* (:id l)) l]) (concat out-link in-links))
+         (into {}))))
+
+
+(defn- mixer-link [name node-id index]
+  {:id        (str node-id "-" index)
+   :name      name
+   :ilk       "value"
+   :direction "in"
+   :index     index})
+
+(defn- make-mixer-links
+  "Helper function for creating the in/out links for a mixer."
+  [node-id]
+  (let [out-link [{:id        (str "out-" node-id)
+                   :ilk       "value"
+                   :name      "out"
+                   :direction "out"
+                   :index     2}]
+        in-links [(mixer-link "first" node-id 0)
+                  (mixer-link "second" node-id 1)]]
     (->> (map (fn [l] [(kw* (:id l)) l]) (concat out-link in-links))
          (into {}))))
 
@@ -288,6 +336,7 @@
   [_ {:keys [position color]} db]
   (let [node-id (str (random-uuid))
         links (make-color-links node-id color)]
+    (log/debug "make :color node" links)
     {:id       node-id
      :ilk      "color"
      :position (vec-map position)
@@ -308,6 +357,16 @@
                  :ilk       "value"
                  :index     0
                  :direction "out"}}}))
+
+(defmethod make :mixer
+  [_ {:keys [position item]} db]
+  (let [node-id (str (random-uuid))
+        links (make-mixer-links node-id)]
+    {:id       node-id
+     :ilk      "mixer"
+     :position (vec-map position)
+     :item-id  (:id item)
+     :links    links}))
 
 ;//   _        _
 ;//  | |_  ___| |_ __ ___ _ _ ___

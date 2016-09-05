@@ -113,9 +113,7 @@
 
 (def-event
   :success-scene-update
-  (fn [world response]
-    (log/debug ":success-scene-update" response)
-    world))
+  (fn [world response] world))
 
 (def-event
   :failure-scene-update

@@ -52,7 +52,7 @@
                          :handshake-data-fn socket/handshake-data-fn
                          :user-id-fn        socket/user-id-fn})
                       [:db :redis])
-             :kafka (component/using (new-kafka (:kafka config)) [:sente])
+             ;:kafka (component/using (new-kafka (:kafka config)) [:sente])
              :sente-endpoint (component/using
                                (new-endpoint sente-routes)
                                [:sente])

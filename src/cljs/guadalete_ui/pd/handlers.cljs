@@ -47,10 +47,33 @@
         scene* (assoc scene :nodes nodes*)
         db* (-> db
                 (assoc-in [:scene scene-id] scene*)
-                (assoc-in [:color (:id color)] color)
-                )]
+                (assoc-in [:color (:id color)] color))]
     {:db       db*
      :dispatch [:color/make color]
+     :sente    (scene/sync-effect {:old scene :new scene*})}))
+
+(defn- make-mixer-node
+  "Mixer nodes need special handling, since their items (ie. the mixing-function they represent)
+  are being dynamically created."
+  [db {:keys [scene-id ilk position] :as data}]
+
+  (log/debug "make-mixer-node")
+
+  (let [scene (get-in db [:scene scene-id])
+        nodes (:nodes scene)
+        mix {:id     (str (random-uuid))
+             :mix-fn :add}
+        data* (assoc data
+                :position (offset-position position scene)
+                :item mix)
+        node (node/make ilk data* db)
+        nodes* (assoc nodes (kw* (:id node)) node)
+        scene* (assoc scene :nodes nodes*)
+        db* (-> db
+                (assoc-in [:scene scene-id] scene*)
+                (assoc-in [:mixers (:id mix)] mix))]
+    {:db       db*
+     :dispatch [:mixer/make mix]
      :sente    (scene/sync-effect {:old scene :new scene*})}))
 
 ;; event handler for adding nodes to a pd-scene. Called when an item is dropped from the pallete
@@ -59,4 +82,5 @@
   (fn [{:keys [db]} [_ {:keys [ilk] :as data}]]
     (condp = ilk
       :color (make-color-node db data)
+      :mixer (make-mixer-node db data)
       (make-node db data))))

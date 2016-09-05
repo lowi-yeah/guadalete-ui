@@ -81,6 +81,7 @@
 (defn- from-mouse-and-data
   "Internal helper generating a FlowReference from the temporary mouse-flow and the data given by the mouse event"
   [db {:keys [scene-id node-id id] :as data}]
+  (log/debug "from mouse and data " data)
   (let [mouse-flow (get-in db [:tmp :flow])
         reference {:scene-id scene-id
                    :node-id  node-id
@@ -93,11 +94,9 @@
   "Internal helper generating a Flow a fiven flow reference"
   [db reference]
   (let [{:keys [from to]} reference
-        all-links (get-in db [:scene (:scene-id to) :nodes (:node-id to) :links])
+        ;all-links (get-in db [:scene (:scene-id to) :nodes (:node-id to) :links])
         from-link (get-in db [:scene (:scene-id from) :nodes (:node-id from) :links (kw* (:id from))])
         to-link (get-in db [:scene (:scene-id to) :nodes (:node-id to) :links (kw* (:id to))])]
-    (log/debug "getting flow reference")
-    (log/debug "links" all-links)
     {:from from-link :to to-link}))
 
 (defn- make-flow
@@ -105,7 +104,6 @@
   Also checks validity and resets! if necessary"
   [db {:keys [scene-id] :as data}]
   (let [mouse-flow (get-in db [:tmp :flow])]
-
     (if (= :valid (:valid? mouse-flow))
       (let [scene (get-in db [:scene scene-id])
             flows (:flows scene)
@@ -116,6 +114,8 @@
                         (dissoc :valid?))
             flows* (assoc flows flow-id reference)
             scene* (-> scene (assoc :flows flows*))]
+
+        (log/debug "make flow" (pretty reference))
 
         {:db    (-> db
                     (abort)
@@ -133,7 +133,7 @@
 
 (def-event
   ;; called during flow/mouse-move, when the mouse is above a nide link.
-  ;; checks whether the first link tip mathches the current link, so that a valid link would be created.
+  ;; checks whether the first link tip matches the current link, so that a valid link would be created.
   :link/check-connection
   (fn [db [_ {:keys [type] :as data}]]
     (condp = type
@@ -141,11 +141,11 @@
                   flow-reference (from-mouse-and-data db data)
                   different-nodes? (not= (get-in flow-reference [:from :node-id])
                                          (get-in flow-reference [:to :node-id]))
-                  flow (from-reference db flow-reference)
-                  ]
-
-              (log/debug "flow-reference" flow-reference)
-              (log/debug "check flow" flow)
+                  flow (from-reference db flow-reference)]
+              ;(log/debug "flow-reference" flow-reference)
+              ;(log/debug "check flow")
+              ;(log/debug "from" (:from flow))
+              ;(log/debug "to" (:to flow))
               (if different-nodes?
                 (assoc-in db [:tmp :flow :valid?] (validate-flow flow))
                 db))

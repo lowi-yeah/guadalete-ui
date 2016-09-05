@@ -241,7 +241,7 @@ body {
     padding-top: 0.25rem;
     border-width: 1px;
     font-size: $typecsset-small-size;
-    font-family: Silkscreen, monospace;
+    font-family: Monofur, monospace;
     &.active {
       border-color: $yellow !important;
       font-weight: 400;
@@ -306,9 +306,11 @@ body {
 
 .ui.button {
 
-  // &.icon {
-  //   padding: 0.5rem;
-  // }
+  &.icon {
+    padding: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+  }
 
   // &.circular {
   //   .icon {
@@ -346,6 +348,13 @@ body {
   &.trash {
     // margin-right: -3rem;
     background: $re-red;
+  }
+
+  &.circular{
+    .icon {
+      width: 1.2rem;
+      height: 1.2rem;
+    }
   }
 }
 

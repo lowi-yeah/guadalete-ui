@@ -75,50 +75,76 @@
 
 ;; UPDATE COLOR NODE
 ;; ********************************
-(defn- color-in-link [type name node-id]
-  {:id        (str type "-" node-id)
-   :type      type
-   :name      name
-   :ilk       "signal"
-   :state     "normal"
+(defn- make-in-link [channel channel-name node-id index]
+  (log/debug "make-in-link" channel channel-name node-id index)
+  (log/debug "keyword? channel" (keyword? channel))
+  {:id        (str node-id "-" (name channel))
+   :index     index
+   :channel   channel
+   :name      channel-name
+   :ilk       "value"
    :direction "in"})
 
-(defn- get-link-by-channel [links channel node-id name]
+(defn- get-link-by-channel [links channel node-id name index]
+  ;(log/debug "get-link-by-channel " links channel node-id name index)
+  (log/debug "get-link-by-channel " name)
   (let [existing-link (->> links
-                           (filter #(= channel (:channel %)))
-                           (first))]
-    (or existing-link (color-in-link type name node-id))))
+                           (filter (fn [link] (= channel (keyword (:channel link)))))
+                           (first))
+        link* (or existing-link (make-in-link channel name node-id index))]
+    (log/debug "get link by channel" name)
+    (log/debug "channel" channel)
+    (log/debug "links" links)
+    (log/debug "existing-link" existing-link)
+    (log/debug "link*" link*)
+    link*
+    ))
 
 (defmulti update-links (fn [color-type _ _] color-type))
 
 (defmethod update-links :v
   [_ node-id in-links]
-  [(get-link-by-channel in-links "v" node-id "brightness")])
+  [(get-link-by-channel in-links :brightness node-id "brightness" 0)])
 
 (defmethod update-links :sv
   [_ node-id in-links]
-  [(get-link-by-channel in-links "v" node-id "brightness")
-   (get-link-by-channel in-links "s" node-id "saturation")])
+  (log/debug "update-links :sv")
+  [(get-link-by-channel in-links :brightness node-id "brightness" 0)
+   (get-link-by-channel in-links :saturation node-id "saturation" 1)])
 
 (defmethod update-links :hsv
   [_ node-id in-links]
-  [(get-link-by-channel in-links "v" node-id "brightness")
-   (get-link-by-channel in-links "s" node-id "saturation")
-   (get-link-by-channel in-links "h" node-id "hue")])
+  (let [new-links (->> [:brightness :saturation :hue]
+                       (map #(get-link-by-channel in-links % node-id (name %) 0))
+                       (into []))]
+    (log/debug "update-links :hsv" new-links)
+    new-links))
 
 (def-event-fx
   :node/update-color
-  (fn [{:keys [db]} [_ {:keys [item-id scene-id node-id]}]]
-    (log/debug "updating color")
+  (fn [{:keys [db]} [_ {:keys [item-id scene-id node-id] :as data}]]
     (let [scene (get-in db [:scene scene-id])
           color (get-in db [:color item-id])
           node (get-in scene [:nodes (kw* node-id)])
-          out-link (first (vals (filter (fn [[_id link]] (= "out" (get link :direction))) (:links node))))
-          in-links (vals (filter (fn [[_id link]] (= "in" (get link :direction))) (:links node)))
+
+          in-links (->> (:links node)
+                        (filter (fn [[_id link]] (= "in" (get link :direction))))
+                        (map (fn [[_id link]] link))
+                        (into []))
+
+          out-link (->> (:links node)
+                        (filter (fn [[_id link]] (= "out" (get link :direction))))
+                        (map (fn [[_id link]] link))
+                        (first))
 
           ;; reassemble
           in-links* (update-links (-> color (get :type)) node-id in-links)
-          links* (->> (conj in-links* out-link)
+
+          out-link* (assoc out-link :index (count in-links*))
+
+          _ (log/debug "in-links*" (pretty in-links*))
+
+          links* (->> (conj in-links* out-link*)
                       (map (fn [l] [(:id l) l]))
                       (into {}))
           node* (assoc node :links links*)

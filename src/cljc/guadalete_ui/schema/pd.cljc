@@ -37,12 +37,13 @@
 
 (def ValueOutLink
   "A link emitting values"
-  {:ilk                   (s/eq "value")
-   :id                    s/Str
-   :direction             (s/eq "out")
-   :index                 s/Num
-   (s/optional-key :type) s/Str
-   (s/optional-key :name) s/Str})
+  {:ilk                      (s/eq "value")
+   :id                       s/Str
+   :direction                (s/eq "out")
+   :index                    s/Num
+   (s/optional-key :type)    s/Str
+   (s/optional-key :channel) s/Str
+   (s/optional-key :name)    s/Str})
 
 ;; IN
 ;; ********************************
@@ -56,12 +57,13 @@
 
 (def ValueInLink
   "A link accepting values as input"
-  {:ilk                   (s/eq "value")
-   :id                    s/Str
-   :direction             (s/eq "in")
-   :index                 s/Num
-   (s/optional-key :type) s/Str
-   (s/optional-key :name) s/Str})
+  {:ilk                      (s/eq "value")
+   :id                       s/Str
+   :direction                (s/eq "in")
+   :index                    s/Num
+   (s/optional-key :type)    s/Str
+   (s/optional-key :channel) s/Str
+   (s/optional-key :name)    s/Str})
 
 ;; Conditionals
 ;; ********************************

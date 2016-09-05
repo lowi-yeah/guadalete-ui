@@ -33,13 +33,17 @@
       :data-type     "link"
       }]))
 
+(defn- y-pos [offset index]
+  [(* (+ index offset) line-height)
+   (* (+ index (- offset 0.64)) line-height)])
+
 (defn- in* []
   (fn [links scene-id node-id offset]
     [svg/group
      {:class "in-links"}
      (doall
-       (for [index (-> links count range)]
-         (let [l (nth links index)
+       (for [l links]
+         (let [index (:index l)
                text-position (vec2 handle-text-padding (* (+ index offset) line-height))
                handle-position (vec2 (* -1 handle-width) (* (+ index (- offset 0.64)) line-height))]
            ^{:key (str "link-" (:id l))}
@@ -47,23 +51,26 @@
             [link-handle l scene-id node-id handle-position]
             [svg/text
              text-position
-             (str (:name l))]])))]))
+             (str (:name l))
+             ]])))]))
 
 (defn- out* []
   (fn [links scene-id node-id offset]
     [svg/group
      {:class "out-links"}
      (doall
-       (for [index (-> links count range)]
-         (let [l (nth links index)
-               text-position (vec2 (- node-width handle-text-padding) (* (+ index offset) line-height))
-               handle-position (vec2 node-width (* (+ index (- offset 0.64)) line-height))]
+       (for [l links]
+         (let [index (:index l)
+               [text-y handle-y] (y-pos offset index)
+               text-position (vec2 (- node-width handle-text-padding) text-y)
+               handle-position (vec2 node-width handle-y)]
            ^{:key (str "link-" (:id l))}
            [svg/group {}
             [link-handle l scene-id node-id handle-position]
             [svg/text
              text-position
              (str (:name l))
+             ;(str (:index l) " - " (:name l))
              {:text-anchor :end}]])))]))
 
 (defn- filter-direction [links direction]
@@ -73,17 +80,19 @@
          (into {})
          (vals))))
 
+(def sort-by-index (partial sort-by #(:index %)))
+
 (defn links
   "Draws the in- & out-links of a given node"
   []
   (fn [scene-id node offset]
-    (let [in-links (filter-direction (:links node) "in")
-          out-links (filter-direction (:links node) "out")]
+    (let [in-links (-> (:links node) (filter-direction "in") (sort-by-index))
+          out-links (-> (:links node) (filter-direction "out") (sort-by-index))]
       ^{:key (str "links-" (:id node))}
       [svg/group
        {}
        (if (not-empty in-links) [in* in-links scene-id (:id node) offset])
-       (if (not-empty out-links) [out* out-links scene-id (:id node) (+ offset (count in-links))])])))
+       (if (not-empty out-links) [out* out-links scene-id (:id node) offset])])))
 
 (defn ->get [db scene-id node-id link-id]
   (get-in db [:scene scene-id :nodes (kw* node-id) :links (kw* link-id)]))

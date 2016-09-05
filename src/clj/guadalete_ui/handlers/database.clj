@@ -136,6 +136,15 @@
   (->> (get-all connection :signal)
        (map #(get % :id))))
 
+; Mixer
+; ****************
+(defn get-mixers [connection]
+  (get-all connection :mixer))
+
+(defn create-mixer [connection mixer]
+  (create-item connection :mixer mixer))
+
+
 ;//
 ;//   _  _ ______ _ _ ___
 ;//  | || (_-< -_) '_(_-<
@@ -158,9 +167,11 @@
         lights (get-lights connection)
         scenes (get-scenes connection)
         colors (get-colors connection)
-        signals (get-signals connection)]
+        signals (get-signals connection)
+        mixers (get-mixers connection)]
     {:room   rooms
      :light  lights
      :scene  scenes
      :color  colors
-     :signal signals}))
+     :signal signals
+     :mixer  mixers}))

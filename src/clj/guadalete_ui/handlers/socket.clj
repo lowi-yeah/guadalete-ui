@@ -64,8 +64,8 @@
   (when (and (session-uid ring-req) ?reply-fn)
     (let [state (db/everything db-conn)
           state* (assoc state :config (frontend-config))
-          values-channel (signal-values redis-conn (db/signal-ids db-conn))]
-
+          ;values-channel (signal-values redis-conn (db/signal-ids db-conn))
+          ]
       ;(go
       ;  (let [signal-values (<! values-channel)]
       ;    (send-fn uid [:signals/values (generate-string signal-values)])
@@ -157,12 +157,15 @@
     ;(db/trash-light (:conn db) light-id)
     ))
 
+;//          _
+;//   __ ___| |___ _ _
+;//  / _/ _ \ / _ \ '_|
+;//  \__\___/_\___/_|
+;//
 (defmethod event-handler :color/make
   [{:keys [?data db-conn ?reply-fn]}]
   (let [color ?data
         response (db/create-color db-conn color)]
-    (log/debug "creating color" color)
-    (log/debug "response " response)
     (when ?reply-fn
       (?reply-fn response))))
 
@@ -174,6 +177,21 @@
     (log/debug ":color/update response:" response)
     (when ?reply-fn
       (?reply-fn response))))
+
+
+;//         _
+;//   _ __ (_)_ _____ _ _
+;//  | '  \| \ \ / -_) '_|
+;//  |_|_|_|_/_\_\___|_|
+;//
+(defmethod event-handler :mixer/make
+  [{:keys [?data db-conn ?reply-fn]}]
+  (let [response (db/create-mixer db-conn ?data)]
+    (log/debug "creating color" ?data)
+    (log/debug "response " response)
+    (when ?reply-fn
+      (?reply-fn response))))
+
 
 ; DEFAULT
 ; ****************
