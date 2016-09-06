@@ -252,12 +252,9 @@
     (str type " " h " " s " " v)))
 
 (defn make-color []
-  (let [id (str (random-uuid))
-        channel-id (keyword (str id "-brightness"))]
-    {:id        id
-     :type      :v
-     channel-id {:channel :brightness
-                 :value   0}}))
+  {:id         (str (random-uuid))
+   :type       :v
+   :brightness 0})
 
 (defn from-id [color-id]
   (let [[type h s v] (str/split color-id #" ")

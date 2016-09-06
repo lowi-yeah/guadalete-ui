@@ -75,23 +75,19 @@
 
 ;; UPDATE COLOR NODE
 ;; ********************************
-(defn- make-in-link [channel channel-name node-id index]
-  (log/debug "make-in-link" channel channel-name node-id index)
-  (log/debug "keyword? channel" (keyword? channel))
-  {:id        (str node-id "-" (name channel))
-   :index     index
-   :channel   channel
-   :name      channel-name
+(defn- make-in-link [channel index]
+  {:id        channel
+   :name      (name channel)
    :ilk       "value"
-   :direction "in"})
+   :direction "in"
+   :index     index})
 
-(defn- get-link-by-channel [links channel node-id name index]
-  ;(log/debug "get-link-by-channel " links channel node-id name index)
-  (log/debug "get-link-by-channel " name)
+(defn- get-link-by-channel [links channel name index]
+  (log/debug "get-link-by-channel " channel)
   (let [existing-link (->> links
-                           (filter (fn [link] (= channel (keyword (:channel link)))))
+                           (filter (fn [link] (= channel (keyword (:id link)))))
                            (first))
-        link* (or existing-link (make-in-link channel name node-id index))]
+        link* (or existing-link (make-in-link channel index))]
     (log/debug "get link by channel" name)
     (log/debug "channel" channel)
     (log/debug "links" links)
@@ -104,18 +100,18 @@
 
 (defmethod update-links :v
   [_ node-id in-links]
-  [(get-link-by-channel in-links :brightness node-id "brightness" 0)])
+  [(get-link-by-channel in-links :brightness "brightness" 0)])
 
 (defmethod update-links :sv
   [_ node-id in-links]
   (log/debug "update-links :sv")
-  [(get-link-by-channel in-links :brightness node-id "brightness" 0)
-   (get-link-by-channel in-links :saturation node-id "saturation" 1)])
+  [(get-link-by-channel in-links :brightness "brightness" 0)
+   (get-link-by-channel in-links :saturation "saturation" 1)])
 
 (defmethod update-links :hsv
   [_ node-id in-links]
   (let [new-links (->> [:brightness :saturation :hue]
-                       (map #(get-link-by-channel in-links % node-id (name %) 0))
+                       (map #(get-link-by-channel in-links % (name %) 0))
                        (into []))]
     (log/debug "update-links :hsv" new-links)
     new-links))

@@ -264,10 +264,9 @@
 ;//  | '  \/ _` | / / -_)
 ;//  |_|_|_\__,_|_\_\___|
 ;//
-(defn- color-channel-link [channel channel-name node-id index]
-  {:id        (str node-id "-" (name channel))
-   :channel   channel
-   :name      channel-name
+(defn- color-channel-link [channel index]
+  {:id        channel
+   :name      (name channel)
    :ilk       "value"
    :direction "in"
    :index     index})
@@ -275,27 +274,26 @@
 (defn- make-color-links
   "Helper function for creating the in/out links for a given color.
   The number of input-links corresponds to the number of color channels (h,s,v)"
-  [node-id color]
-  (let [color-id (:id color)
-        out-link [{:id        (str "out-" node-id)
+  [color]
+  (let [out-link [{:id        "out"
                    :ilk       "color"
                    :name      "out"
                    :direction "out"
                    :index     (-> color (:type) (name) (count))}]
         in-links (condp = (:type color)
-                   :v [(color-channel-link :brightness "brightness" color-id 0)]
-                   :sv [(color-channel-link :brightness "brightness" color-id 0)
-                        (color-channel-link :saturation "saturation" color-id 1)]
-                   :hsv [(color-channel-link :brightness "brightness" color-id 0)
-                         (color-channel-link :saturation "saturation" color-id 1)
-                         (color-channel-link :hue "hue" color-id 2)]
+                   :v [(color-channel-link :brightness 0)]
+                   :sv [(color-channel-link :brightness 0)
+                        (color-channel-link :saturation 1)]
+                   :hsv [(color-channel-link :brightness 0)
+                         (color-channel-link :saturation 1)
+                         (color-channel-link :hue 2)]
                    :default (log/error (str "Unknown color type " (:type color) ". Must be either :v :sv or :hsv")))]
     (->> (map (fn [l] [(kw* (:id l)) l]) (concat out-link in-links))
          (into {}))))
 
 
-(defn- mixer-link [name node-id index]
-  {:id        (str node-id "-" index)
+(defn- mixer-link [name index]
+  {:id        (str "in-" index)
    :name      name
    :ilk       "value"
    :direction "in"
@@ -304,13 +302,13 @@
 (defn- make-mixer-links
   "Helper function for creating the in/out links for a mixer."
   [node-id]
-  (let [out-link [{:id        (str "out-" node-id)
+  (let [out-link [{:id        "out"
                    :ilk       "value"
                    :name      "out"
                    :direction "out"
                    :index     2}]
-        in-links [(mixer-link "first" node-id 0)
-                  (mixer-link "second" node-id 1)]]
+        in-links [(mixer-link "first" 0)
+                  (mixer-link "second" 1)]]
     (->> (map (fn [l] [(kw* (:id l)) l]) (concat out-link in-links))
          (into {}))))
 
@@ -320,22 +318,20 @@
 (defmethod make :light
   [_ {:keys [position] :as data} db]
   (let [node-id (str (random-uuid))
-        link-id (str (random-uuid))
         item-id (find-unused-light data db)]
     {:id       node-id
      :ilk      "light"
      :item-id  item-id
      :position (vec-map position)
-     :links    {(keyword link-id)
-                {:id        link-id
+     :links    [{:id        "in"
                  :index     0
-                 :ilk       "color"
-                 :direction "in"}}}))
+                 :ilk       :color
+                 :direction :in}]}))
 
 (defmethod make :color
   [_ {:keys [position color]} db]
   (let [node-id (str (random-uuid))
-        links (make-color-links node-id color)]
+        links (make-color-links color)]
     (log/debug "make :color node" links)
     {:id       node-id
      :ilk      "color"
@@ -346,17 +342,15 @@
 (defmethod make :signal
   [_ {:keys [position] :as data} db]
   (let [node-id (str (random-uuid))
-        link-id (str (random-uuid))
         item-id (find-unused-signal data db)]
     {:id       node-id
      :ilk      "signal"
      :position (vec-map position)
      :item-id  item-id
-     :links    {(keyword link-id)
-                {:id        link-id
-                 :ilk       "value"
-                 :index     0
-                 :direction "out"}}}))
+     :links    [{:id        "out"
+                 :ilk       :value
+                 :direction :out
+                 :index     0}]}))
 
 (defmethod make :mixer
   [_ {:keys [position item]} db]

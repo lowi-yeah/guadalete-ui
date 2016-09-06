@@ -68,11 +68,12 @@
     (with-open [conn (r/connect :host host :port port :auth-key auth-key :db db)]
       (truncate conn "light")
       (truncate conn "color")
-      (truncate conn "signal")
       (truncate conn "mixer")
       (items conn "dmx")
       (items conn "room")
       (items conn "scene")
+      (items conn "signal")
+
       (users conn)
       )))
 

@@ -62,22 +62,14 @@
 (defn update-color-type
   "Helper function which updates the color type after a type-change."
   [color new-type]
-  (let [saturatation-id (keyword (str (:id color) "-saturation"))
-        hue-id (keyword (str (:id color) "-hue"))
-        color* (condp = (kw* new-type)
-                 :v (dissoc color saturatation-id hue-id)
+  (let [color* (condp = (kw* new-type)
+                 :v (dissoc color :saturatation :hue)
                  :sv (-> color
-                         (dissoc hue-id)
-                         (assoc saturatation-id (or (get color saturatation-id)
-                                                    {:channel :saturation
-                                                     :value   0})))
+                         (dissoc :hue)
+                         (assoc :saturatation (or (:saturatation color) 0)))
                  :hsv (-> color
-                          (assoc saturatation-id (or (get color saturatation-id)
-                                                     {:channel :saturation
-                                                      :value   0}))
-                          (assoc hue-id (or (get color hue-id)
-                                            {:channel :hue
-                                             :value   0})))
+                          (assoc :saturatation (or (:saturatation color) 0))
+                          (assoc :hue (or (:hue color) 0)))
                  color)]
     (-> color*
         (assoc :type (keyword new-type)))))
