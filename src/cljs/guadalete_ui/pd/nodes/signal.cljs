@@ -13,6 +13,7 @@
 
     [guadalete-ui.views.widgets :refer [sparky]]
     [guadalete-ui.pd.nodes.core :refer [node-title click-target]]
+    [guadalete-ui.pd.nodes.link :refer [links]]
     [guadalete-ui.pd.layout :refer [node-width line-height node-height]]))
 
 ;//   _        _
@@ -43,7 +44,7 @@
   (let [id (:id node)
         position (:position node)
         height (* line-height 4)
-        ;link-offset 3.5
+        link-offset 3.5
         ]
     [svg/group
      {:id            id
@@ -68,8 +69,8 @@
       (str (:name item))
       {:class       "node-text"
        :text-anchor "left"}]
-
      [click-target height]
+     [links scene-id node link-offset]
      ]))
 
 (s/defn ^:always-validate make-node :- gs/Node

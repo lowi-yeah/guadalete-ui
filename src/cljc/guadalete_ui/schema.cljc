@@ -134,7 +134,7 @@
    :user/role               (s/enum :anonymous :user :admin :none)
 
    ;; map containing configuration data received from the server
-   (s/optional-key :config)   Configuration
+   (s/optional-key :config) Configuration
 
    ;; map for temporary data used during user-interaction
    ;; eg: the current interaction-mode, currently selected nodes or temporary (mouse) flows are put here
@@ -143,6 +143,14 @@
    ;                         :mode     (s/enum :none :pan :link)}
    :tmp                     s/Any
    })
+
+(s/defschema Effect
+  {:db                     DB
+   (s/optional-key :sente) s/Any
+   (s/optional-key :dispatch) s/Any
+   (s/optional-key :modal) s/Any
+   }
+  )
 
 
 

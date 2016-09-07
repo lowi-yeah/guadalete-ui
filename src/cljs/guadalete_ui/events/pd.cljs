@@ -26,7 +26,6 @@
           δ (g/- (vec2 position) (vec2 (:position stashed-scene)))
           translation* (g/+ (vec2 (:translation stashed-scene)) δ)
           scene* (assoc scene :translation (vec->map translation*))]
-      (log/debug ":pd/mouse-move" scene-id)
       (assoc-in db [:scene scene-id] scene*))))
 
 

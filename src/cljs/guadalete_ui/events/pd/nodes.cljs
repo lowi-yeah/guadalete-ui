@@ -83,7 +83,6 @@
 
 (defmethod create-node* :signal
   [db data]
-  (log/debug "create-node :signal" data)
   (validate! gs/DB db)
   (signal/make-node db data))
 
@@ -103,19 +102,20 @@
   {})
 
 ;; event handler for adding nodes to a pd-scene. Called when an item is dropped from the pallete
-(def-event-fx
-  :node/make
-  (fn [{:keys [db]} [_ {:keys [scene-id position] :as data}]]
-    (let [scene (get-in db [:scene scene-id])
-          node-position (offset-position position scene)
-          data* (assoc data :position node-position)
-          new-node (create-node* db data*)
+(s/defn ^:always-validate make-node* :- gs/Effect
+  [{:keys [db]} [_ {:keys [scene-id position] :as data}]]
+  (let [scene (get-in db [:scene scene-id])
+        node-position (offset-position position scene)
+        data* (assoc data :position node-position)
+        new-node (create-node* db data*)
 
-          nodes* (assoc (:nodes scene) (keyword (:id new-node)) new-node)
-          scene* (assoc scene :nodes nodes*)
-          db* (assoc-in db [:scene scene-id] scene*)]
-      {:db    db*
-       :sente (scene/sync-effect {:old scene :new scene*})})))
+        nodes* (assoc (:nodes scene) (keyword (:id new-node)) new-node)
+        scene* (assoc scene :nodes nodes*)
+        db* (assoc-in db [:scene scene-id] scene*)]
+    {:db    db*
+     :sente (scene/sync-effect {:old scene :new scene*})}))
+
+(def-event-fx :node/make make-node* )
 
 
 ;//      _                          _          _
