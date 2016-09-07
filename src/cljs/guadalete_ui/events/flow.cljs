@@ -5,7 +5,7 @@
     [thi.ng.geom.core :as g]
     [thi.ng.geom.core.vector :refer [vec2]]
     [guadalete-ui.pd.flow :as flow]
-    [guadalete-ui.util :refer [pretty kw* vec-map]]
+    [guadalete-ui.util :refer [pretty kw* vec->map]]
     [guadalete-ui.pd.link :as link]
     [guadalete-ui.console :as log]
     ; schema

@@ -14,12 +14,18 @@
             [guadalete-ui.views.editor :refer [editor]]
             ))
 
+;// ROOM
+;// ********************************
+(defn- scene* []
+  (fn [room-rctn]
+    (let [scene-rctn (subscribe [:view/scene])]
+      [pd room-rctn scene-rctn])))
+
 (defmulti segment (fn [type _] type))
 
 (defmethod segment :scene
   [_ room-rctn]
-  (let [scene-rctn (subscribe [:view/scene])]
-    [pd room-rctn scene-rctn]))
+  [scene* room-rctn])
 
 (defmethod segment :dash
   [_ room-rctn]

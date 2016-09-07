@@ -52,7 +52,6 @@
   (fn [room-rctn]
     (let [scenes (:scene @room-rctn)
           scene-rctn (subscribe [:view/scene])]
-
       [:div#scene-menu
        [:div.ui.secondary.inverted.menu.pointing.floating
         (doall

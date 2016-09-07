@@ -5,7 +5,8 @@
             [thi.ng.geom.core :as g]
             [thi.ng.geom.svg.core :refer [svg-attribs]]
             [thi.ng.geom.core.vector :refer [vec2]]
-            [guadalete-ui.console :as log]))
+            [guadalete-ui.console :as log]
+            [schema.core :as s]))
 
 (declare clj->js*)
 
@@ -90,7 +91,7 @@ Maps become Objects. Arbitrary keys are encoded to by key->js."
   [something]
   (.stringify js/JSON (clj->js* something) nil 2))
 
-(defn vec-map
+(defn vec->map
   "returns a {:x :y } map for the given Vec2"
   [vec]
   {:x (:x vec) :y (:y vec)})
@@ -136,3 +137,14 @@ Maps become Objects. Arbitrary keys are encoded to by key->js."
 
 (defn dimensions [jq]
   (vec2 (.outerWidth jq true) (.outerHeight jq true)))
+
+
+(defn validate!
+  [schema data & silent?]
+  (let [verbose? (not= (first silent?) :silent)]
+    (try
+      (if verbose? (log/info "validate" (keys data)))
+      (s/validate schema data)
+      (if verbose? (log/info "**** VALID! ****"))
+      (catch :default e
+        (log/error "ERROR" e)))))

@@ -3,7 +3,7 @@
     [re-frame.core :refer [dispatch def-event def-event-fx def-fx]]
     [thi.ng.geom.core :as g]
     [thi.ng.geom.core.vector :refer [vec2]]
-    [guadalete-ui.util :refer [pretty kw* vec-map offset-position in?]]
+    [guadalete-ui.util :refer [pretty kw* vec->map offset-position in?]]
     [guadalete-ui.console :as log]
     [guadalete-ui.events.scene :as scene]))
 
@@ -25,7 +25,8 @@
           stashed-scene (get-in db [:tmp :scene])
           δ (g/- (vec2 position) (vec2 (:position stashed-scene)))
           translation* (g/+ (vec2 (:translation stashed-scene)) δ)
-          scene* (assoc scene :translation (vec-map translation*))]
+          scene* (assoc scene :translation (vec->map translation*))]
+      (log/debug ":pd/mouse-move" scene-id)
       (assoc-in db [:scene scene-id] scene*))))
 
 

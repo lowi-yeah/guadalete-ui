@@ -10,7 +10,7 @@
     [thi.ng.geom.core.vector :refer [vec2]]
     [thi.ng.color.core :as color]
     [guadalete-ui.console :as log]
-    [guadalete-ui.util :refer [pretty vec-map kw*]]
+    [guadalete-ui.util :refer [pretty vec->map kw*]]
     [guadalete-ui.pd.mouse :as mouse]
     [guadalete-ui.pd.color :refer [render-color]]
     [guadalete-ui.pd.layout

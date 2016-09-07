@@ -4,7 +4,7 @@
     [re-frame.core :refer [dispatch def-event def-event-fx def-fx]]
     [thi.ng.geom.core :as g]
     [thi.ng.geom.core.vector :refer [vec2]]
-    [guadalete-ui.util :refer [pretty kw* vec-map]]
+    [guadalete-ui.util :refer [pretty kw* vec->map]]
     [guadalete-ui.pd.link :as link]
     [guadalete-ui.console :as log]
 
@@ -50,8 +50,8 @@
 
       (-> db
           (assoc-in [:tmp :flow] flow)
-          (assoc-in [:tmp :start-pos] (vec-map position))
-          (assoc-in [:tmp :mouse-pos] (vec-map position))
+          (assoc-in [:tmp :start-pos] (vec->map position))
+          (assoc-in [:tmp :mouse-pos] (vec->map position))
           (assoc-in [:tmp :mode] :link)
           (assoc-in [:tmp :scene] scene)))))
 
@@ -65,7 +65,7 @@
     (let [dispatch* (if (= :link (kw* type))
                       [:link/check-connection data]
                       [:link/reset-connection data])]
-      {:db       (assoc-in db [:tmp :mouse-pos] (vec-map position))
+      {:db       (assoc-in db [:tmp :mouse-pos] (vec->map position))
        :dispatch dispatch*})))
 
 (defn- abort

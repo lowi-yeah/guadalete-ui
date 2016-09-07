@@ -5,7 +5,7 @@
     [thi.ng.geom.core :as g]
     [thi.ng.geom.core.vector :refer [vec2]]
     [guadalete-ui.events.scene :as scene]
-    [guadalete-ui.util :refer [pretty kw* vec-map]]
+    [guadalete-ui.util :refer [pretty kw* vec->map]]
     [guadalete-ui.console :as log]))
 
 ;//                                           _
@@ -14,45 +14,9 @@
 ;//  |_|_|_\___/\_,_/__\___| \___|\_/\___|_||_\__/__/
 ;//
 
-(def-event
-  :node/mouse-down
-  ;; upon mousedown on a node, mark it as selected by storing its
-  ;; id in db/tmp/nodes
-  (fn [db [_ {:keys [scene-id id position modifiers]}]]
-    (let [selected-items (if (:shift modifiers) (get-in db [:tmp :selected]) #{})
-          node (get-in db [:scene scene-id :nodes (kw* id)])
-          node-reference {:scene-id scene-id
-                          :id       id
-                          :type     :node
-                          :position (vec-map (:position node))}
-          selected-items* (conj selected-items node-reference)
-          scene (get-in db [:scene scene-id])]
-      (-> db
-          (assoc-in [:tmp :selected] selected-items*)
-          (assoc-in [:tmp :mode] :move)
-          (assoc-in [:tmp :pos] position)
-          (assoc-in [:tmp :scene] scene)))))
 
 
-(defn- move-node
-  "helper function for adjusting the position of a single node during 'move'"
-  [db mouse-position scene-id {:keys [id position]}]
-  (let [node (get-in db [:scene scene-id :nodes (kw* id)])
-        δ (g/- (vec2 mouse-position) (vec2 (get-in db [:tmp :pos])))
-        position* (g/+ (vec2 position) δ)
-        node* (assoc node :position (vec-map position*))]
-    [(kw* id) node*]))
 
-(def-event
-  :node/mouse-move
-  (fn [db [_ {:keys [scene-id position]}]]
-    (let [selected-ids (->> (get-in db [:tmp :selected])
-                            (filter #(= :node (:type %))))
-          moved-nodes (into {} (map #(move-node db position scene-id %) selected-ids))
-          scene-nodes (get-in db [:scene scene-id :nodes])
-          scene-nodes* (into scene-nodes moved-nodes)
-          db* (assoc-in db [:scene scene-id :nodes] scene-nodes*)]
-      db*)))
 
 
 (def-event-fx

@@ -10,12 +10,16 @@
     [thi.ng.geom.core.vector :refer [vec2]]
     [thi.ng.color.core :as color]
     [guadalete-ui.console :as log]
-    [guadalete-ui.util :refer [pretty kw* vec-map in?]]
+    [guadalete-ui.util :refer [pretty vec->map in?]]
     [guadalete-ui.pd.color :refer [make-color render-color]]
-    [guadalete-ui.items :refer [find-unused-light find-unused-signal]]
+    [guadalete-ui.items :refer [find-unused-light]]
     [guadalete-ui.pd.link :as link :refer [links]]
     [guadalete-ui.views.widgets :refer [sparky]]
     [guadalete-ui.pd.layout :refer [node-width line-height node-height]]
+
+
+
+    [guadalete-ui.pd.nodes.signal :as signal]
     ))
 
 ;//      _
@@ -237,8 +241,8 @@
 
 (defn node*
   [scene-id node item selected?]
-  (condp = (kw* (:ilk node))
-    :signal [signal-node scene-id node item selected?]
+  (condp = (keyword (:ilk node))
+    :signal [signal/render-node scene-id node item selected?]
     :light [light-node scene-id node item selected?]
     :color [color-node scene-id node item selected?]
     :mixer [mixer-node scene-id node item selected?]
@@ -253,7 +257,7 @@
      {:id "nodes"}
      (let [selected-node-ids-rctn (subscribe [:pd/selected-nodes])]
        (doall (for [node (vals (:nodes @scene-rctn))]
-                (let [ilk (kw* (:ilk node))
+                (let [ilk (:ilk node)
                       item-rctn (subscribe [:pd/node-item {:ilk ilk :id (:item-id node)}])
                       selected? (in? @selected-node-ids-rctn (:id node))]
                   ^{:key (str "n-" (:id node))}
@@ -288,7 +292,7 @@
                          (color-channel-link :saturation 1)
                          (color-channel-link :hue 2)]
                    :default (log/error (str "Unknown color type " (:type color) ". Must be either :v :sv or :hsv")))]
-    (->> (map (fn [l] [(kw* (:id l)) l]) (concat out-link in-links))
+    (->> (map (fn [l] [(keyword (:id l)) l]) (concat out-link in-links))
          (into {}))))
 
 
@@ -309,7 +313,7 @@
                    :index     2}]
         in-links [(mixer-link "first" 0)
                   (mixer-link "second" 1)]]
-    (->> (map (fn [l] [(kw* (:id l)) l]) (concat out-link in-links))
+    (->> (map (fn [l] [(keyword (:id l)) l]) (concat out-link in-links))
          (into {}))))
 
 (defmulti make
@@ -320,9 +324,9 @@
   (let [node-id (str (random-uuid))
         item-id (find-unused-light data db)]
     {:id       node-id
-     :ilk      "light"
+     :ilk      :light
      :item-id  item-id
-     :position (vec-map position)
+     :position (vec->map position)
      :links    [{:id        "in"
                  :index     0
                  :ilk       :color
@@ -334,31 +338,19 @@
         links (make-color-links color)]
     (log/debug "make :color node" links)
     {:id       node-id
-     :ilk      "color"
-     :position (vec-map position)
+     :ilk      :color
+     :position (vec->map position)
      :item-id  (:id color)
      :links    links}))
 
-(defmethod make :signal
-  [_ {:keys [position] :as data} db]
-  (let [node-id (str (random-uuid))
-        item-id (find-unused-signal data db)]
-    {:id       node-id
-     :ilk      "signal"
-     :position (vec-map position)
-     :item-id  item-id
-     :links    [{:id        "out"
-                 :ilk       :value
-                 :direction :out
-                 :index     0}]}))
 
 (defmethod make :mixer
   [_ {:keys [position item]} db]
   (let [node-id (str (random-uuid))
         links (make-mixer-links node-id)]
     {:id       node-id
-     :ilk      "mixer"
-     :position (vec-map position)
+     :ilk      :mixer
+     :position (vec->map position)
      :item-id  (:id item)
      :links    links}))
 
@@ -405,16 +397,14 @@
 ;//   _ __  _____ _____
 ;//  | '  \/ _ \ V / -_)
 ;//  |_|_|_\___/\_/\___|
-;//
-
-
 (defn move [{:keys [scene-id id position] :as data} db]
+  (log/debug "movemovemovemove")
   (let [scene (get-in db [:scene scene-id])
         nodes (get-in db [:scene scene-id :nodes])
         node (selected-node nodes)
         δ (g/- (vec2 position) (vec2 (:pos-0 scene)))
         node-position* (g/+ (vec2 (:pos-0 node)) δ)
-        node* (assoc node :position (vec-map node-position*))
+        node* (assoc node :position (vec->map node-position*))
         scene* (assoc-in scene [:nodes (keyword (:id node))] node*)]
     (assoc-in db [:scene scene-id] scene*)))
 

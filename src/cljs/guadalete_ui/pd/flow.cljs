@@ -9,7 +9,7 @@
     [thi.ng.geom.svg.core :as svg]
     [thi.ng.geom.core.vector :refer [vec2]]
     [guadalete-ui.console :as log]
-    [guadalete-ui.util :refer [pretty abs vec-map kw* in?]]
+    [guadalete-ui.util :refer [pretty abs vec->map kw* in?]]
     [thi.ng.math.core :as math :refer [PI HALF_PI TWO_PI]]
     [guadalete-ui.pd.link :as link]
     [guadalete-ui.pd.layout

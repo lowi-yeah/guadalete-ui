@@ -40,7 +40,6 @@
 
   (defroute "/room/:id" [id]
             (re-frame/dispatch [:view/room [id :current]]))
-  ;(re-frame/dispatch [:view/scene [id]]))
 
   (defroute "/room/:room-id/dash" [room-id]
             (re-frame/dispatch [:view/dash room-id]))

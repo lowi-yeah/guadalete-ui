@@ -4,6 +4,8 @@
     [secretary.core :as secretary]
     [taoensso.sente :as sente]
     [schema.core :as s]
+    [guadalete-ui.schema :as gs]
+    [re-frame.core :refer [subscribe]]
     [taoensso.encore :refer [ajax-lite]]
     [differ.core :as differ]
     [cljs-time.core :as time :refer [seconds ago]]
@@ -36,18 +38,6 @@
 ;; it the value in app-db still correctly matches the schema.
 (def check-schema-mw (after (partial check-and-throw DB)))
 ;
-;(log/debug "day8.re-frame.async-flow-fx" (:make-flow-event-handler day8.re-frame.async-flow-fx))
-;
-;(fx/register :async-flow (:make-flow-event-handler day8.re-frame.async-flow-fx))
-
-;(fx/register
-;  :aync-flow
-;  (fn [{:as flow :keys [id]}]
-;    (def-event-fx
-;      (or id :async/flow)
-;      (day8.re-frame.async-flow-fx/make-flow-event-handler flow))
-;    (dispatch [id :setup])))
-
 ;//          _
 ;//   ______| |_ _  _ _ __
 ;//  (_-< -_)  _| || | '_ \
@@ -61,11 +51,7 @@
                   :anonymous :login
                   :admin :root
                   :blank)]
-      (assoc-in db [:view :panel] panel)
-      ;(assoc-in db [:view :panel] :root)
-
-
-         )))
+      (assoc-in db [:view :panel] panel))))
 
 ;//   _          _
 ;//  | |___ __ _(_)_ _
@@ -125,44 +111,48 @@
              (assoc-in [:view :panel] :root)
              (assoc-in [:view :section] :dash))}))
 
-(def-event
-  :view/room
-  (fn [db [_ [room-id segment]]]
+(s/defn ^:always-validate view-room* :- gs/DB
+  [db [_ [room-id segment]]]
+  (let [loading? (subscribe [:db/loading?])]
     (condp = segment
       ; :current is passed, if the room changes but the segment to be shown remains the same
       ; (e.g switching form the secenes segment in roomA to the scenes segment in roomB)
       :current (let [scene-id (-> db
                                   (get-in [:room room-id :scene])
                                   (first))]
+                 (log/debug "room id" room-id)
+                 (log/debug "scene-id" scene-id)
                  (-> db
                      (assoc-in [:view :section] :room)
-                     (assoc-in [:view :room-id] room-id)
-                     (assoc-in [:view :scene-id] scene-id)))
+                     (assoc-in [:view :room-id] (keyword room-id))
+                     (assoc-in [:view :scene-id] (keyword scene-id))
+                     (assoc-in [:view :ready?] (not @loading?))))
       (-> db
           (assoc-in [:view :section] :room)
           (assoc-in [:view :segment] segment)
-          (assoc-in [:view :room-id] room-id)))))
-
-(def-event
-  :view/scene
-  (fn [db [_ [room-id scene-id]]]
-    (let [scene-id* (or scene-id (first-scene-id db room-id))]
-      (-> db
-          (assoc-in [:view :section] :room)
-          (assoc-in [:view :segment] :scene)
-          (assoc-in [:view :room-id] room-id)
-          (assoc-in [:view :scene-id] scene-id*)))))
-
-(def-event
-  :view/dash
-  (fn [db [_ room-id]]
-    (let []
-      (-> db
-          (assoc-in [:view :section] :room)
-          (assoc-in [:view :segment] :dash)
-          (assoc-in [:view :room-id] room-id)))))
+          (assoc-in [:view :ready?] (not @loading?))
+          (assoc-in [:view :room-id] (keyword room-id))))))
 
 
+(s/defn ^:always-validate view-scene* :- gs/DB
+  [db [_ [room-id scene-id]]]
+  (let [scene-id* (or scene-id (first-scene-id db room-id))]
+    (-> db
+        (assoc-in [:view :section] :room)
+        (assoc-in [:view :segment] :scene)
+        (assoc-in [:view :room-id] (keyword room-id))
+        (assoc-in [:view :scene-id] (keyword scene-id*)))))
+
+(s/defn ^:always-validate view-dash* :- gs/DB
+  [db [_ room-id]]
+  (-> db
+      (assoc-in [:view :section] :room)
+      (assoc-in [:view :segment] :dash)
+      (assoc-in [:view :room-id] (keyword room-id))))
+
+(def-event :view/room view-room*)
+(def-event :view/scene view-scene*)
+(def-event :view/dash view-dash*)
 
 ;//                _      _
 ;//   _ __  ___ __| |__ _| |___

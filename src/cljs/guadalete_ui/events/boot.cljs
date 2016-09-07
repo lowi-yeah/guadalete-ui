@@ -2,8 +2,10 @@
   (:require
     [re-frame.core :refer [dispatch def-event def-event-fx def-fx]]
     [thi.ng.geom.core.vector :refer [vec2]]
-    [guadalete-ui.util :refer [pretty kw* mappify]]
-    [guadalete-ui.console :as log]))
+    [guadalete-ui.util :refer [pretty mappify validate!]]
+    [guadalete-ui.console :as log]
+    [schema.core :as s]
+    [guadalete-ui.schema :as gs]))
 
 
 ;//   _            _
@@ -21,11 +23,14 @@
   :boot
   (fn [_ _]
     {:db       {:ws/connected? false
-                :loading?      false
+                :loading?      true
                 :user/role     :none
                 :view          {:panel      :blank
                                 :section    :dash
                                 :segment    :scene
+                                :room-id    nil
+                                :scene-id   nil
+                                :ready?     false
                                 :dimensions {:root   (vec2)
                                              :view   (vec2)
                                              :header (vec2)}}
@@ -86,28 +91,38 @@
       {:db    db
        :sente sente-effect})))
 
+(s/defn ^:always-validate success-sync-state* :- gs/DB
+  [db state]
+  (let [rooms-map (mappify :id (:room state))
+        lights-map (mappify :id (:light state))
+        scenes-map (mappify :id (:scene state))
+        colors-map (mappify :id (:color state))
+        signals-map (mappify :id (:signal state))
+        mixers-map (mappify :id (:mixer state))
+        config (:config state)
+        db* (assoc db
+              :loading? false
+              :room rooms-map
+              :light lights-map
+              :signal signals-map
+              :color colors-map
+              :scene scenes-map
+              :mixer mixers-map
+              :config config)
+        ; coerce the schema
+        db** (gs/parse-db db*)]
+    db**))
+
 (def-event-fx
   :success-sync-state
   (fn [{:keys [db]} [_ state]]
     (let [role (:user/role db)
-          rooms-map (mappify :id (:room state))
-          lights-map (mappify :id (:light state))
-          scenes-map (mappify :id (:scene state))
-          colors-map (mappify :id (:color state))
-          signals-map (mappify :id (:signal state))
-          mixers-map (mappify :id (:mixer state))
-          config (:config state)
-          db* (assoc db
-                :loading? false
-                :room rooms-map
-                :light lights-map
-                :signal signals-map
-                :color colors-map
-                :scene scenes-map
-                :mixer mixers-map
-                :config config)]
+          db* (success-sync-state* db state)]
+      (validate! gs/DB db* :silent)
       {:db       db*
        :dispatch [:set-panel role]})))
+
+
 
 (def-event
   :chsk/connect

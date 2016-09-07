@@ -16,6 +16,11 @@
   (fn [db _]
     (:user/role db)))
 
+(def-sub
+  :db/loading?
+  (fn [db _]
+    (:loading? db)))
+
 ;//       _
 ;//  __ ___)_____ __ __
 ;//  \ V / / -_) V  V /
@@ -49,11 +54,21 @@
   (fn [db _]
     (get-in db [:view :segment])))
 
+
+(defn- name*
+  "similar to clojure.core/name, but accepting nil values."
+  [keyword-or-nil]
+  (if (nil? keyword-or-nil)
+    nil
+    (name keyword-or-nil)))
+
 ;Dynamic subscriptions need to pass a fn which takes app-db, the static vector, and the dereffed dynamic values.
 (def-sub
   :view/room-id
   (fn [db _]
-    (get-in db [:view :room-id])))
+    (-> db
+        (get-in [:view :room-id])
+        (name*))))
 
 (def-sub
   :view/room
@@ -64,19 +79,20 @@
         (assemble-item :room db room)
         room))))
 
+
 (def-sub
   :view/scene-id
   (fn [db _]
-    (get-in db [:view :scene-id])))
+    (-> db
+        (get-in [:view :scene-id])
+        (name*))))
 
 (def-sub
   :view/scene
-  (fn [db [_ {:keys [assemble?]}]]
+  (fn [db _]
     (let [scene-id-rctn (subscribe [:view/scene-id])
           scene (get-in db [:scene @scene-id-rctn])]
-      (if assemble?
-        (assemble-item :scene db scene)
-        scene))))
+      scene)))
 
 (def-sub
   :view/pd-dimensions

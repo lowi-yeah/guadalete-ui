@@ -73,7 +73,7 @@
            (environ :env {:http-port "3041"
                           :config-file "resources/config.edn"})
            (watch :verbose true)
-           ;(speak)
+           (speak)
            ;;; the js build toolchain
            (middleman)
            (system :sys #'dev-system :auto true :files ["handler.clj"])
