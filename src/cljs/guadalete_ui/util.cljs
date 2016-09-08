@@ -143,6 +143,7 @@ Maps become Objects. Arbitrary keys are encoded to by key->js."
   [schema data & silent?]
   (let [verbose? (not= (first silent?) :silent)]
     (try
+      ;(if verbose? (log/info "validate" (pretty data)))
       (if verbose? (log/info "validate" (keys data)))
       (s/validate schema data)
       (if verbose? (log/info "**** VALID! ****"))

@@ -4,14 +4,17 @@
     [re-frame.core :refer [dispatch def-event def-event-fx def-fx]]
     [thi.ng.geom.core :as g]
     [thi.ng.geom.core.vector :refer [vec2]]
-    [guadalete-ui.util :refer [pretty kw* vec->map]]
+    [guadalete-ui.util :refer [pretty validate! vec->map]]
     [guadalete-ui.pd.link :as link]
     [guadalete-ui.console :as log]
 
     ; schema
     [schema.core :as s]
     [guadalete-ui.schema.pd :refer [Flow]]
-    [guadalete-ui.events.scene :as scene]))
+    [guadalete-ui.events.scene :as scene]
+
+    [schema.core :as s]
+    [guadalete-ui.schema :as gs]))
 
 ;//   _        _
 ;//  | |_  ___| |_ __ ___ _ _ ___
@@ -35,25 +38,29 @@
 ;//  |  _| / _ \ V  V /
 ;//  |_| |_\___/\_/\_/
 ;//
+;(s/defn ^:always-validate mouse-down :- gs/DB
+(s/defn mouse-down :- gs/DB
+  [db :- gs/DB
+   {:keys [scene-id node-id id position] :as data} :- gs/MouseEventData]
+  (let [scene (get-in db [:scene scene-id])
+        node-link (link/->get db scene-id node-id id)
+        flow (condp = (keyword (:direction node-link))
+               :in {:from :mouse :to {:scene-id scene-id :node-id node-id :id id}}
+               :out {:from {:scene-id scene-id :node-id node-id :id id} :to :mouse}
+               nil)
+        db* (-> db
+                (assoc-in [:tmp :flow] flow)
+                (assoc-in [:tmp :start-pos] (vec->map position))
+                (assoc-in [:tmp :mouse-pos] (vec->map position))
+                (assoc-in [:tmp :mode] :link)
+                (assoc-in [:tmp :scene] scene))]
+    (validate! gs/DB db*)
+    db*))
+
 (def-event
   :link/mouse-down
-  (fn [db [_ {:keys [scene-id node-id id position]}]]
-    (let [scene (get-in db [:scene scene-id])
-
-          _ (log/debug ":link/mouse-down" scene)
-
-          node-link (link/->get db scene-id node-id id)
-          flow (condp = (kw* (:direction node-link))
-                 :in {:from :mouse :to {:scene-id scene-id :node-id node-id :id id}}
-                 :out {:from {:scene-id scene-id :node-id node-id :id id} :to :mouse}
-                 nil)]
-
-      (-> db
-          (assoc-in [:tmp :flow] flow)
-          (assoc-in [:tmp :start-pos] (vec->map position))
-          (assoc-in [:tmp :mouse-pos] (vec->map position))
-          (assoc-in [:tmp :mode] :link)
-          (assoc-in [:tmp :scene] scene)))))
+  (fn [db [_ data]]
+    (mouse-down db data)))
 
 
 ;; Called when moving the mouse during link creation.
@@ -62,7 +69,7 @@
 (def-event-fx
   :link/mouse-move
   (fn [{:keys [db]} [_ {:keys [position type] :as data}]]
-    (let [dispatch* (if (= :link (kw* type))
+    (let [dispatch* (if (= :link (keyword type))
                       [:link/check-connection data]
                       [:link/reset-connection data])]
       {:db       (assoc-in db [:tmp :mouse-pos] (vec->map position))
@@ -78,9 +85,10 @@
       (assoc-in [:tmp :mouse-pos] nil)
       (assoc-in [:tmp :flow] nil)))
 
-(defn- from-mouse-and-data
+(s/defn ^:always-validate from-mouse-and-data :- gs/Flow
   "Internal helper generating a FlowReference from the temporary mouse-flow and the data given by the mouse event"
-  [db {:keys [scene-id node-id id] :as data}]
+  [db :- gs/DB
+   {:keys [scene-id node-id id] :as data} :- gs/MouseEventData]
   (log/debug "from mouse and data " data)
   (let [mouse-flow (get-in db [:tmp :flow])
         reference {:scene-id scene-id
@@ -95,8 +103,8 @@
   [db reference]
   (let [{:keys [from to]} reference
         ;all-links (get-in db [:scene (:scene-id to) :nodes (:node-id to) :links])
-        from-link (get-in db [:scene (:scene-id from) :nodes (:node-id from) :links (kw* (:id from))])
-        to-link (get-in db [:scene (:scene-id to) :nodes (:node-id to) :links (kw* (:id to))])]
+        from-link (get-in db [:scene (:scene-id from) :nodes (:node-id from) :links (keyword (:id from))])
+        to-link (get-in db [:scene (:scene-id to) :nodes (:node-id to) :links (keyword (:id to))])]
     {:from from-link :to to-link}))
 
 (defn- make-flow
@@ -142,10 +150,10 @@
                   different-nodes? (not= (get-in flow-reference [:from :node-id])
                                          (get-in flow-reference [:to :node-id]))
                   flow (from-reference db flow-reference)]
-              ;(log/debug "flow-reference" flow-reference)
-              ;(log/debug "check flow")
-              ;(log/debug "from" (:from flow))
-              ;(log/debug "to" (:to flow))
+              (log/debug "flow-reference" flow-reference)
+              (log/debug "check flow")
+              (log/debug "from" (:from flow))
+              (log/debug "to" (:to flow))
               (if different-nodes?
                 (assoc-in db [:tmp :flow :valid?] (validate-flow flow))
                 db))

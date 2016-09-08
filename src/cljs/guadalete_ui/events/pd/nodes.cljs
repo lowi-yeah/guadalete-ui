@@ -85,13 +85,12 @@
 
 
 
-(s/defn ^:always-validate move-node                         ;:- [s/Str gs/Node]
+(s/defn ^:always-validate move-node
   "helper function for adjusting the position of a single node during 'move'"
   [db :- gs/DB
    mouse-position :- gs/Vec2
    scene-id :- s/Str
-   {:keys [id position]} :- gs/MouseEventData
-   ]
+   {:keys [id position]} :- gs/NodeReference]
   (let [node (get-in db [:scene scene-id :nodes (keyword id)])
         δ (g/- (vec2 mouse-position) (vec2 (get-in db [:tmp :pos])))
         position* (g/+ (vec2 position) δ)
@@ -198,74 +197,3 @@
      :sente effects}))
 
 (def-event-fx :node/make make-node)
-
-
-;//      _                          _          _
-;//   __| |___ _ __ _ _ ___ __ __ _| |_ ___ __| |
-;//  / _` / -_) '_ \ '_/ -_) _/ _` |  _/ -_) _` |
-;//  \__,_\___| .__/_| \___\__\__,_|\__\___\__,_|
-;//           |_|
-;
-;(defn- make-node [db {:keys [scene-id ilk position] :as data}]
-;  (log/debug "make node" data)
-;  (let [scene (get-in db [:scene scene-id])
-;        nodes (:nodes scene)
-;        data* (assoc data :position (offset-position position scene))
-;        node (node/make ilk data* db)
-;        nodes* (assoc nodes (kw* (:id node)) node)
-;        scene* (assoc scene :nodes nodes*)
-;        db* (assoc-in db [:scene scene-id] scene*)]
-;
-;    (log/debug "validate new node" node)
-;    (s/validate gs/Node node)
-;    (log/debug "valid?ddddd")
-;
-;    ;{:db    db*
-;    ; :sente (scene/sync-effect {:old scene :new scene*})}
-;    {:db db}
-;    ))
-;
-;(defn- make-color-node
-;  "Color nodes need special handling, since their items (ie. the colors they represent)
-;  are being dynamically created."
-;  [db {:keys [scene-id ilk position] :as data}]
-;  (let [scene (get-in db [:scene scene-id])
-;        nodes (:nodes scene)
-;        color (make-color)
-;        data* (assoc data
-;                :position (offset-position position scene)
-;                :color color)
-;        node (node/make ilk data* db)
-;        nodes* (assoc nodes (kw* (:id node)) node)
-;        scene* (assoc scene :nodes nodes*)
-;        db* (-> db
-;                (assoc-in [:scene scene-id] scene*)
-;                (assoc-in [:color (:id color)] color))]
-;    {:db       db*
-;     :dispatch [:color/make color]
-;     :sente    (scene/sync-effect {:old scene :new scene*})}))
-;
-;(defn- make-mixer-node
-;  "Mixer nodes need special handling, since their items (ie. the mixing-function they represent)
-;  are being dynamically created."
-;  [db {:keys [scene-id ilk position] :as data}]
-;
-;  (log/debug "make-mixer-node")
-;
-;  (let [scene (get-in db [:scene scene-id])
-;        nodes (:nodes scene)
-;        mix {:id     (str (random-uuid))
-;             :mix-fn :add}
-;        data* (assoc data
-;                :position (offset-position position scene)
-;                :item mix)
-;        node (node/make ilk data* db)
-;        nodes* (assoc nodes (kw* (:id node)) node)
-;        scene* (assoc scene :nodes nodes*)
-;        db* (-> db
-;                (assoc-in [:scene scene-id] scene*)
-;                (assoc-in [:mixers (:id mix)] mix))]
-;    {:db       db*
-;     :dispatch [:mixer/make mix]
-;     :sente    (scene/sync-effect {:old scene :new scene*})}))
-;

@@ -45,7 +45,7 @@
   [id]
   (let [jq (js/$ (str "#" id))
         scene-id* (.attr jq "data-scene-id")
-        node-id* (keyword (.attr jq "data-node-id"))]
+        node-id* (.attr jq "data-node-id")]
     {:scene-id scene-id*
      :node-id  node-id*
      :id       id

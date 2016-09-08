@@ -18,10 +18,15 @@
     :else [s/Num]))
 
 (s/defschema MouseEventData
-  {:id       s/Str
-   :scene-id s/Str
-   :type     (s/enum :node :link :pd :flow)
-   :position Vec2})
+  {:id                         s/Str
+   :scene-id                   s/Str
+   :room-id                    s/Str
+   :node-id                    s/Str
+   :type                       (s/enum :node :link :pd :flow)
+   :position                   Vec2
+   (s/optional-key :buttons)   s/Num
+   (s/optional-key :modifiers) s/Any})
+
 
 (s/defschema Link
   {:id                    s/Str
@@ -37,6 +42,12 @@
    :ilk      (s/enum :signal :color :mixer :light)
    :position Vec2
    })
+
+(s/defschema NodeReference
+  {:scene-id s/Str
+   :id       s/Str
+   :type     (s/enum :node)
+   :position Vec2})
 
 (s/defschema Node
   {:id       s/Str
@@ -137,6 +148,20 @@
    :scene-id   (s/maybe s/Keyword)})
 
 
+(s/defschema TemporaryDB
+  "Schema for data that is kept temporarily, eg. mose data during user-interaction"
+  {
+   (s/optional-key :nodes)     s/Any
+   (s/optional-key :selected)  s/Any
+   (s/optional-key :flow)      Flow
+   (s/optional-key :pos)       Vec2
+   (s/optional-key :start-pos) Vec2
+   (s/optional-key :mouse-pos) Vec2
+   (s/optional-key :mode)      (s/enum :none :link :pan :move)
+   (s/optional-key :scene)     Scene
+   }
+  )
+
 ;//    __             _               _   ___  ___
 ;//   / _|_ _ ___ _ _| |_ ___ _ _  __| | |   \| _ )
 ;//  |  _| '_/ _ \ ' \  _/ -_) ' \/ _` | | |) | _ \
@@ -167,7 +192,7 @@
    ;:tmp                    {:nodes    s/Any
    ;                         :selected s/Any
    ;                         :mode     (s/enum :none :pan :link)}
-   :tmp                     s/Any
+   :tmp                     TemporaryDB
    })
 
 (s/defschema Effect
@@ -199,7 +224,6 @@
 (s/defschema UpdateResponse
   "Definition for a patch supplied when synchronizing with the backend"
   {(s/enum :ok :error) s/Any})
-
 
 ;//                     _
 ;//   __ ___ ___ _ _ __(_)___ _ _
