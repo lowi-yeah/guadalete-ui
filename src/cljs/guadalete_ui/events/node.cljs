@@ -14,11 +14,6 @@
 ;//  |_|_|_\___/\_,_/__\___| \___|\_/\___|_||_\__/__/
 ;//
 
-
-
-
-
-
 (def-event-fx
   :node/mouse-up
   (fn [{:keys [db]} [_ {:keys [scene-id]}]]
@@ -98,7 +93,7 @@
                         (first))
 
           ;; reassemble
-          in-links* (update-links (-> color (get :type)) node-id in-links)
+          in-links* (update-links (-> color (get :color-type)) node-id in-links)
 
           out-link* (assoc out-link :index (count in-links*))
 

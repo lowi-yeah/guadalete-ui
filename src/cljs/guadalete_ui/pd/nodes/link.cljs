@@ -87,6 +87,7 @@
   "Draws the in- & out-links of a given node"
   []
   (fn [scene-id node offset]
+
     (let [links (->> (:links node) (group-by-direction) (sort-by-index))]
       ^{:key (str "links-" (:id node))}
       [svg/group {}

@@ -62,7 +62,7 @@
 (defn update-color-type
   "Helper function which updates the color type after a type-change."
   [color new-type]
-  (let [color* (condp = (kw* new-type)
+  (let [color* (condp = (keyword new-type)
                  :v (dissoc color :saturatation :hue)
                  :sv (-> color
                          (dissoc :hue)
@@ -72,7 +72,7 @@
                           (assoc :hue (or (:hue color) 0)))
                  color)]
     (-> color*
-        (assoc :type (keyword new-type)))))
+        (assoc :color-type (keyword new-type)))))
 
 (def-event-fx
   :color/change-type

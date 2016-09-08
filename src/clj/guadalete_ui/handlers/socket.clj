@@ -156,27 +156,27 @@
       (?reply-fn (str ":light/trash" light-id)))
     ;(db/trash-light (:conn db) light-id)
     ))
-
-;//          _
-;//   __ ___| |___ _ _
-;//  / _/ _ \ / _ \ '_|
-;//  \__\___/_\___/_|
-;//
-(defmethod event-handler :color/make
-  [{:keys [?data db-conn ?reply-fn]}]
-  (let [color ?data
-        response (db/create-color db-conn color)]
-    (when ?reply-fn
-      (?reply-fn response))))
-
-(defmethod event-handler :color/update
-  [{:keys [?data db-conn ?reply-fn]}]
-  (let [[id diff flag] ?data
-        flag (or flag :patch)
-        response (db/update-color db-conn id diff flag)]
-    (log/debug ":color/update response:" response)
-    (when ?reply-fn
-      (?reply-fn response))))
+;
+;;//          _
+;;//   __ ___| |___ _ _
+;;//  / _/ _ \ / _ \ '_|
+;;//  \__\___/_\___/_|
+;;//
+;(defmethod event-handler :color/make
+;  [{:keys [?data db-conn ?reply-fn]}]
+;  (let [color ?data
+;        response (db/create-color db-conn color)]
+;    (when ?reply-fn
+;      (?reply-fn response))))
+;
+;(defmethod event-handler :color/update
+;  [{:keys [?data db-conn ?reply-fn]}]
+;  (let [[id diff flag] ?data
+;        flag (or flag :patch)
+;        response (db/update-color db-conn id diff flag)]
+;    (log/debug ":color/update response:" response)
+;    (when ?reply-fn
+;      (?reply-fn response))))
 
 
 ;//         _
@@ -191,6 +191,23 @@
     (log/debug "response " response)
     (when ?reply-fn
       (?reply-fn response))))
+
+
+
+
+;//   _ _
+;//  (_) |_ ___ _ __  ___
+;//  | |  _/ -_) '  \(_-<
+;//  |_|\__\___|_|_|_/__/
+;//
+(defmethod event-handler :items/update
+  [{:keys [?data db-conn ?reply-fn]}]
+  (let [response (db/update-items db-conn ?data)]
+    (log/debug ":items/update" response)
+    (when ?reply-fn
+      (?reply-fn response))))
+
+
 
 
 ; DEFAULT

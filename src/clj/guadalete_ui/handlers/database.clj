@@ -3,7 +3,10 @@
     [rethinkdb.query :as r]
     [differ.core :as differ]
     [taoensso.timbre :as log]
-    [guadalete-ui.helpers.util :refer [mappify]])
+    [guadalete-ui.helpers.util :refer [mappify]]
+    [schema.core :as s]
+    [guadalete-ui.schema :as gs]
+    )
   (:import (clojure.lang ExceptionInfo)))
 
 ;//                         _
@@ -70,6 +73,39 @@
        (catch ExceptionInfo ex
          (let [msg (.getMessage ex)]
            {:error msg}))))))
+
+
+(s/defn ^:always-validate update-items :- gs/UpdateResponse
+  "Updates all items of a given ilk with the given patch"
+  [db-conn
+   {:keys [ilk diff]} :- gs/Patch]
+  (let [items (get-all db-conn ilk)
+        patch (->>
+                (differ/patch items diff)
+                (vals)
+                (into []))]
+    (log/debug "ilk" ilk)
+    (log/debug "diff" diff)
+    (log/debug "items" items)
+    (log/debug "patch" patch)
+    (try
+      (let [response (-> (r/table ilk)
+                         (r/insert patch)
+                         (r/run db-conn))]
+
+        ;(doseq [item (vals patch)]
+        ;  (log/debug "update item" item)
+        ;  (-> (r/table ilk)
+        ;      (r/get (:id item))
+        ;      (r/replace item)
+        ;      (r/run db-conn)))
+
+        (log/debug "rethink-response" response)
+        {:ok response})
+
+      (catch ExceptionInfo ex
+        (let [msg (.getMessage ex)]
+          {:error msg})))))
 
 ;//                            _ _      _   _
 ;//   _ _ ___ ___ _ __  ___   | (_)__ _| |_| |_ ___    _____ ___ _ _  ___ ___

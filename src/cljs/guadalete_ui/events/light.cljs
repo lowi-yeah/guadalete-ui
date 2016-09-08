@@ -5,7 +5,9 @@
     [differ.core :as differ]
     [guadalete-ui.console :as log]
     [guadalete-ui.dmx :as dmx]
-    [guadalete-ui.util.dickens :as dickens]))
+    [guadalete-ui.util.dickens :as dickens]
+    [schema.core :as s]
+    [guadalete-ui.schema :as gs]))
 
 
 ;//   _        _
@@ -51,7 +53,9 @@
    ; obacht:
    ; nested arrays, since each color can be assigned multiple channels
    :channels     [[channel]]
-   :color        {:h 0 :s 0 :v 0}})
+   :color        {:brightness 0
+                  :saturation 0
+                  :hue        0}})
 
 
 ;// re-frame_  __        _
@@ -59,9 +63,9 @@
 ;//  / -_)  _|  _/ -_) _|  _(_-<
 ;//  \___|_| |_| \___\__|\__/__/
 ;//
-(defn- new-light-effect
+(s/defn ^:always-validate new-light-effect
   "Creates a sente-effect for syncing the new light with the backend"
-  [light]
+  [light :- gs/Light]
   {:topic      :light/make
    :data       light
    :on-success [:success-light-make]
@@ -92,14 +96,20 @@
 
 ;; MAKE
 ;; ********************************
+
+(s/defn ^:always-validate make-light* :- gs/Effect
+  [db :- gs/DB
+   room-id :- s/Str]
+  (let [channels (sort (into [] (dmx/assignable db)))
+        new-light (make-light room-id (first channels))]
+    {:db    db
+     :sente (new-light-effect new-light)}))
+
 (def-event-fx
   ;; create a new light (a map) and sync it via sente
   :light/make
   (fn [{:keys [db]} [_ room-id]]
-    (let [channels (sort (into [] (dmx/assignable db)))
-          new-light (make-light room-id (first channels))]
-      {:db    db
-       :sente (new-light-effect new-light)})))
+    (make-light* db room-id)))
 
 (def-event-fx
   ;; when the light has been created successfully,
@@ -116,7 +126,7 @@
               room-lights* (conj (:light room) (:id light))
               room* (assoc room :light room-lights*)
               modal-data {:item-id    (:id light)
-                          :ilk    :light
+                          :ilk        :light
                           :modal-type :light}
               db* (-> db
                       (assoc-in [:room room-id] room*)

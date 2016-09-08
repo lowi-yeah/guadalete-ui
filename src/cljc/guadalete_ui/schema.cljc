@@ -24,10 +24,11 @@
    :position Vec2})
 
 (s/defschema Link
-  {:id        s/Str
-   :accepts   (s/enum :value :color)
-   :index     s/Num                                         ; used for rendering
-   :direction (s/enum :in :out)})
+  {:id                    s/Str
+   :accepts               (s/enum :value :color)
+   :index                 s/Num                             ; used for rendering
+   :direction             (s/enum :in :out)
+   (s/optional-key :name) s/Str})
 
 
 (s/defschema NodeData
@@ -55,12 +56,22 @@
   {s/Keyword Flow})
 
 
-
 (s/defschema Rooms
   {s/Str s/Any})                                            ; map id->Room
 
+(s/defschema Light
+  {:room-id      s/Str
+   :id           s/Str
+   :name         s/Str
+   :num-channels s/Num
+   :channels     [[s/Num]]
+   :color        {:brightness                  s/Num
+                  (s/optional-key :saturation) s/Num
+                  (s/optional-key :hue)        s/Num}
+   :transport    (s/enum :dmx :mqtt)})
+
 (s/defschema Lights
-  {s/Str s/Any})
+  {s/Str Light})
 
 (s/defschema Scene
   "Scheme definition for a Scene"
@@ -85,17 +96,33 @@
 (s/defschema Signals
   {s/Str Signal})
 
+(s/defschema Color
+  {:id         s/Str
+   :color-type (s/enum :v :sv :hsv)
+   :brightness s/Num})
+
 (s/defschema Colors
-  {s/Str s/Any})
+  {s/Str Color})
+
+(s/defschema Mixer
+  {:id       s/Str
+   :mixin-fn s/Keyword})
 
 (s/defschema Mixers
-  {s/Str s/Any})
+  {s/Str Mixer})
 
 
 
 ;; configuration data for the ui
 (s/defschema Configuration
   {:signal {:sparkline/timespan-seconds s/Num}})
+
+;; configuration data for the ui
+(s/defschema Modal
+  {:item-id    s/Str
+   :ilk        (s/enum :light :color :mixer :signal)
+   :modal-type (s/enum :light :color :mixer :signal)})
+
 
 ;; description of the current ui-view
 (s/defschema View
@@ -130,11 +157,10 @@
    :ws/connected?           s/Bool
    ;; flag indicating that the frontend is still loading (used during bootstrap)
    :loading?                s/Bool
-
    :user/role               (s/enum :anonymous :user :admin :none)
 
-   ;; map containing configuration data received from the server
-   (s/optional-key :config) Configuration
+   (s/optional-key :config) Configuration                   ;; map containing configuration data received from the server
+   (s/optional-key :modal)  Modal
 
    ;; map for temporary data used during user-interaction
    ;; eg: the current interaction-mode, currently selected nodes or temporary (mouse) flows are put here
@@ -145,13 +171,34 @@
    })
 
 (s/defschema Effect
-  {:db                     DB
-   (s/optional-key :sente) s/Any
+  {:db                        DB
+   (s/optional-key :sente)    s/Any
    (s/optional-key :dispatch) s/Any
-   (s/optional-key :modal) s/Any
-   }
-  )
+   (s/optional-key :modal)    s/Any
+   })
 
+;//                   _                 _         _   _
+;//   ____  _ _ _  __| |_  _ _ ___ _ _ (_)_____ _| |_(_)___ _ _
+;//  (_-< || | ' \/ _| ' \| '_/ _ \ ' \| |_ / _` |  _| / _ \ ' \
+;//  /__/\_, |_||_\__|_||_|_| \___/_||_|_/__\__,_|\__|_\___/_||_|
+;//      |__/
+(s/defschema Diff*
+  "One half of a diff"
+  {s/Str s/Any})
+
+(s/defschema Diff
+  "Definition of a Diff as returned by differ"
+  ;; obacht: this won't chack that there are exactly two elements to a diff
+  [Diff*])
+
+(s/defschema Patch
+  "Definition for a patch supplied when synchronizing with the backend"
+  {:ilk  s/Keyword
+   :diff Diff})
+
+(s/defschema UpdateResponse
+  "Definition for a patch supplied when synchronizing with the backend"
+  {(s/enum :ok :error) s/Any})
 
 
 ;//                     _

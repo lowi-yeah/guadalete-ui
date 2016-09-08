@@ -118,7 +118,8 @@
   (fn [{:keys [db]} [_ state]]
     (let [role (:user/role db)
           db* (success-sync-state* db state)]
-      (validate! gs/DB db* :silent)
+      ;(validate! gs/DB db* :silent)
+      (validate! gs/DB db*)
       {:db       db*
        :dispatch [:set-panel role]})))
 

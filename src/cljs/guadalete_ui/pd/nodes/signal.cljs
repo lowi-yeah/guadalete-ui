@@ -16,36 +16,19 @@
     [guadalete-ui.pd.nodes.link :refer [links]]
     [guadalete-ui.pd.layout :refer [node-width line-height node-height]]))
 
-;//   _        _
-;//  | |_  ___| |_ __ ___ _ _ ___
-;//  | ' \/ -_) | '_ \ -_) '_(_-<
-;//  |_||_\___|_| .__\___|_| /__/
-;//             |_|
-(defn- find-unused-signal
-  "Finds a signal which is not yet in use by the given scene.
-  Used for assigning a signal during make-node"
-  [{:keys [scene-id]} db]
-  (let [all-signal-ids (->>
-                         (get-in db [:signal])
-                         (into [])
-                         (map #(first %))
-                         (into #{}))
-        used-signal-ids (->>
-                          (get-in db [:scene scene-id :nodes])
-                          (filter (fn [[_ l]] (= :signal (keyword (:ilk l)))))
-                          (map (fn [[_ l]] (:item-id l)))
-                          (filter (fn [id] id))
-                          (into #{}))
-        unused (difference all-signal-ids used-signal-ids)]
-    (first unused)))
 
+
+;//                   _
+;//   _ _ ___ _ _  __| |___ _ _
+;//  | '_/ -_) ' \/ _` / -_) '_|
+;//  |_| \___|_||_\__,_\___|_|
+;//
 (s/defn render-node
   [scene-id node item selected?]
   (let [id (:id node)
         position (:position node)
         height (* line-height 4)
-        link-offset 3.5
-        ]
+        link-offset 3.5]
     [svg/group
      {:id            id
       :class         (if selected? "signal node selected" "signal node")
@@ -70,19 +53,42 @@
       {:class       "node-text"
        :text-anchor "left"}]
      [click-target height]
-     [links scene-id node link-offset]
-     ]))
+     [links scene-id node link-offset]]))
+
+;//              _
+;//   _ __  __ _| |_____
+;//  | '  \/ _` | / / -_)
+;//  |_|_|_\__,_|_\_\___|
+;//
+
+(s/defn ^:always-validate get-avilable
+  "Finds a signal which is not yet in use by the given scene.
+  Used for assigning a signal during make-node"
+  [db :- gs/DB
+   {:keys [scene-id] :as data} :- gs/NodeData]
+  (let [all-signal-ids (->>
+                         (get-in db [:signal])
+                         (into [])
+                         (map #(first %))
+                         (into #{}))
+        used-signal-ids (->>
+                          (get-in db [:scene scene-id :nodes])
+                          (filter (fn [[_ l]] (= :signal (keyword (:ilk l)))))
+                          (map (fn [[_ l]] (:item-id l)))
+                          (filter (fn [id] id))
+                          (into #{}))
+        unused (difference all-signal-ids used-signal-ids)
+        signal-id (first unused)]
+    (get-in db [:signal signal-id])))
 
 (s/defn ^:always-validate make-node :- gs/Node
-  [db :- gs/DB
+  [item :- gs/Signal
    {:keys [position] :as data} :- gs/NodeData]
-  (let [node-id (str "sgnl-" (random-uuid))
-        item-id (find-unused-signal data db)]
-    {:id       node-id
-     :ilk      :signal
-     :position (vec->map position)
-     :item-id  item-id
-     :links    [{:id        "out"
-                 :accepts   :value
-                 :direction :out
-                 :index     0}]}))
+  {:id       (str "sgnl-" (random-uuid))
+   :ilk      :signal
+   :position (vec->map position)
+   :item-id  (:id item)
+   :links    [{:id        "out"
+               :accepts   :value
+               :direction :out
+               :index     0}]})

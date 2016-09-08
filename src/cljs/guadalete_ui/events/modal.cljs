@@ -17,8 +17,6 @@
   (fn [db [_ new-data]]
     (assoc db :modal new-data)))
 
-
-
 (def-event-fx
   :modal/close
   (fn [{:keys [db]} [_ type]]
@@ -37,7 +35,7 @@
 (def-event
   :modal/deny
   (fn [db _]
-    (dissoc db :modal/item)))
+    (dissoc db :modal)))
 ;
 ;(def-event
 ;  :modal/register-node

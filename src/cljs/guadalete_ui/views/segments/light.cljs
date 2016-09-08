@@ -10,11 +10,11 @@
   (fn [light]
     (let [color (:color light)
           color-type (condp = (:num-channels light)
-                       1 "v"
-                       2 "sv"
-                       3 "hsv"
-                       4 "hsv")
-          c (render-color (assoc color :type color-type))]
+                       1 :v
+                       2 :sv
+                       3 :hsv
+                       4 :hsv)
+          c (render-color (assoc color :color-type color-type))]
       [:div.small-color-indicator
        {:style {:background c}}])))
 

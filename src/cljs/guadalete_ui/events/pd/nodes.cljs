@@ -16,10 +16,48 @@
     [guadalete-ui.events.scene :as scene]
 
     [guadalete-ui.pd.nodes.signal :as signal]
+    [guadalete-ui.pd.nodes.color :as color]
+    [guadalete-ui.pd.nodes.mixer :as mixer]
+    [guadalete-ui.pd.nodes.light :as light]
 
     [schema.core :as s]
     [guadalete-ui.schema :as gs]
-    ))
+    [differ.core :as differ]))
+
+;// re-frame_  __        _
+;//   ___ / _|/ _|___ __| |_ ___
+;//  / -_)  _|  _/ -_) _|  _(_-<
+;//  \___|_| |_| \___\__|\__/__/
+;//
+
+(defn- empty-diff? [diff]
+  (= diff [{} {}]))
+
+(s/defn sync-items-effect
+  "Creates a sente effect fro syncing all items of a given ilk with the backend."
+  [{:keys [ilk old new]}]
+  (let [diff (differ/diff old new)]
+    (if (not (empty-diff? diff))
+      {:topic      :items/update
+       :data       {:ilk ilk :diff diff}
+       :on-success [:success-items-update]
+       :on-failure [:failure-items-update]}
+      ;; else
+      {})))
+
+
+(def-event
+  :success-items-update
+  (fn [world response]
+    (log/error ":success-items-update" response)
+    world))
+
+(def-event
+  :failure-items-update
+  (fn [world response]
+    (log/error "Scene update failed:" response)
+    world))
+
 
 ;//
 ;//   _ __  ___ _  _ ______
@@ -78,44 +116,88 @@
 ;//  / _| '_/ -_) _` |  _/ -_)
 ;//  \__|_| \___\__,_|\__\___|
 ;//
-(defmulti create-node*
+(defmulti make-node*
+          (fn [_item {:keys [ilk]}] ilk))
+
+(defmethod make-node* :signal
+  [item data]
+  (signal/make-node item data))
+
+(defmethod make-node* :mixer
+  [item data]
+  (log/debug "create-node :mixer")
+  (mixer/make-node item data))
+
+(defmethod make-node* :color
+  [item data]
+  (log/debug "create-node* :color" data)
+  (color/make-node item data))
+
+(defmethod make-node* :light
+  [item data]
+  (log/debug "create-node :light" item data)
+  (light/make-node item data))
+
+
+(defmulti get-node-item*
           (fn [_db {:keys [ilk]}] ilk))
 
-(defmethod create-node* :signal
+(defmethod get-node-item* :signal
   [db data]
-  (validate! gs/DB db)
-  (signal/make-node db data))
+  ;(validate! gs/DB db :silent)
+  (signal/get-avilable db data))
 
-(defmethod create-node* :mixer
-  [db data]
-  (log/debug "create-node :mixer")
-  {})
+(defmethod get-node-item* :mixer
+  [_ _]
+  (mixer/make))
 
-(defmethod create-node* :color
-  [db data]
-  (log/debug "create-node :color")
-  {})
+(defmethod get-node-item* :color
+  [_ _]
+  (color/make))
 
-(defmethod create-node* :light
+(defmethod get-node-item* :light
   [db data]
-  (log/debug "create-node :light")
-  {})
+  (light/get-avilable db data))
+
+
 
 ;; event handler for adding nodes to a pd-scene. Called when an item is dropped from the pallete
-(s/defn ^:always-validate make-node* :- gs/Effect
-  [{:keys [db]} [_ {:keys [scene-id position] :as data}]]
-  (let [scene (get-in db [:scene scene-id])
+(s/defn ^:always-validate make-node :- gs/Effect
+  "Event handler called when a new node shall be created after an item from the pallete has been dropped."
+  [{:keys [db]} [_ {:keys [scene-id position ilk] :as data}]]
+  (let [
+        scene (get-in db [:scene scene-id])
         node-position (offset-position position scene)
-        data* (assoc data :position node-position)
-        new-node (create-node* db data*)
+        data (assoc data :position node-position)
 
-        nodes* (assoc (:nodes scene) (keyword (:id new-node)) new-node)
+        ;; first of all, get the appropriate item (or create one if necessary)
+        item (get-node-item* db data)
+        ;; then construct the node
+        node (make-node* item data)
+        ;; reassemble items map
+        items (get db ilk)
+        items* (assoc items (:id item) item)
+        ;; reassemble nodes map
+        nodes (get-in db [:scene scene-id :nodes])
+        nodes* (assoc nodes (keyword (:id node)) node)
         scene* (assoc scene :nodes nodes*)
-        db* (assoc-in db [:scene scene-id] scene*)]
-    {:db    db*
-     :sente (scene/sync-effect {:old scene :new scene*})}))
 
-(def-event-fx :node/make make-node* )
+        ;; reassemble the database
+        db* (-> db
+                (assoc ilk items*)
+                (assoc-in [:scene scene-id] scene*))
+
+        ;; might be nil
+        items-effect (sync-items-effect {:ilk ilk :old items :new items*})
+        scene-effect (scene/sync-effect {:old scene :new scene*})
+        effects (->>
+                  (list items-effect scene-effect)
+                  (filter not-empty)
+                  (into []))]
+    {:db    db*
+     :sente effects}))
+
+(def-event-fx :node/make make-node)
 
 
 ;//      _                          _          _

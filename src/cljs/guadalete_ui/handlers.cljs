@@ -16,7 +16,7 @@
     [guadalete-ui.socket :refer [chsk-send! chsk-state chsk-reconnect!]]
     [guadalete-ui.pd.util :refer [modal-room modal-scene modal-node]]
     [guadalete-ui.pd.scene :as scene]
-    [guadalete-ui.util :refer [pretty kw* mappify]]
+    [guadalete-ui.util :refer [pretty validate! mappify]]
     [guadalete-ui.util.queue :as queue]
     [guadalete-ui.dmx :as dmx]
     [guadalete-ui.util.dickens :as dickens]
@@ -144,7 +144,8 @@
         (assoc-in [:view :scene-id] (keyword scene-id*)))))
 
 (s/defn ^:always-validate view-dash* :- gs/DB
-  [db [_ room-id]]
+  [db :- gs/DB
+   [_ room-id]]
   (-> db
       (assoc-in [:view :section] :room)
       (assoc-in [:view :segment] :dash)
