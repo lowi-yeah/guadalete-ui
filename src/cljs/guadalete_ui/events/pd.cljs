@@ -23,8 +23,13 @@
   (fn [db [_ {:keys [scene-id position]}]]
     (let [scene (get-in db [:scene scene-id])
           stashed-scene (get-in db [:tmp :scene])
-          δ (g/- (vec2 position) (vec2 (:position stashed-scene)))
-          translation* (g/+ (vec2 (:translation stashed-scene)) δ)
+          ;; might be nil, as somtimes mouse-events arrive in incorrect order (:up before the last :move)
+          δ (if (nil? (:position stashed-scene))
+              (vec2 position)
+              (g/- (vec2 position) (vec2 (:position stashed-scene))))
+          translation* (if (nil? (:position stashed-scene))
+                         δ
+                         (g/+ (vec2 (:translation stashed-scene)) δ))
           scene* (assoc scene :translation (vec->map translation*))]
       (assoc-in db [:scene scene-id] scene*))))
 

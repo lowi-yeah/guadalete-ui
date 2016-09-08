@@ -3,16 +3,9 @@
     [re-frame.core :refer [dispatch def-event def-event-fx]]
     [thi.ng.geom.core :as g]
     [thi.ng.geom.core.vector :refer [vec2]]
-    [guadalete-ui.pd.mouse :as mouse]
-    [guadalete-ui.pd.nodes :as node]
     [guadalete-ui.console :as log]
     [guadalete-ui.util :refer [pretty validate! vec->map offset-position]]
-    [guadalete-ui.views.modal :as modal]
-    [guadalete-ui.pd.util :refer [modal-room modal-scene modal-node]]
-    [guadalete-ui.pd.nodes :as node]
 
-    [guadalete-ui.pd.link :as link]
-    [guadalete-ui.pd.color :refer [make-color]]
     [guadalete-ui.events.scene :as scene]
 
     [guadalete-ui.pd.nodes.signal :as signal]
@@ -29,7 +22,6 @@
 ;//  / -_)  _|  _/ -_) _|  _(_-<
 ;//  \___|_| |_| \___\__|\__/__/
 ;//
-
 (defn- empty-diff? [diff]
   (= diff [{} {}]))
 
@@ -44,7 +36,6 @@
        :on-failure [:failure-items-update]}
       ;; else
       {})))
-
 
 (def-event
   :success-items-update
@@ -83,20 +74,28 @@
           (assoc-in [:tmp :pos] position)
           (assoc-in [:tmp :scene] scene)))))
 
-
-
 (s/defn ^:always-validate move-node
   "helper function for adjusting the position of a single node during 'move'"
   [db :- gs/DB
    mouse-position :- gs/Vec2
    scene-id :- s/Str
    {:keys [id position]} :- gs/NodeReference]
-  (let [node (get-in db [:scene scene-id :nodes (keyword id)])
-        δ (g/- (vec2 mouse-position) (vec2 (get-in db [:tmp :pos])))
-        position* (g/+ (vec2 position) δ)
-        node* (assoc node :position (vec->map position*))]
-    [(keyword id) node*]))
 
+  ;; sometimes it happens that the last :mouse-move event arrives AFTER :mouse-up
+  ;; (dunno why this is, but what shall one do)
+  ;; as the :mouse-up un-registers the :tmp data, and (db [:tmp :pos]) returns nil
+  ;; To work around that problem, query [:tmp :pos] exists, and if it doesn't, just retrun the unchanged node
+  (if (nil? (get-in db [:tmp :pos]))
+    (let [node (get-in db [:scene scene-id :nodes (keyword id)])]
+      [(keyword id) node])
+    ;; [:tmp :pos] ain't nil
+    (let [node (get-in db [:scene scene-id :nodes (keyword id)])
+          δ (g/- (vec2 mouse-position) (vec2 (get-in db [:tmp :pos])))
+          position* (g/+ (vec2 position) δ)
+          node* (assoc node :position (vec->map position*))]
+      [(keyword id) node*])
+    )
+  )
 
 (def-event
   :node/mouse-move
@@ -108,7 +107,6 @@
           scene-nodes* (into scene-nodes moved-nodes)
           db* (assoc-in db [:scene scene-id :nodes] scene-nodes*)]
       db*)))
-
 
 ;//                   _
 ;//   __ _ _ ___ __ _| |_ ___
@@ -124,26 +122,21 @@
 
 (defmethod make-node* :mixer
   [item data]
-  (log/debug "create-node :mixer")
   (mixer/make-node item data))
 
 (defmethod make-node* :color
   [item data]
-  (log/debug "create-node* :color" data)
   (color/make-node item data))
 
 (defmethod make-node* :light
   [item data]
-  (log/debug "create-node :light" item data)
   (light/make-node item data))
-
 
 (defmulti get-node-item*
           (fn [_db {:keys [ilk]}] ilk))
 
 (defmethod get-node-item* :signal
   [db data]
-  ;(validate! gs/DB db :silent)
   (signal/get-avilable db data))
 
 (defmethod get-node-item* :mixer
@@ -157,8 +150,6 @@
 (defmethod get-node-item* :light
   [db data]
   (light/get-avilable db data))
-
-
 
 ;; event handler for adding nodes to a pd-scene. Called when an item is dropped from the pallete
 (s/defn ^:always-validate make-node :- gs/Effect

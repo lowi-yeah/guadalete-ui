@@ -43,11 +43,15 @@
   [db :- gs/DB
    {:keys [scene-id node-id id position] :as data} :- gs/MouseEventData]
   (let [scene (get-in db [:scene scene-id])
+        _ (log/debug "mouse-down!\n scene" scene)
+        _ (log/debug "data" data)
         node-link (link/->get db scene-id node-id id)
+        _ (log/debug "node-link" node-link)
         flow (condp = (keyword (:direction node-link))
                :in {:from :mouse :to {:scene-id scene-id :node-id node-id :id id}}
                :out {:from {:scene-id scene-id :node-id node-id :id id} :to :mouse}
                nil)
+        _ (log/debug "mouse flow" flow)
         db* (-> db
                 (assoc-in [:tmp :flow] flow)
                 (assoc-in [:tmp :start-pos] (vec->map position))
@@ -91,9 +95,11 @@
    {:keys [scene-id node-id id] :as data} :- gs/MouseEventData]
   (log/debug "from mouse and data " data)
   (let [mouse-flow (get-in db [:tmp :flow])
+        _ (log/debug "mouse-flow" mouse-flow)
         reference {:scene-id scene-id
                    :node-id  node-id
-                   :id       id}]
+                   :id       id}
+        _ (log/debug "reference" reference)]
     (if (= :mouse (:from mouse-flow))
       (assoc mouse-flow :from reference)
       (assoc mouse-flow :to reference))))

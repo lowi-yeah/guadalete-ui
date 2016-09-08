@@ -3,16 +3,12 @@
     [reagent.ratom :refer [reaction]])
   (:require
     [clojure.string]
-    [reagent.core :as r]
     [re-frame.core :refer [dispatch subscribe]]
     [thi.ng.geom.core :as g]
     [thi.ng.geom.svg.core :as svg]
     [thi.ng.geom.core.vector :refer [vec2]]
-    [thi.ng.color.core :as color]
     [guadalete-ui.console :as log]
-    [guadalete-ui.util :refer [pretty vec->map kw*]]
-    [guadalete-ui.pd.mouse :as mouse]
-    [guadalete-ui.pd.color :refer [render-color]]
+    [guadalete-ui.util :refer [pretty vec->map]]
     [guadalete-ui.pd.layout
      :refer [node-width line-height node-height handle-width handle-height handle-text-padding]]))
 
@@ -95,11 +91,14 @@
        (if (not-empty out-links) [out* out-links scene-id (:id node) offset])])))
 
 (defn ->get [db scene-id node-id link-id]
-  (get-in db [:scene scene-id :nodes (kw* node-id) :links (kw* link-id)]))
+  (let [links (get-in db [:scene scene-id :nodes (keyword node-id) :links])]
+    (->> links
+         (filter #(= link-id (:id %)))
+         (first))))
 
 (defn ->update [db scene-id node-id link-id link*]
   (assoc-in db
-            [:scene scene-id :nodes (kw* node-id) :links (kw* link-id)]
+            [:scene scene-id :nodes (keyword node-id) :links link-id]
             (dissoc link* :node-id :scene-id)))
 
 (defn- ->reset [[id link]]
