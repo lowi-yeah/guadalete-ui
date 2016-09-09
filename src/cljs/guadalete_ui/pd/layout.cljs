@@ -12,9 +12,9 @@
 
 (defn link-offset [node link]
   (let [node-offset (condp = (:ilk node)
-                      "signal" 3.5
-                      "color" 2.5
-                      "light" 2
-                      "mixer" 2
+                      :signal 3.5
+                      :color 2.5
+                      :light 2
+                      :mixer 2
                       1)]
     (+ (:index link) (- node-offset 0.64))))

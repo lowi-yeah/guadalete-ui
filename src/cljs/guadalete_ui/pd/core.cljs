@@ -93,7 +93,7 @@
          :on-click        #(dispatch [:mouse/click (mouse/event-data % mouse-data)])
          :on-double-click #(dispatch [:mouse/double-click (mouse/event-data % mouse-data)])
          :on-mouse-down   #(dispatch [:mouse/down (mouse/event-data % mouse-data)])
-         :on-mouse-move   #(dispatch [:mouse/move (mouse/event-data % mouse-data)])
+         :on-mouse-move   #(dispatch [:mouse/move (mouse/event-data % mouse-data)]) ;; @obacht it is quite expensive to call event-data on each an every mosue event
          :on-mouse-up     #(dispatch [:mouse/up (mouse/event-data % mouse-data)])
          ;:on-mouse-enter  #(dispatch [:mouse/enter (mouse/event-data % mouse-data)])
          ;:on-mouse-leave  #(dispatch [:mouse/leave (mouse/event-data % mouse-data)])

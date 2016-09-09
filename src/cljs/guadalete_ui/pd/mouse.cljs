@@ -45,10 +45,11 @@
   [id]
   (let [jq (js/$ (str "#" id))
         scene-id* (.attr jq "data-scene-id")
-        node-id* (.attr jq "data-node-id")]
+        node-id* (.attr jq "data-node-id")
+        link-id* (.attr jq "data-link-id")]
     {:scene-id scene-id*
      :node-id  node-id*
-     :id       id
+     :id       link-id*
      :type     :link}))
 
 (defn- load-node
@@ -85,8 +86,7 @@
       :node (load-node id)
       :link (load-link id)
       :flow (flow-reference id)
-      {:type type}
-      )))
+      {:type type})))
 
 (defn event-buttons
   "Get the button state of a mouse event"

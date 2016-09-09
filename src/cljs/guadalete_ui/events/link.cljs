@@ -5,7 +5,7 @@
     [thi.ng.geom.core :as g]
     [thi.ng.geom.core.vector :refer [vec2]]
     [guadalete-ui.util :refer [pretty validate! vec->map]]
-    [guadalete-ui.pd.link :as link]
+    [guadalete-ui.pd.nodes.link :as link]
     [guadalete-ui.console :as log]
 
     ; schema
@@ -38,27 +38,21 @@
 ;//  |  _| / _ \ V  V /
 ;//  |_| |_\___/\_/\_/
 ;//
-;(s/defn ^:always-validate mouse-down :- gs/DB
-(s/defn mouse-down :- gs/DB
+(s/defn ^:always-validate mouse-down :- gs/DB
   [db :- gs/DB
    {:keys [scene-id node-id id position] :as data} :- gs/MouseEventData]
   (let [scene (get-in db [:scene scene-id])
-        _ (log/debug "mouse-down!\n scene" scene)
-        _ (log/debug "data" data)
         node-link (link/->get db scene-id node-id id)
-        _ (log/debug "node-link" node-link)
         flow (condp = (keyword (:direction node-link))
                :in {:from :mouse :to {:scene-id scene-id :node-id node-id :id id}}
                :out {:from {:scene-id scene-id :node-id node-id :id id} :to :mouse}
                nil)
-        _ (log/debug "mouse flow" flow)
         db* (-> db
                 (assoc-in [:tmp :flow] flow)
                 (assoc-in [:tmp :start-pos] (vec->map position))
                 (assoc-in [:tmp :mouse-pos] (vec->map position))
                 (assoc-in [:tmp :mode] :link)
                 (assoc-in [:tmp :scene] scene))]
-    (validate! gs/DB db*)
     db*))
 
 (def-event
@@ -82,12 +76,14 @@
 (defn- abort
   "Internal helper for resetting the state when the flow-creation is being cancelled."
   [db]
-  (-> db
-      (assoc-in [:tmp :mode] :none)
-      (assoc-in [:tmp :scene] nil)
-      (assoc-in [:tmp :start-pos] nil)
-      (assoc-in [:tmp :mouse-pos] nil)
-      (assoc-in [:tmp :flow] nil)))
+  (let [tmp (:tmp db)
+        tmp* (-> tmp
+                 (assoc :mode :none)
+                 (dissoc :scene)
+                 (dissoc :start-pos)
+                 (dissoc :mouse-pos)
+                 (dissoc :flow))]
+    (assoc db :tmp tmp*)))
 
 (s/defn ^:always-validate from-mouse-and-data :- gs/Flow
   "Internal helper generating a FlowReference from the temporary mouse-flow and the data given by the mouse event"
@@ -111,6 +107,9 @@
         ;all-links (get-in db [:scene (:scene-id to) :nodes (:node-id to) :links])
         from-link (get-in db [:scene (:scene-id from) :nodes (:node-id from) :links (keyword (:id from))])
         to-link (get-in db [:scene (:scene-id to) :nodes (:node-id to) :links (keyword (:id to))])]
+    (log/debug "link from reference" reference)
+    (log/debug "from-link" from-link)
+    (log/debug "to-link" to-link)
     {:from from-link :to to-link}))
 
 (defn- make-flow

@@ -22,15 +22,13 @@
 (def-event-fx
   :mouse/down
   (fn [{:keys [db]} [_ data]]
-    (let
-      [type (:type data)
-
-       dispatch* (condp = type
-                   :pd [:pd/mouse-down data]
-                   :node [:node/mouse-down data]
-                   :link [:link/mouse-down data]
-                   :flow [:flow/mouse-down data]
-                   (log/error (str "mouse-down: I don't know the type: " type)))]
+    (let [type (:type data)
+          dispatch* (condp = type
+                      :pd [:pd/mouse-down data]
+                      :node [:node/mouse-down data]
+                      :link [:link/mouse-down data]
+                      :flow [:flow/mouse-down data]
+                      (log/error (str "mouse-down: I don't know the type: " type)))]
       {:db       db
        :dispatch dispatch*})))
 

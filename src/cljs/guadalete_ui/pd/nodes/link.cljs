@@ -23,15 +23,16 @@
 ;//  | '_/ -_) ' \/ _` / -_) '_|
 ;//  |_| \___|_||_\__,_\___|_|
 ;//
+
 (defn- link-handle []
   (fn [l scene-id node-id position]
     [svg/rect position handle-width handle-height
-     {:id            (:id l)
-      :class         (str "link " (:direction l))
+     {:id            (str node-id "-" (:id l))
+      :class         (str "link " (name (:direction l)))
       :data-scene-id scene-id
       :data-node-id  node-id
-      :data-type     "link"
-      }]))
+      :data-link-id  (:id l)
+      :data-type     "link"}]))
 
 (defn- y-pos [offset index]
   [(* (+ index offset) line-height)
@@ -97,12 +98,16 @@
          [out* (:out links) scene-id (:id node) offset])])))
 
 (defn ->get [db scene-id node-id link-id]
-  (get-in db [:scene scene-id :nodes (kw* node-id) :links (kw* link-id)]))
+  (let [links (get-in db [:scene scene-id :nodes (kw* node-id) :links])]
+    (->> links
+         (filter #(= link-id (:id %)))
+         (first))))
 
 (defn ->update [db scene-id node-id link-id link*]
   (assoc-in db
             [:scene scene-id :nodes (kw* node-id) :links (kw* link-id)]
             (dissoc link* :node-id :scene-id)))
+
 
 (defn- ->reset [[id link]]
   [id (assoc link :state :normal)])

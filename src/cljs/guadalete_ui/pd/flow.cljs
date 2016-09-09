@@ -2,16 +2,17 @@
   (:require-macros
     [thi.ng.math.macros :as mm])
   (:require
-    [reagent.core :as r]
     [reagent.core :refer [create-class dom-node]]
     [re-frame.core :refer [dispatch subscribe]]
+    [schema.core :as s]
+    [guadalete-ui.schema :as gs]
     [thi.ng.geom.core :as g]
     [thi.ng.geom.svg.core :as svg]
     [thi.ng.geom.core.vector :refer [vec2]]
     [guadalete-ui.console :as log]
     [guadalete-ui.util :refer [pretty abs vec->map kw* in?]]
     [thi.ng.math.core :as math :refer [PI HALF_PI TWO_PI]]
-    [guadalete-ui.pd.link :as link]
+    [guadalete-ui.pd.nodes.link :as link]
     [guadalete-ui.pd.layout
      :refer [link-offset node-width line-height node-height handle-width handle-height handle-text-padding]]))
 
@@ -20,17 +21,20 @@
 ;//  / _` | '_/ _` \ V  V /
 ;//  \__,_|_| \__,_|\_/\_/
 ;//
-(defn- get-link-position [{:keys [node-id id] :as data} scene-rctn]
+(s/defn ^:always-validate get-link-position :- gs/Vec2
+  [{:keys [node-id id]} :- gs/LinkReference
+   scene-rctn]
   (let [node (get-in @scene-rctn [:nodes (kw* node-id)])
         node-vec (vec2 (:position node))
-        link (get-in node [:links (kw* id)])
+        link (->> (:links node)
+                  (filter #(= id (:id %)))
+                  (first))
         offset (link-offset node link)
-        x (if (= (:direction link) "in")
+        x (if (= (:direction link) :in)
             (* -0.5 handle-width)
             (+ (* 0.5 handle-width) node-width))
         y (+ (* offset line-height) (/ handle-height 2))
-        link-vec (vec2 x y)
-        ]
+        link-vec (vec2 x y)]
     (g/+ node-vec link-vec)))
 
 
@@ -91,8 +95,7 @@
        (doall (for [f (vals (:flows @scene-rctn))]
                 (let [selected? (in? @selected-flows (:id f))]
                   ^{:key (str "f-" (:id f))}
-                  [flow f scene-rctn selected?])))
-       ])))
+                  [flow f scene-rctn selected?])))])))
 
 
 ;//              _

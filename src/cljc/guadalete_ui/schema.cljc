@@ -27,6 +27,10 @@
    (s/optional-key :buttons)   s/Num
    (s/optional-key :modifiers) s/Any})
 
+(s/defschema LinkReference
+  {:id       s/Str
+   :node-id  s/Str
+   :scene-id s/Str})
 
 (s/defschema Link
   {:id                    s/Str

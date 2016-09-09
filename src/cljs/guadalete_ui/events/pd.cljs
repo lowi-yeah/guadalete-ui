@@ -38,10 +38,11 @@
   :pd/mouse-up
   (fn [{:keys [db]} [_ {:keys [scene-id]}]]
     (let [scene (get-in db [:scene scene-id])
-          stashed-scene (get-in db [:tmp :scene])]
-      {:db    (-> db
-                  (assoc-in [:tmp :mode] :none)
-                  (assoc-in [:tmp :scene] nil))
+          stashed-scene (get-in db [:tmp :scene])
+          tmp* (-> (:tmp db)
+                   (assoc :mode :none)
+                   (dissoc :scene))]
+      {:db    (assoc db :tmp tmp*)
        :sente (scene/sync-effect {:old stashed-scene :new scene})})))
 
 (def-event-fx

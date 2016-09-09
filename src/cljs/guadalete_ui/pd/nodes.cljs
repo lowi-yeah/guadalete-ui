@@ -11,7 +11,6 @@
     [guadalete-ui.console :as log]
     [guadalete-ui.util :refer [pretty vec->map in?]]
 
-    [guadalete-ui.pd.link :as link :refer [links]]
     [guadalete-ui.pd.layout :refer [node-width line-height node-height]]
 
     [guadalete-ui.pd.color :refer [make-color render-color]]
@@ -19,7 +18,9 @@
     [guadalete-ui.pd.nodes.signal :as signal]
     [guadalete-ui.pd.nodes.color :as color]
     [guadalete-ui.pd.nodes.mixer :as mixer]
-    [guadalete-ui.pd.nodes.light :as light]))
+    [guadalete-ui.pd.nodes.light :as light]
+    [guadalete-ui.pd.nodes.link :as link]
+    ))
 
 (defn- default-node
   []

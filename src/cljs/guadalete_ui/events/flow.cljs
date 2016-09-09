@@ -6,7 +6,6 @@
     [thi.ng.geom.core.vector :refer [vec2]]
     [guadalete-ui.pd.flow :as flow]
     [guadalete-ui.util :refer [pretty kw* vec->map]]
-    [guadalete-ui.pd.link :as link]
     [guadalete-ui.console :as log]
     ; schema
     [schema.core :as s]
@@ -26,6 +25,7 @@
     (let [selected-items (if (:shift modifiers) (get-in db [:tmp :selected]) #{})
           flow-reference {:scene-id scene-id :id id :type :flow}
           selected-items* (conj selected-items flow-reference)]
+      (log/debug "selected-items*" selected-items*)
       {:db (assoc-in db [:tmp :selected] selected-items*)})))
 
 
