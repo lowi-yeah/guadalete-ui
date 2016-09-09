@@ -10,7 +10,7 @@
 
     ; schema
     [schema.core :as s]
-    [guadalete-ui.schema.pd :refer [Flow]]
+    [guadalete-ui.schema :as gs]
     [guadalete-ui.events.scene :as scene]
 
     [schema.core :as s]
@@ -26,7 +26,7 @@
   Only checks for semantic validity (ie. whether the the :from and :to links match to form a valid connection."
   [flow]
   (try
-    (s/validate Flow flow)
+    (s/validate gs/Flow flow)
     :valid
     (catch js/Error e
       (log/debug "validation error!" e)
@@ -43,12 +43,12 @@
    {:keys [scene-id node-id id position] :as data} :- gs/MouseEventData]
   (let [scene (get-in db [:scene scene-id])
         node-link (link/->get db scene-id node-id id)
-        flow (condp = (keyword (:direction node-link))
-               :in {:from :mouse :to {:scene-id scene-id :node-id node-id :id id}}
-               :out {:from {:scene-id scene-id :node-id node-id :id id} :to :mouse}
-               nil)
+        flow-reference (condp = (keyword (:direction node-link))
+                         :in {:from :mouse :to {:scene-id scene-id :node-id node-id :id id}}
+                         :out {:from {:scene-id scene-id :node-id node-id :id id} :to :mouse}
+                         nil)
         db* (-> db
-                (assoc-in [:tmp :flow] flow)
+                (assoc-in [:tmp :flow] flow-reference)
                 (assoc-in [:tmp :start-pos] (vec->map position))
                 (assoc-in [:tmp :mouse-pos] (vec->map position))
                 (assoc-in [:tmp :mode] :link)
@@ -85,37 +85,45 @@
                  (dissoc :flow))]
     (assoc db :tmp tmp*)))
 
-(s/defn ^:always-validate from-mouse-and-data :- gs/Flow
+(s/defn ^:always-validate from-mouse-and-data :- gs/FlowReference
   "Internal helper generating a FlowReference from the temporary mouse-flow and the data given by the mouse event"
   [db :- gs/DB
    {:keys [scene-id node-id id] :as data} :- gs/MouseEventData]
-  (log/debug "from mouse and data " data)
   (let [mouse-flow (get-in db [:tmp :flow])
-        _ (log/debug "mouse-flow" mouse-flow)
         reference {:scene-id scene-id
                    :node-id  node-id
-                   :id       id}
-        _ (log/debug "reference" reference)]
+                   :id       id}]
     (if (= :mouse (:from mouse-flow))
       (assoc mouse-flow :from reference)
       (assoc mouse-flow :to reference))))
 
-(defn- from-reference
-  "Internal helper generating a Flow a fiven flow reference"
-  [db reference]
-  (let [{:keys [from to]} reference
-        ;all-links (get-in db [:scene (:scene-id to) :nodes (:node-id to) :links])
-        from-link (get-in db [:scene (:scene-id from) :nodes (:node-id from) :links (keyword (:id from))])
-        to-link (get-in db [:scene (:scene-id to) :nodes (:node-id to) :links (keyword (:id to))])]
-    (log/debug "link from reference" reference)
-    (log/debug "from-link" from-link)
-    (log/debug "to-link" to-link)
-    {:from from-link :to to-link}))
 
-(defn- make-flow
+(s/defn ^:always-validate from-reference
+  "Internal helper generating a Flow a given flow reference"
+  [db :- gs/DB
+   reference :- gs/FlowReference]
+  ;(log/debug "from-reference" reference)
+  (let [{:keys [from to]} reference
+        from-links (get-in db [:scene (:scene-id from) :nodes (keyword (:node-id from)) :links])
+        from-link (->> from-links
+                       (filter #(= (:id from) (:id %)))
+                       (first))
+        ;_ (log/debug "from-link" from-link)
+        from* (merge from from-link)
+        to-links (get-in db [:scene (:scene-id to) :nodes (keyword (:node-id to)) :links])
+        to-link (->> to-links
+                     (filter #(= (:id to) (:id %)))
+                     (first))
+        ;_ (log/debug "to-link" to-link)
+        to* (merge to to-link)
+        flow {:from from* :to to*}]
+    flow))
+
+(s/defn ^:always-validate make-flow :- gs/Effect
   "Internal helper creating a flow after mouse-up.
   Also checks validity and resets! if necessary"
-  [db {:keys [scene-id] :as data}]
+  [db :- gs/DB
+   {:keys [scene-id] :as data}]
   (let [mouse-flow (get-in db [:tmp :flow])]
     (if (= :valid (:valid? mouse-flow))
       (let [scene (get-in db [:scene scene-id])
@@ -125,17 +133,15 @@
                         (from-mouse-and-data db data)
                         (assoc :id flow-id)
                         (dissoc :valid?))
-            flows* (assoc flows flow-id reference)
+            flows* (assoc flows (keyword flow-id) reference)
             scene* (-> scene (assoc :flows flows*))]
-
-        (log/debug "make flow" (pretty reference))
-
         {:db    (-> db
                     (abort)
                     (assoc-in [:scene scene-id] scene*))
          :sente (scene/sync-effect {:old scene :new scene*})})
       ;else
-      {:db (abort db)})))
+      {:db (abort db)})
+    ))
 
 (def-event-fx
   :link/mouse-up
@@ -150,15 +156,10 @@
   :link/check-connection
   (fn [db [_ {:keys [type] :as data}]]
     (condp = type
-      :link (let [
-                  flow-reference (from-mouse-and-data db data)
+      :link (let [flow-reference (from-mouse-and-data db data)
                   different-nodes? (not= (get-in flow-reference [:from :node-id])
                                          (get-in flow-reference [:to :node-id]))
                   flow (from-reference db flow-reference)]
-              (log/debug "flow-reference" flow-reference)
-              (log/debug "check flow")
-              (log/debug "from" (:from flow))
-              (log/debug "to" (:to flow))
               (if different-nodes?
                 (assoc-in db [:tmp :flow :valid?] (validate-flow flow))
                 db))
@@ -168,5 +169,7 @@
 (def-event
   :link/reset-connection
   (fn [db [_ _data]]
-    (assoc-in db [:tmp :flow :valid?] nil)))
+    (let [flow (get-in db [:tmp :flow])
+          flow* (dissoc flow :valid?)]
+      (assoc-in db [:tmp :flow] flow*))))
 

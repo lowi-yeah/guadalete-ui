@@ -27,25 +27,93 @@
    (s/optional-key :buttons)   s/Num
    (s/optional-key :modifiers) s/Any})
 
-(s/defschema LinkReference
-  {:id       s/Str
-   :node-id  s/Str
-   :scene-id s/Str})
+
+;//   _ _      _
+;//  | (_)_ _ | |_____
+;//  | | | ' \| / (_-<
+;//  |_|_|_||_|_\_\__/
+;//
+
+(defn in-link? [link]
+  (or (= :in (:direction link))
+      (= "in" (:direction link))))
+
+(def LinkReference
+  "A reference for looking up a Link"
+  (s/conditional keyword? (s/eq :mouse)
+                 :else {:scene-id s/Str
+                        :node-id  s/Str
+                        :id       s/Str}))
+
+;; IN
+;; ********************************
+(def ColorInLink
+  "A link accepting colors as input"
+  {:id                        s/Str
+   (s/optional-key :scene-id) s/Str
+   (s/optional-key :node-id)  s/Str
+   :accepts                   (s/eq :color)
+   :direction                 (s/eq :in)
+   :index                     s/Num
+   (s/optional-key :name)     s/Str})
+
+(def ValueInLink
+  "A link accepting values as input"
+  {:id                        s/Str
+   (s/optional-key :scene-id) s/Str
+   (s/optional-key :node-id)  s/Str
+   :accepts                   (s/eq :value)
+   :direction                 (s/eq :in)
+   :index                     s/Num
+   (s/optional-key :type)     s/Str
+   (s/optional-key :channel)  s/Str
+   (s/optional-key :name)     s/Str})
+
+
+;; OUT
+;; ********************************
+(def ColorOutLink
+  "A link emitting a color"
+  {:id                        s/Str
+   (s/optional-key :scene-id) s/Str
+   (s/optional-key :node-id)  s/Str
+   :emits                     (s/eq :color)
+   :direction                 (s/eq :out)
+   :index                     s/Num
+   (s/optional-key :name)     s/Str})
+
+(def ValueOutLink
+  "A link emitting values"
+  {:id                        s/Str
+   (s/optional-key :scene-id) s/Str
+   (s/optional-key :node-id)  s/Str
+   :emits                     (s/eq :value)
+   :direction                 (s/eq :out)
+   :index                     s/Num
+   (s/optional-key :name)     s/Str})
+
+(s/defschema InLink
+  (s/conditional
+    #(or
+      (= (:accepts %) "color")
+      (= (:accepts %) :color)) ColorInLink
+    :else ValueInLink))
+
+(s/defschema OutLink
+  (s/conditional
+    #(or
+      (= (:emits %) "color")
+      (= (:emits %) :color)) ColorOutLink
+    :else ValueOutLink))
 
 (s/defschema Link
-  {:id                    s/Str
-   :accepts               (s/enum :value :color)
-   :index                 s/Num                             ; used for rendering
-   :direction             (s/enum :in :out)
-   (s/optional-key :name) s/Str})
-
+  (s/conditional in-link? InLink :else OutLink))
 
 (s/defschema NodeData
   {:room-id  s/Str
    :scene-id s/Str
    :ilk      (s/enum :signal :color :mixer :light)
-   :position Vec2
-   })
+   :position Vec2})
 
 (s/defschema NodeReference
   {:scene-id s/Str
@@ -58,17 +126,50 @@
    :ilk      (s/enum :signal :color :mixer :light)
    :item-id  s/Str
    :position Vec2
-   :links    [Link]
-   })
+   :links    [Link]})
 
 (s/defschema Nodes
   {s/Keyword Node})
 
-(s/defschema Flow
-  s/Any)
 
-(s/defschema Flows
-  {s/Keyword Flow})
+;//    __ _
+;//   / _| |_____ __ __
+;//  |  _| / _ \ V  V /
+;//  |_| |_\___/\_/\_/
+;//
+(s/defschema FlowReference
+  "A flow between two pd nodes.
+  (Between links of two nodes, to be more precise.)"
+  {:from                    LinkReference
+   :to                      LinkReference
+   (s/optional-key :id)     s/Str
+   (s/optional-key :valid?) (s/enum :valid :invalid)})
+
+(s/defschema FlowReferences
+  {s/Keyword s/Any})
+
+(s/defschema ValueFlow
+  "A schema for flows between value links"
+  {:from                ValueOutLink
+   :to                  ValueInLink
+   (s/optional-key :id) s/Str})
+
+(s/defschema ColorFlow
+  "A schema for flows between value links"
+  {:from                ColorOutLink
+   :to                  ColorInLink
+   (s/optional-key :id) s/Str})
+
+(s/defschema Flow
+  "An assembled flow between two pd nodes.
+  In this context, assembled means that the actual links have been loaded,
+  instead of just their reference ids."
+  ;; i'd like to use an enum here, but validation always fails when I do so…
+  ;(s/enum ValueFlow ColorFlow)
+  (s/conditional
+    #(or (= (-> % (get :from) (get :emits)) "value")
+         (= (-> % (get :from) (get :emits)) :value)) ValueFlow
+    :else ColorFlow))
 
 
 (s/defschema Rooms
@@ -96,7 +197,7 @@
    :mode        (s/enum :none :pan :link)                   ; flag used for interacting with the gui, indicates wthere the scene is being panned or whether a link is being created
    :translation Vec2                                        ; offset vector (pan) for rendering
    :nodes       Nodes
-   :flows       Flows
+   :flows       FlowReferences
    :on?         s/Bool})
 
 
@@ -157,7 +258,7 @@
   {
    (s/optional-key :nodes)     s/Any
    (s/optional-key :selected)  s/Any
-   (s/optional-key :flow)      Flow
+   (s/optional-key :flow)      FlowReference
    (s/optional-key :pos)       Vec2
    (s/optional-key :start-pos) Vec2
    (s/optional-key :mouse-pos) Vec2

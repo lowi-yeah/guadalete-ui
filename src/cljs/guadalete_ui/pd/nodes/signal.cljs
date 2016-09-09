@@ -89,6 +89,6 @@
    :position (vec->map position)
    :item-id  (:id item)
    :links    [{:id        "out"
-               :accepts   :value
+               :emits     :value
                :direction :out
                :index     0}]})

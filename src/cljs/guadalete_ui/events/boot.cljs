@@ -91,7 +91,8 @@
       {:db    db
        :sente sente-effect})))
 
-(s/defn ^:always-validate success-sync-state* :- gs/DB
+;(s/defn ^:always-validate success-sync-state* :- gs/DB
+(s/defn success-sync-state* :- gs/DB
   [db state]
   (let [rooms-map (mappify :id (:room state))
         lights-map (mappify :id (:light state))
@@ -111,6 +112,7 @@
               :config config)
         ; coerce the schema
         db** (gs/parse-db db*)]
+    (log/debug "success-sync-state*" db**)
     db**))
 
 (def-event-fx

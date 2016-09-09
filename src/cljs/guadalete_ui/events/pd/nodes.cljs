@@ -40,7 +40,7 @@
 (def-event
   :success-items-update
   (fn [world response]
-    (log/error ":success-items-update" response)
+    ;(log/info ":success-items-update" response)
     world))
 
 (def-event

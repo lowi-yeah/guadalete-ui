@@ -34,7 +34,7 @@
   The number of input-links corresponds to the number of color channels (h,s,v)"
   [color]
   (let [out-link [{:id        "out"
-                   :accepts   :color
+                   :emits   :color
                    :name      "out"
                    :direction :out
                    :index     (-> color (:color-type) (name) (count))}]

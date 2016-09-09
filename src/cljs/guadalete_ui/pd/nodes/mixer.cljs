@@ -72,7 +72,7 @@
   "Helper function for creating the in/out links for a mixer."
   []
   (let [out-link [{:id        "out"
-                   :accepts   :value
+                   :emits     :value
                    :name      "out"
                    :direction :out
                    :index     2}]
