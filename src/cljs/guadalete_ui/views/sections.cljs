@@ -12,7 +12,8 @@
 
 ;// DASH
 ;// ********************************
-(defn- dash [] [:div#dash
+(defn- dash []
+  [:div#dash
                 [:h1 "dash…"]])
 
 ;// ROOM

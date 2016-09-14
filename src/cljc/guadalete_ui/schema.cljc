@@ -171,9 +171,15 @@
          (= (-> % (get :from) (get :emits)) :value)) ValueFlow
     :else ColorFlow))
 
+(s/defschema Room
+  {:id     s/Str
+   :name   s/Str
+   :light  [s/Str]
+   :scene  [s/Str]
+   :sensor [s/Str]})
 
 (s/defschema Rooms
-  {s/Str s/Any})                                            ; map id->Room
+  {s/Str s/Any})
 
 (s/defschema DMXLight
   {:room-id   s/Str

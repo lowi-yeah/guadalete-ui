@@ -109,10 +109,10 @@
 ;//  | '_/ _ \ _ \ '  \(_-<_  | | / _` | ' \  _(_-<_  (_-< _/ -_) ' \/ -_)_-<_ _ _
 ;//  |_| \___\___/_|_|_/__( ) |_|_\__, |_||_\__/__( ) /__\__\___|_||_\___/__(_)_)_)
 ;//                       |/      |___/           |/
-
 ; Room
 ; ****************
-(defn get-rooms [connection]
+(s/defn ^:always-validate get-rooms :- [gs/Room]
+  [connection]
   (get-all connection :room))
 
 (defn update-room [connection id diff flag]
@@ -128,22 +128,20 @@
        (map #(dissoc % :created :updated))
        (map #(gs/coerce-light %))))
 
-
 (defn create-light [connection light]
   (create-item connection :light light))
 
 (defn update-light [connection id diff flag]
   (update-item connection id diff :light flag))
 
-
 ; Scene
 ; ****************
 (defn create-scene [connection scene]
   (create-item connection :scene scene))
 
-(defn get-scenes [connection]
-  (let [scenes (get-all connection :scene)]
-    (into [] scenes)))
+(s/defn ^:always-validate get-scenes :- [gs/Scene]
+  [connection]
+  (get-all connection :scene))
 
 (defn update-scene [connection id diff flag]
   (update-item connection id diff :scene flag))
