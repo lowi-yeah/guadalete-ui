@@ -84,10 +84,6 @@
                 (differ/patch items diff)
                 (vals)
                 (into []))]
-    (log/debug "ilk" ilk)
-    (log/debug "diff" diff)
-    (log/debug "items" items)
-    (log/debug "patch" patch)
     (try
       (let [response (-> (r/table ilk)
                          (r/insert patch)
@@ -107,6 +103,7 @@
         (let [msg (.getMessage ex)]
           {:error msg})))))
 
+
 ;//                            _ _      _   _
 ;//   _ _ ___ ___ _ __  ___   | (_)__ _| |_| |_ ___    _____ ___ _ _  ___ ___
 ;//  | '_/ _ \ _ \ '  \(_-<_  | | / _` | ' \  _(_-<_  (_-< _/ -_) ' \/ -_)_-<_ _ _
@@ -124,8 +121,13 @@
 
 ; Light
 ; ****************
-(defn get-lights [connection]
-  (get-all connection :light))
+
+(s/defn ^:always-validate get-lights :- [gs/Light]
+  [connection]
+  (->> (get-all connection :light)
+       (map #(dissoc % :created :updated))
+       (map #(gs/coerce-light %))))
+
 
 (defn create-light [connection light]
   (create-item connection :light light))
@@ -205,6 +207,13 @@
         colors (get-colors connection)
         signals (get-signals connection)
         mixers (get-mixers connection)]
+
+    (log/debug "DB/everything")
+    (log/debug "\t rooms" rooms)
+    (log/debug "\t scenes" scenes)
+    (log/debug "\t lights" lights)
+
+
     {:room   rooms
      :light  lights
      :scene  scenes

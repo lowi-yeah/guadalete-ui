@@ -63,19 +63,7 @@
   [{:keys [uid ring-req ?reply-fn send-fn db-conn redis-conn redis-topics]}]
   (when (and (session-uid ring-req) ?reply-fn)
     (let [state (db/everything db-conn)
-          state* (assoc state :config (frontend-config))
-          ;values-channel (signal-values redis-conn (db/signal-ids db-conn))
-          ]
-      ;(go
-      ;  (let [signal-values (<! values-channel)]
-      ;    (send-fn uid [:signals/values (generate-string signal-values)])
-      ;    ;(send-fn uid [:signals/values (generate-string signal-values)])
-      ;    ;(send-fn uid [:signal/values signal-values])
-      ;
-      ;    ;(doseq [i (range 100)]
-      ;    ;  (send-fn uid [:fast-push/is-fast (str "hello " i "!!")]))
-      ;    ))
-
+          state* (assoc state :config (frontend-config))]
       (?reply-fn state*))))
 
 ; ROLE

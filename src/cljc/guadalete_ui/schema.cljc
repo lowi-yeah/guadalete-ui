@@ -175,16 +175,38 @@
 (s/defschema Rooms
   {s/Str s/Any})                                            ; map id->Room
 
+(s/defschema DMXLight
+  {:room-id   s/Str
+   :id        s/Str
+   :name      s/Str
+   :type      (s/enum :v :sv :hsv)
+   :channels  {:brightness                  [s/Num]
+               (s/optional-key :saturation) [s/Num]
+               (s/optional-key :hue)        [s/Num]}
+   :color     {:brightness                  s/Num
+               (s/optional-key :saturation) s/Num
+               (s/optional-key :hue)        s/Num}
+   :transport (s/eq :dmx)})
+
+(s/defschema MqttLight
+  {(s/optional-key :room-id) s/Str
+   :id                       s/Str
+   :name                     s/Str
+   :type                     (s/enum :v :sv :hsv)
+   :transport                (s/eq :mqtt)
+   :accepted?                s/Bool
+   (s/optional-key :color)   {:brightness                  s/Num
+                              (s/optional-key :saturation) s/Num
+                              (s/optional-key :hue)        s/Num}})
+
 (s/defschema Light
-  {:room-id      s/Str
-   :id           s/Str
-   :name         s/Str
-   :num-channels s/Num
-   :channels     [[s/Num]]
-   :color        {:brightness                  s/Num
-                  (s/optional-key :saturation) s/Num
-                  (s/optional-key :hue)        s/Num}
-   :transport    (s/enum :dmx :mqtt)})
+  (s/conditional
+    #(or
+      (= (:transport %) "mqtt")
+      (= (:transport %) :mqtt))
+    MqttLight
+    :else DMXLight))
+
 
 (s/defschema Lights
   {s/Str Light})
@@ -337,3 +359,6 @@
 ;//
 (def parse-db
   (coerce/coercer DB coerce/json-coercion-matcher))
+
+(def coerce-light
+  (coerce/coercer Light coerce/json-coercion-matcher))
