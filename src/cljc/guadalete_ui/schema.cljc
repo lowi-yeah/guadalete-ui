@@ -368,3 +368,6 @@
 
 (def coerce-light
   (coerce/coercer Light coerce/json-coercion-matcher))
+
+(def coerce-scene
+  (coerce/coercer Scene coerce/json-coercion-matcher))

@@ -151,6 +151,15 @@
       {:db    (assoc db :modal data)
        :modal [:show {}]})))
 
+(def-event-fx
+  :light/approve
+  (fn [{:keys [db]} [_ light-id]]
+    (let [data {:item-id    light-id
+                :ilk        :light
+                :modal-type :light}]
+      {:db    (assoc db :modal data)
+       :modal [:show {}]})))
+
 ;(def-event-fx
 ;  :mouse/double-click
 ;  (fn [{:keys [db]} [_ {:keys [room-id scene-id id ilk]}]]
@@ -208,19 +217,18 @@
           room* (assoc room :light room-lights*)
           db* (-> db
                   (assoc :light lights*)
-                  (assoc-in [:room (:id room)] room*))
-          ]
-      (log/debug "room-lights" (count room-lights))
-      (log/debug "room-lights*" (count room-lights*))
+                  (assoc-in [:room (:id room)] room*))]
       {:db    db*
        :sente (trash-light-effect light-id)
-       :modal [:light :close]})))
+       :modal [:close {}]}
+      )))
 
 (def-event-fx
   :success-light-trash
   (fn [{:keys [db]} [_ response]]
     (let [light (:ok response)
           error-msg (:error response)]
+      (log/info ":success-light-trash" response)
       {:db db})))
 
 (def-event-fx

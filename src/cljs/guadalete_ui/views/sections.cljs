@@ -3,18 +3,46 @@
     [re-frame.core :refer [dispatch subscribe]]
     [guadalete-ui.views.segments :refer [segment]]
     [guadalete-ui.views.menu :refer [main-menu secondary-menu]]
-    [guadalete-ui.console :as log]))
+    [guadalete-ui.console :as log]
+    [guadalete-ui.util :refer [pretty]]))
 
 
 ;// BLANK
 ;// ********************************
 (defn- blank [] [:div#blank])
 
+
+
 ;// DASH
 ;// ********************************
 (defn- dash []
-  [:div#dash
-                [:h1 "dash…"]])
+  (fn []
+    (let [unconfirmed-lights-rctn (subscribe [:light/unconfirmed])]
+      [:div#dash.flex-container.full-height
+       [:h3.margins.margin-top "dash…"]
+       (when (> (count @unconfirmed-lights-rctn) 0)
+         [:div#unconfirmed-lights
+          [:h6.margins
+           (if (= (count @unconfirmed-lights-rctn) 1)
+             "A new light has been found:"
+             "New lights have been found:")]
+
+          (doall
+            (for [light @unconfirmed-lights-rctn]
+              ^{:key (str "s-" (:id light))}
+              [:div.ui.message.margins
+               {:on-click #(dispatch [:light/approve (:id light)])}
+               [:div.content.flex-row-container
+                [:div.align.right.margin-right
+                 [:ul
+                  [:li.small "name:"]]]
+                [:div
+                 [:ul
+                  [:li (:name light)]]]
+                [:div.align.right.flexing
+                 [:button.ui.mini.circular.icon.button.item
+                  {:on-click #(dispatch [:light/approve (:id light)])}
+                  [:i.mini.edit.icon]]]]]))])])))
 
 ;// ROOM
 ;// ********************************

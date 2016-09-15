@@ -120,10 +120,15 @@
   (fn [{:keys [db]} [_ state]]
     (let [role (:user/role db)
           db* (success-sync-state* db state)]
-      ;(validate! gs/DB db* :silent)
-      (validate! gs/DB db*)
+      (validate! gs/DB db* :silent)
       {:db       db*
        :dispatch [:set-panel role]})))
+
+(def-event-fx
+  :failure-sync-state
+  (fn [{:keys [db]} response]
+    (log/error "State sync failed: " response)
+    {:db db}))
 
 
 

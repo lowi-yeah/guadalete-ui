@@ -246,6 +246,14 @@
           lights (map #(get-in db [:light %]) unused)]
       (into [] lights))))
 
+(def-sub
+  :light/unconfirmed
+  (fn [db _]
+    (->> (:light db)
+         (vals)
+         ;(filter #(not (:accepted? %)))
+         (into []))))
+
 ;//           _
 ;//   _ __ __| |
 ;//  | '_ \ _` |

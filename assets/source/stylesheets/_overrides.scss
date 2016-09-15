@@ -306,6 +306,14 @@ body {
 
 .ui.button {
 
+  font-size: 0.8rem;
+  padding: 0.5rem 1.5rem 0.5rem;
+  margin: 0 0.5rem 0 0;
+
+  &:last-child {
+    margin: 0;
+  }
+
   &.icon {
     padding: 0;
     width: 2.5rem;
@@ -344,16 +352,38 @@ body {
     }
   }
 
-
   &.trash {
     // margin-right: -3rem;
-    background: $re-red;
+    background: $red;
+    color: $grey-dark;     
+    border: 2px solid $red;
+    &:hover {
+      background: $grey-dark;
+      color: $red;  
+    }
+  }
+
+  &.block {
+    // margin-right: -3rem;
+    background: $yellow;
+    color: $grey-dark;     
+    border: 2px solid $yellow;
+    &:hover {
+      background: $grey-dark;
+      color: $yellow;  
+    }
   }
 
   &.circular{
     .icon {
       width: 1.2rem;
       height: 1.2rem;
+    }
+
+    &.mini {
+      width: 1.5rem;
+      height: 1.5rem;
+      padding-top: 0.5rem;
     }
   }
 }
@@ -397,5 +427,36 @@ hr {
   .actions {
     padding-top: 0;
     padding-right: 1.25rem;
+  }
+}
+
+
+//  _ __  ___ ______ __ _ __ _ ___
+// | '  \/ -_|_-<_-</ _` / _` / -_)
+// |_|_|_\___/__/__/\__,_\__, \___|
+//                       |___/
+.ui.message {
+  margin-left: 1rem;
+  margin-right: 1rem;
+  padding: 0 10px;
+  background: $primary-color-dark;
+  color: $primary-color-light;
+  border:1px solid $primary-color-light;  
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+
+  ul {
+    margin-left: 0;
+    list-style:none;
+    margin-bottom: 0;
+
+    li {
+      line-height: 1.5;
+
+      &.small {
+        font-size: 0.8rem;
+        margin-top: 0.28rem;
+      }
+    }
   }
 }

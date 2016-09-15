@@ -6,7 +6,7 @@
     [guadalete-ui.helpers.util :refer [mappify]]
     [schema.core :as s]
     [guadalete-ui.schema :as gs]
-    )
+    [guadalete-ui.helpers.util :refer [in?]])
   (:import (clojure.lang ExceptionInfo)))
 
 ;//                         _
@@ -62,17 +62,16 @@
 (defn- trash-item
   "Generic update function called by update-room, update-light & update-sensor"
   ([connection type id]
-   (let [item (get-one connection type id)]
-     (try
-       (do
-         (-> (r/table type)
-             (r/get id)
-             (r/delete)
-             (r/run connection))
-         {:ok id})
-       (catch ExceptionInfo ex
-         (let [msg (.getMessage ex)]
-           {:error msg}))))))
+   (try
+     (do
+       (-> (r/table type)
+           (r/get id)
+           (r/delete)
+           (r/run connection))
+       {:ok id})
+     (catch ExceptionInfo ex
+       (let [msg (.getMessage ex)]
+         {:error msg})))))
 
 
 (s/defn ^:always-validate update-items :- gs/UpdateResponse
@@ -134,6 +133,21 @@
 (defn update-light [connection id diff flag]
   (update-item connection id diff :light flag))
 
+(defn trash-light
+  "Handler function for removing a light. Not only removes the light form the DB,
+  but also removes the reference from the room it -the light- is assigned to."
+  [connection id]
+  (let [room (->> (get-rooms connection)
+                  (filter #(in? (:light %) id))
+                  (first))]
+    (when (not (nil? room))
+      (let [room-lights (->> (:light room)
+                             (remove #(= id %))
+                             (into []))
+            room* (assoc room :light room-lights)]
+        (update-item (:id room*) room* :room :replace)))
+    (trash-item connection :light id)))
+
 ; Scene
 ; ****************
 (defn create-scene [connection scene]
@@ -141,7 +155,9 @@
 
 (s/defn ^:always-validate get-scenes :- [gs/Scene]
   [connection]
-  (get-all connection :scene))
+  (->> :scene
+       (get-all connection)
+       (map #(gs/coerce-scene %))))
 
 (defn update-scene [connection id diff flag]
   (update-item connection id diff :scene flag))
@@ -205,13 +221,6 @@
         colors (get-colors connection)
         signals (get-signals connection)
         mixers (get-mixers connection)]
-
-    (log/debug "DB/everything")
-    (log/debug "\t rooms" rooms)
-    (log/debug "\t scenes" scenes)
-    (log/debug "\t lights" lights)
-
-
     {:room   rooms
      :light  lights
      :scene  scenes

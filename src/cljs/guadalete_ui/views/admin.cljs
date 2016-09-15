@@ -53,9 +53,10 @@
        (fn []
          [:div#root.attached.segment.pushable
           [:div#nav.ui.visible.thin.sidebar.inverted.vertical.menu
-           [:a
-            {:href "#/root"}
-            [:img {:src "images/logo.svg"}]]
+           [:div.margin-top
+            [:a
+             {:href "#/root"}
+             [:img {:src "images/logo.svg"}]]]
            (doall
              (for [room @rooms-rctn]
                (let

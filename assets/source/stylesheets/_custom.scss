@@ -237,7 +237,7 @@ tr.light {
 }
 
 .margin-top {
- margin-top:1.5rem; 
+ margin-top:1.5rem !important; 
 }
 
 .margin-right {
@@ -267,4 +267,30 @@ tr.light {
 
 .floating {
   float:left;
+}
+
+.align {
+  &.right {
+    text-align: right;
+  }
+  &.left {
+    text-align: left;
+  }
+}
+
+.float {
+  &.right {
+    float: right;
+  }
+}
+
+//     _     _
+//  __| |___| |__ _  _ __ _
+// / _` / -_) '_ \ || / _` |
+// \__,_\___|_.__/\_,_\__, |
+//                    |___/
+.debug {
+  &.red { background: rgba($re-red, 0.62) !important;}
+  &.blue { background: rgba($re-blue, 0.62) !important;}
+  &.green { background: rgba($re-green, 0.62) !important;}
 }
