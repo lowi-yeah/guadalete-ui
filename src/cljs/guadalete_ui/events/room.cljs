@@ -30,6 +30,8 @@
   :room/update
   (fn [{:keys [db]} [_ {:keys [old new]}]]
     (log/debug ":room/update")
+    (log/debug "\t old " old)
+    (log/debug "\t new" new)
     (if old
       (patch db old new)
       (reset db new))))
@@ -46,10 +48,6 @@
           (log/error "error during light creation:" error-msg)
           {:db db})))))
 
-(def-event-fx
-  :light/edit
-  (fn [{:keys [db]} [_ light-id]]
-    ))
 
 (def-event-fx
   :room/prepare-trash

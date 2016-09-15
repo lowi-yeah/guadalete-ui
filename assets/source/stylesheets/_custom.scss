@@ -253,6 +253,10 @@ tr.light {
   margin-right:1rem;
 }
 
+.no-top-margin {
+  margin-top: 0 !important;
+}
+
 .relative {
   position:relative;
 }
@@ -282,6 +286,12 @@ tr.light {
   &.right {
     float: right;
   }
+}
+
+p.small {
+  font-size: 0.8rem;
+  margin-bottom: 0;
+  line-height: 1.8;
 }
 
 //     _     _

@@ -3,10 +3,9 @@
     [rethinkdb.query :as r]
     [differ.core :as differ]
     [taoensso.timbre :as log]
-    [guadalete-ui.helpers.util :refer [mappify]]
+    [guadalete-ui.helpers.util :refer [mappify in? validate! pretty]]
     [schema.core :as s]
-    [guadalete-ui.schema :as gs]
-    [guadalete-ui.helpers.util :refer [in?]])
+    [guadalete-ui.schema :as gs])
   (:import (clojure.lang ExceptionInfo)))
 
 ;//                         _
@@ -14,20 +13,31 @@
 ;//  / _` / -_) ' \/ -_) '_| / _|
 ;//  \__, \___|_||_\___|_| |_\__|
 ;//  |___/
-(defn- get-all [connection type]
+(s/defn ^:always-validate get-all
+  [connection
+   type :- s/Keyword]
   (-> (r/table type)
-      (r/run connection)))
+      (r/run connection)
+      (gs/coerce-all type)))
 
-(defn- get-one [connection type id]
+(s/defn ^:always-validate get-one
+  [connection
+   type :- s/Keyword
+   id :- s/Str]
   (-> (r/table type)
       (r/get id)
-      (r/run connection)))
+      (r/run connection)
+      (gs/coerce! type)))
 
-(defn- table-map [connection table map-key]
+(s/defn ^:always-validate table-map
   "Generic convenience function for extracting all enties of a given table into a map"
-  (mappify map-key (get-all connection table)))
+  [connection
+   table-key :- s/Keyword
+   map-key :- s/Keyword]
+  (mappify map-key (get-all connection table-key)))
 
-(defn- create-item [connection type item]
+(defn create-item
+  [connection type item]
   (try
     (do
       (-> (r/table type)
@@ -39,40 +49,43 @@
       (let [msg (.getMessage ex)]
         {:error msg}))))
 
-(defn- update-item
+(s/defn ^:always-validate update-item :- gs/UpdateResponse
   "Generic update function called by update-room, update-light & update-sensor"
   ([_connection id diff type] (update-item id diff type :replace))
-  ([connection id diff type flag]
-   (let [item (get-one connection type id)
-         patch (condp = flag
-                 :patch (differ/patch item diff)
-                 :replace diff
-                 (str "unexpected flag, \"" (str flag) \"))]
-     (try
-       (do
-         (-> (r/table type)
-             (r/get id)
-             (r/replace patch)
-             (r/run connection))
-         {:ok patch})
-       (catch ExceptionInfo ex
-         (let [msg (.getMessage ex)]
-           {:error msg}))))))
+  ([connection
+    id :- s/Str
+    diff :- gs/Diff
+    type :- s/Keyword
+    flag :- (s/enum :patch :replace)]
+    (let [item (get-one connection type id)
+          patch (condp = flag
+                  :patch (differ/patch item diff)
+                  :replace diff
+                  (str "unexpected flag, \"" (str flag) \"))]
+      (try
+        (do
+          (-> (r/table type)
+              (r/get id)
+              (r/replace patch)
+              (r/run connection))
+          {:ok patch})
+        (catch ExceptionInfo ex
+          (let [msg (.getMessage ex)]
+            {:error msg}))))))
 
-(defn- trash-item
+(s/defn ^:always-validate trash-item :- gs/UpdateResponse
   "Generic update function called by update-room, update-light & update-sensor"
   ([connection type id]
-   (try
-     (do
-       (-> (r/table type)
-           (r/get id)
-           (r/delete)
-           (r/run connection))
-       {:ok id})
-     (catch ExceptionInfo ex
-       (let [msg (.getMessage ex)]
-         {:error msg})))))
-
+    (try
+      (do
+        (-> (r/table type)
+            (r/get id)
+            (r/delete)
+            (r/run connection))
+        {:ok id})
+      (catch ExceptionInfo ex
+        (let [msg (.getMessage ex)]
+          {:error msg})))))
 
 (s/defn ^:always-validate update-items :- gs/UpdateResponse
   "Updates all items of a given ilk with the given patch"
@@ -87,15 +100,6 @@
       (let [response (-> (r/table ilk)
                          (r/insert patch)
                          (r/run db-conn))]
-
-        ;(doseq [item (vals patch)]
-        ;  (log/debug "update item" item)
-        ;  (-> (r/table ilk)
-        ;      (r/get (:id item))
-        ;      (r/replace item)
-        ;      (r/run db-conn)))
-
-        (log/debug "rethink-response" response)
         {:ok response})
 
       (catch ExceptionInfo ex
@@ -112,20 +116,18 @@
 ; ****************
 (s/defn ^:always-validate get-rooms :- [gs/Room]
   [connection]
-  (get-all connection :room))
+  (->> :room
+       (get-all connection)))
 
 (defn update-room [connection id diff flag]
   (update-item connection id diff :room flag))
 
-
 ; Light
 ; ****************
-
 (s/defn ^:always-validate get-lights :- [gs/Light]
   [connection]
   (->> (get-all connection :light)
-       (map #(dissoc % :created :updated))
-       (map #(gs/coerce-light %))))
+       (map #(dissoc % :created :updated))))
 
 (defn create-light [connection light]
   (create-item connection :light light))
@@ -156,16 +158,13 @@
 (s/defn ^:always-validate get-scenes :- [gs/Scene]
   [connection]
   (->> :scene
-       (get-all connection)
-       (map #(gs/coerce-scene %))))
+       (get-all connection)))
 
 (defn update-scene [connection id diff flag]
   (update-item connection id diff :scene flag))
 
 (defn trash-scene [connection id]
   (trash-item connection :scene id))
-
-
 
 ; Color
 ; ****************
@@ -181,8 +180,9 @@
 ; Signal
 ; ****************
 (defn get-signals [connection]
-  (->> (get-all connection :signal)
-       (map #(select-keys % [:accepted :description :id :name :type]))))
+  (->> :signal
+       (get-all connection)
+       (map #(dissoc % :created :updated))))
 
 (defn signal-ids [connection]
   (->> (get-all connection :signal)
@@ -205,7 +205,7 @@
 (defn all-users-as-map
   "get all users from the database. Instead of returning just an array, a map in which the usernames are the keys is returned"
   [connection]
-  (table-map connection "user" :username))
+  (table-map connection :user :username))
 
 ;//   _   _                 _        _          _        _
 ;//  | |_| |_  ___  __ __ __ |_  ___| |___   ___ |_  ___| |__ __ _ _ _  __ _

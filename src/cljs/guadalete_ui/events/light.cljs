@@ -1,14 +1,13 @@
 (ns guadalete-ui.events.light
   (:require
     [re-frame.core :refer [dispatch def-event def-event-fx def-fx]]
-    [guadalete-ui.util :refer [pretty]]
+    [guadalete-ui.util :refer [pretty validate!]]
     [differ.core :as differ]
     [guadalete-ui.console :as log]
     [guadalete-ui.dmx :as dmx]
     [guadalete-ui.util.dickens :as dickens]
     [schema.core :as s]
     [guadalete-ui.schema :as gs]))
-
 
 ;//   _        _
 ;//  | |_  ___| |_ __ ___ _ _ ___
@@ -151,14 +150,6 @@
       {:db    (assoc db :modal data)
        :modal [:show {}]})))
 
-(def-event-fx
-  :light/approve
-  (fn [{:keys [db]} [_ light-id]]
-    (let [data {:item-id    light-id
-                :ilk        :light
-                :modal-type :light}]
-      {:db    (assoc db :modal data)
-       :modal [:show {}]})))
 
 ;(def-event-fx
 ;  :mouse/double-click
@@ -173,18 +164,78 @@
 ;      {:db    (assoc db :modal data)
 ;       :modal :show})))
 
+(s/defn ^:always-validate update-dmx :- gs/Light
+  [db :- gs/DB
+   original :- gs/Light
+   update :- gs/Light]
+  (if (= :dmx (:transport original))
+    (let [assignables (sort (into [] (dmx/assignable db)))
+          channels (update-channels update original assignables)]
+      (assoc update :channels channels))
+    ;; if no DMX light, do nothin'
+    update))
+
+(s/defn ^:always-validate update-mqtt :- gs/Light
+  [db :- gs/DB
+   original :- gs/Light
+   update :- gs/Light]
+  (log/debug "update-mqtt")
+  update)
+
+(s/defn ^:always-validate update-transport :- gs/Light
+  [db :- gs/DB
+   original :- gs/Light
+   update :- gs/Light]
+  (log/debug "update-dmx")
+  (if (= :dmx (:transport original))
+    (update-dmx db original update)
+    (update-mqtt db original update)))
+
 ;; UPDATE
 ;; ********************************
+(def default-color
+  {:color {:brightness   0
+           :hue          0
+           :saturatation 0}})
+
 (def-event-fx
   :light/update
   (fn [{:keys [db]} [_ update]]
-    (let [original (get-in db [:light (:id update)])
-          assignables (sort (into [] (dmx/assignable db)))
-          channels (update-channels update original assignables)
-          update* (assoc update :channels channels)
-          patch (differ/diff original update*)]
-      {:db    (assoc-in db [:light (:id update)] update*)
-       :sente (update-light-effect (:id update) patch :patch)})))
+    (log/debug ":light/update")
+    (log/debug "\t light" update)
+    (let [original-light (get-in db [:light (:id update)])
+          light-update (update-transport db original-light update)
+
+          light-update (merge default-color light-update)
+
+          light-patch (differ/diff original-light light-update)
+
+          ;; in case of mqtt lights the root with which they are associated might change
+          room-changed? (not= (:room-id original-light) (:room-id light-update))
+          original-room (get-in db [:room (:room-id original-light)])
+          update-room (get-in db [:room (:room-id light-update)])
+
+          original-room* (when (and room-changed? (not (nil? original-room)))
+                           (assoc original-room :light
+                                                (->> (:light original-room)
+                                                     (remove #(= % (:id update)))
+                                                     (into []))))
+
+          update-room* (when (and room-changed? (not (nil? update-room)))
+                         (assoc update-room :light (conj (:light update-room) (:id update))))
+
+          original-room-dispatch (if (not (nil? original-room*))
+                                   [:room/update {:new original-room* :old original-room}])
+          update-room-dispatch (if (not (nil? update-room*))
+                                 [:room/update {:new update-room* :old update-room}])
+
+          room-dispatches (->> [original-room-dispatch update-room-dispatch]
+                               (remove #(nil? %))
+                               (into ()))]
+
+      {:db       (assoc-in db [:light (:id update)] light-update)
+       :sente    (update-light-effect (:id update) light-patch :patch)
+       :dispatch room-dispatches})))
 
 (def-event-fx
   ;; Handler called after the light has been updated sucessfully

@@ -22,7 +22,7 @@
        [:h3.margins.margin-top "dash…"]
        (when (> (count @unconfirmed-lights-rctn) 0)
          [:div#unconfirmed-lights
-          [:h6.margins
+          [:p.small.side-margins
            (if (= (count @unconfirmed-lights-rctn) 1)
              "A new light has been found:"
              "New lights have been found:")]
@@ -30,8 +30,8 @@
           (doall
             (for [light @unconfirmed-lights-rctn]
               ^{:key (str "s-" (:id light))}
-              [:div.ui.message.margins
-               {:on-click #(dispatch [:light/approve (:id light)])}
+              [:div.ui.message.side-margins.no-top-margin
+               {:on-click #(dispatch [:light/edit (:id light)])}
                [:div.content.flex-row-container
                 [:div.align.right.margin-right
                  [:ul
@@ -41,7 +41,7 @@
                   [:li (:name light)]]]
                 [:div.align.right.flexing
                  [:button.ui.mini.circular.icon.button.item
-                  {:on-click #(dispatch [:light/approve (:id light)])}
+                  {:on-click #(dispatch [:light/edit (:id light)])}
                   [:i.mini.edit.icon]]]]]))])])))
 
 ;// ROOM

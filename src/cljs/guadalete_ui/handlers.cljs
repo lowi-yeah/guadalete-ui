@@ -11,7 +11,7 @@
     [cljs-time.core :as time :refer [seconds ago]]
     [cljs-time.coerce :refer [to-long]]
     [cognitect.transit :as transit]
-    [guadalete-ui.schema.core :refer [DB]]
+    [guadalete-ui.schema :refer [DB]]
     [guadalete-ui.console :as log]
     [guadalete-ui.socket :refer [chsk-send! chsk-state chsk-reconnect!]]
     [guadalete-ui.pd.util :refer [modal-room modal-scene modal-node]]

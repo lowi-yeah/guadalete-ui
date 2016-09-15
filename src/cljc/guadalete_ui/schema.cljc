@@ -2,30 +2,22 @@
   #?@(:cljs [(:require
                [schema.utils :as utils]
                [schema.core :as s]
-               [schema.coerce :as coerce])
+               [schema.coerce :as coerce]
+               [taoensso.timbre :as log])
              (:require-macros
                [schema.macros :as macros])])
   #?(:clj
      (:require [schema.utils :as utils]
                [schema.core :as s]
                [schema.coerce :as coerce]
-               [schema.macros :as macros])))
+               [schema.macros :as macros]
+               [taoensso.timbre :as log])))
 
 (s/defschema Vec2
   (s/conditional
     map? {:x s/Num
           :y s/Num}
     :else [s/Num]))
-
-(s/defschema MouseEventData
-  {:id                         s/Str
-   :scene-id                   s/Str
-   :room-id                    s/Str
-   :node-id                    s/Str
-   :type                       (s/enum :node :link :pd :flow)
-   :position                   Vec2
-   (s/optional-key :buttons)   s/Num
-   (s/optional-key :modifiers) s/Any})
 
 
 ;//   _ _      _
@@ -201,6 +193,8 @@
    :type                     (s/enum :v :sv :hsv)
    :transport                (s/eq :mqtt)
    :accepted?                s/Bool
+   (s/optional-key :created) s/Any
+   (s/optional-key :updated) s/Any
    (s/optional-key :color)   {:brightness                  s/Num
                               (s/optional-key :saturation) s/Num
                               (s/optional-key :hue)        s/Num}})
@@ -233,9 +227,13 @@
   {s/Str Scene})
 
 (s/defschema Signal
-  {:name s/Str
-   :type s/Str
-   :id   s/Str})
+  {:name                     s/Str
+   :type                     s/Str
+   :id                       s/Str
+   :accepted?                s/Bool
+   (s/optional-key :created) s/Any
+   (s/optional-key :updated) s/Any
+   (s/optional-key :at)      s/Any})
 
 (s/defschema Signals
   {s/Str Signal})
@@ -328,6 +326,37 @@
    :tmp                     TemporaryDB
    })
 
+
+
+;//                                           _
+;//   _ __  ___ _  _ ______   _____ _____ _ _| |_ ___
+;//  | '  \/ _ \ || (_-< -_) / -_) V / -_) ' \  _(_-<
+;//  |_|_|_\___/\_,_/__\___| \___|\_/\___|_||_\__/__/
+;//
+(def MouseEventData
+  {:room-id  s/Str
+   :scene-id s/Str
+   :node-id  s/Str
+   :type     (s/enum :pd
+                     :default-node
+                     :outlet/color
+                     :node/light
+                     :node/color
+                     :node/signal
+                     :inlet/color
+                     :inlet/hue
+                     :inlet/brightness
+                     :inlet/saturation
+                     )
+   :position Vec2
+   :layout   s/Any
+   :buttons  s/Int
+   })
+
+
+
+
+
 (s/defschema Effect
   {:db                        DB
    (s/optional-key :sente)    s/Any
@@ -358,6 +387,21 @@
   "Definition for a patch supplied when synchronizing with the backend"
   {(s/enum :ok :error) s/Any})
 
+
+;//
+;//   _  _ ______ _ _ ___
+;//  | || (_-< -_) '_(_-<
+;//   \_,_/__\___|_| /__/
+;//
+(s/defschema UserRole
+  (s/enum :user :admin))
+
+(s/defschema User
+  {:id       s/Str
+   :password s/Str
+   :roles    [UserRole]
+   :username s/Str})
+
 ;//                     _
 ;//   __ ___ ___ _ _ __(_)___ _ _
 ;//  / _/ _ \ -_) '_/ _| / _ \ ' \
@@ -366,8 +410,18 @@
 (def parse-db
   (coerce/coercer DB coerce/json-coercion-matcher))
 
-(def coerce-light
-  (coerce/coercer Light coerce/json-coercion-matcher))
+(defn coerce!
+  [item type]
+  (condp = type
+    :user ((coerce/coercer User coerce/json-coercion-matcher) item)
+    :room ((coerce/coercer Room coerce/json-coercion-matcher) item)
+    :light ((coerce/coercer Light coerce/json-coercion-matcher) item)
+    :scene ((coerce/coercer Scene coerce/json-coercion-matcher) item)
+    :signal ((coerce/coercer Signal coerce/json-coercion-matcher) item)
+    :color ((coerce/coercer Color coerce/json-coercion-matcher) item)
+    (log/error (str "Cannot coerce item: " item ". Dunno item type: " type))))
 
-(def coerce-scene
-  (coerce/coercer Scene coerce/json-coercion-matcher))
+(defn coerce-all
+  [coll type]
+  (->> coll
+       (map #(coerce! % type))))

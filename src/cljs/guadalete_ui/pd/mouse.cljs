@@ -6,7 +6,7 @@
             [re-frame.core :refer [dispatch]]
             [thi.ng.geom.core :as g]
             [thi.ng.geom.core.vector :refer [vec2]]
-            [guadalete-ui.schema.core :refer [DB MouseEventData]]
+            [guadalete-ui.schema :refer [DB MouseEventData]]
             [guadalete-ui.util :refer [pretty kw* vec->map in?]]
             [guadalete-ui.console :as log]
             [guadalete-ui.pd.util :refer [pd-screen-offset]]))

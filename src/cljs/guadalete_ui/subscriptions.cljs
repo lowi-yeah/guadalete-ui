@@ -251,7 +251,7 @@
   (fn [db _]
     (->> (:light db)
          (vals)
-         ;(filter #(not (:accepted? %)))
+         (filter #(not (:accepted? %)))
          (into []))))
 
 ;//           _

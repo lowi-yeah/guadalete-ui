@@ -70,9 +70,12 @@
 ; ****************
 (defmethod event-handler :sync/role
   [{:keys [ring-req ?reply-fn]}]
+  (log/debug ":sync/role")
   (when-let [role (session-role ring-req)]
+    (log/debug ":sync/role")
     (when ?reply-fn
-      (?reply-fn {:role role}))))
+      (?reply-fn {:role role})
+      )))
 
 ; ROOM
 ; ****************

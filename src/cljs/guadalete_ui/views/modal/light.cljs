@@ -194,6 +194,7 @@
           [:div.content.ui.form
 
            [:h3.centred "Edit light"]
+           [:pre.code (pretty @light-rctn)]
 
            ;; name
            ;; ----------------
