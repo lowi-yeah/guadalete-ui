@@ -27,6 +27,7 @@
          type :- s/Keyword]
         (-> (r/table type)
             (r/run connection)
+            (prune-all)
             (defaults/all type)
             (gs/coerce-all type)))
 
@@ -37,6 +38,7 @@
         (-> (r/table type)
             (r/get id)
             (r/run connection)
+            (prune)
             (defaults/one type)
             (gs/coerce! type)))
 
@@ -70,8 +72,8 @@
                              :patch (differ/patch item diff)
                              :replace diff
                              (str "unexpected flag, \"" (str flag) \"))
-                      (gs/coerce! type)
-                      (prune))]
+                      (prune)
+                      (gs/coerce! type))]
              (log/debug "update-item" type)
              (log/debug (pretty patch))
              (try

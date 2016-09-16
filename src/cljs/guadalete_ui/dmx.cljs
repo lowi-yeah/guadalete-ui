@@ -17,13 +17,27 @@
             result (-> (difference all-dmx assigned-dmx)
                        (into [])
                        (sort))]
-           result)
-      )
+           result))
 
 (defn assignable [db]
       (let [lights (vals (:light db))
-            assigned-dmx (set (flatten (into [] (map #(:channels %)) lights)))
-            new-light-dmx (set (flatten (into [] (:channels (:new/light db)))))
+
+            ;assigned-dmx (set (flatten (into [] (map #(:channels %)) lights)))
+            assigned-dmx (->> (:light db)
+                              (vals)
+                              (map (fn [light]
+                                       (->> (:channels light)
+                                            (map #(:dmx %))
+                                            (into []))))
+                              (flatten)
+                              (sort))
+
+
+            ;(set (flatten (into [] (map #(:channels %)))))
+
+            _ (log/debug "assigned-dmx" assigned-dmx)
+
+
             all-dmx (set (range 1 513))
-            result (difference all-dmx assigned-dmx new-light-dmx)]
-           result))
+            result (difference all-dmx assigned-dmx)]
+           (sort result)))

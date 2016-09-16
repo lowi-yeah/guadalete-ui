@@ -26,6 +26,15 @@
                    :hsv (str "[ h: " h ", s: " s ", v: " b " ]")
                    (str "Unknown color type: " (:type light)))))
 
+(defn- channels-string
+       "Returns a human readable representation of the DMX channels"
+       [light]
+       (->> (:channels light)
+            (map #(str (name (:name %)) ": " (:dmx %)))
+            (into [])
+            (clojure.string/join ", ")))
+
+
 (defn light-segment
       "Segement for rendering the light pane of a room."
       [room-rctn]
@@ -54,7 +63,7 @@
                         [:td.color
                          [color-indicator light]
                          [:span (color-string light)]]
-                        [:td (str (:channels light))]
+                        [:td (channels-string light)]
                         ]
                        ))
                 (do

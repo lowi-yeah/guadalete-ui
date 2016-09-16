@@ -14,12 +14,12 @@
 (def-sub
   :user/role
   (fn [db _]
-    (:user/role db)))
+      (:user/role db)))
 
 (def-sub
   :db/loading?
   (fn [db _]
-    (:loading? db)))
+      (:loading? db)))
 
 ;//       _
 ;//  __ ___)_____ __ __
@@ -42,68 +42,68 @@
 (def-sub
   :view/panel
   (fn [db _]
-    (get-in db [:view :panel])))
+      (get-in db [:view :panel])))
 
 (def-sub
   :view/section
   (fn [db _]
-    (get-in db [:view :section])))
+      (get-in db [:view :section])))
 
 (def-sub
   :view/segment
   (fn [db _]
-    (get-in db [:view :segment])))
+      (get-in db [:view :segment])))
 
 
 (defn- name*
-  "similar to clojure.core/name, but accepting nil values."
-  [keyword-or-nil]
-  (if (nil? keyword-or-nil)
-    nil
-    (name keyword-or-nil)))
+       "similar to clojure.core/name, but accepting nil values."
+       [keyword-or-nil]
+       (if (nil? keyword-or-nil)
+         nil
+         (name keyword-or-nil)))
 
 ;Dynamic subscriptions need to pass a fn which takes app-db, the static vector, and the dereffed dynamic values.
 (def-sub
   :view/room-id
   (fn [db _]
-    (-> db
-        (get-in [:view :room-id])
-        (name*))))
+      (-> db
+          (get-in [:view :room-id])
+          (name*))))
 
 (def-sub
   :view/room
   (fn [db [_ {:keys [assemble?]}]]
-    (let [room-id-rctn (subscribe [:view/room-id])
-          room (get-in db [:room @room-id-rctn])]
-      (if assemble?
-        (assemble-item :room db room)
-        room))))
+      (let [room-id-rctn (subscribe [:view/room-id])
+            room (get-in db [:room @room-id-rctn])]
+           (if assemble?
+             (assemble-item :room db room)
+             room))))
 
 
 (def-sub
   :view/scene-id
   (fn [db _]
-    (-> db
-        (get-in [:view :scene-id])
-        (name*))))
+      (-> db
+          (get-in [:view :scene-id])
+          (name*))))
 
 (def-sub
   :view/scene
   (fn [db _]
-    (let [scene-id-rctn (subscribe [:view/scene-id])
-          scene (get-in db [:scene @scene-id-rctn])]
-      scene)))
+      (let [scene-id-rctn (subscribe [:view/scene-id])
+            scene (get-in db [:scene @scene-id-rctn])]
+           scene)))
 
 (def-sub
   :view/pd-dimensions
   (fn [db _]
-    (let [dimensions (get-in db [:view :dimensions])
-          view (vec2 (:view dimensions))
-          header (vec2 (:header dimensions))
-          offsets (vec2 144 24)
-          width (max 0 (- (:x view) (:x offsets)))
-          height (max 0 (- (:y view) (:y header) (:y offsets)))]
-      (vec2 width height))))
+      (let [dimensions (get-in db [:view :dimensions])
+            view (vec2 (:view dimensions))
+            header (vec2 (:header dimensions))
+            offsets (vec2 144 24)
+            width (max 0 (- (:x view) (:x offsets)))
+            height (max 0 (- (:y view) (:y header) (:y offsets)))]
+           (vec2 width height))))
 
 
 
@@ -115,12 +115,12 @@
 (def-sub
   :rooms
   (fn [db _]
-    (vals (:room db))))
+      (vals (:room db))))
 
 (def-sub
   :room
   (fn [db [_ room-id]]
-    (get-in db [:room room-id])))
+      (get-in db [:room room-id])))
 
 ;//
 ;//   _____ ___ _ _  ___
@@ -130,14 +130,14 @@
 (def-sub
   :scene
   (fn [db [_ scene-id]]
-    (get-in db [:scene scene-id])))
+      (get-in db [:scene scene-id])))
 
 (def-sub
   :scene/sibling-ids
   (fn [db [_ scene-id]]
-    (let [scene (get-in db [:scene scene-id])
-          scene-ids (get-in db [:room (:room-id scene) :scene])]
-      (into [] (remove #(= scene-id %) scene-ids)))))
+      (let [scene (get-in db [:scene scene-id])
+            scene-ids (get-in db [:room (:room-id scene) :scene])]
+           (into [] (remove #(= scene-id %) scene-ids)))))
 
 
 ;//      _                _
@@ -148,8 +148,8 @@
 (def-sub
   :signal/all
   (fn [db _]
-    (->> (:signal db)
-         (remove (fn [s] (nil? s))))))
+      (->> (:signal db)
+           (remove (fn [s] (nil? s))))))
 
 ;//      _
 ;//   __| |_ __ __ __
@@ -159,19 +159,19 @@
 (def-sub
   :dmx/available
   (fn [db _]
-    (dmx/assignable db)))
+      (dmx/assignable db)))
 
 (def-sub
   :dmx/all
   (fn [db _]
-    (dmx/all db)))
+      (dmx/all db)))
 
 (def-sub
   :selected
   (fn [db _]
-    (let [nodes (get-in db [:scene "scene2" :nodes])
-          selected-nodes (filter (fn [[k v]] (:selected v)) nodes)]
-      selected-nodes)))
+      (let [nodes (get-in db [:scene "scene2" :nodes])
+            selected-nodes (filter (fn [[k v]] (:selected v)) nodes)]
+           selected-nodes)))
 
 ;//                _      _
 ;//   _ __  ___ __| |__ _| |
@@ -186,46 +186,46 @@
 (def-sub
   :modal/item-dynamic
   (fn modal-item-dynamic [db _ [data]]
-    (let [id (:item-id data)
-          ilk (:ilk data)]
-      (get-in db [ilk id]))))
+      (let [id (:item-id data)
+            ilk (:ilk data)]
+           (get-in db [ilk id]))))
 
 (def-sub
   :modal/items-dynamic
   (fn modal-item-dynamic [db _ [data]]
-    (let [ilk (:ilk data)]
-      (get db ilk))))
+      (let [ilk (:ilk data)]
+           (get db ilk))))
 
 (def-sub
   :modal/node-dynamic
   (fn [db _ [{:keys [scene-id node-id]}]]
-    (get-in db [:scene scene-id :nodes (keyword node-id)])))
+      (get-in db [:scene scene-id :nodes (keyword node-id)])))
 
 (def-sub
   :modal/data
   (fn [db _]
-    (get db :modal)))
+      (get db :modal)))
 
 (def-sub
   :modal/item
   (fn [_ _]
-    (let [data-rctn (subscribe [:modal/data])
-          item-rctn (subscribe [:modal/item-dynamic] [data-rctn])]
-      @item-rctn)))
+      (let [data-rctn (subscribe [:modal/data])
+            item-rctn (subscribe [:modal/item-dynamic] [data-rctn])]
+           @item-rctn)))
 
 (def-sub
   :modal/node
   (fn [_ _]
-    (let [data-rctn (subscribe [:modal/data])
-          node-rctn (subscribe [:modal/node-dynamic] [data-rctn])]
-      @node-rctn)))
+      (let [data-rctn (subscribe [:modal/data])
+            node-rctn (subscribe [:modal/node-dynamic] [data-rctn])]
+           @node-rctn)))
 
 (def-sub
   :modal/same-ilk-items
   (fn [_ _]
-    (let [data-rctn (subscribe [:modal/data])
-          items-rctn (subscribe [:modal/items-dynamic] [data-rctn])]
-      @items-rctn)))
+      (let [data-rctn (subscribe [:modal/data])
+            items-rctn (subscribe [:modal/items-dynamic] [data-rctn])]
+           @items-rctn)))
 
 ;//   _ _      _   _
 ;//  | (_)__ _| |_| |_
@@ -235,24 +235,24 @@
 (def-sub
   :light/unused-by-scene
   (fn [db [_ room-id scene-id]]
-    (let [all-light-ids (into #{} (get-in db [:room room-id :light]))
-          used-light-ids (->>
-                           (get-in db [:scene scene-id :nodes])
-                           (filter (fn [[id l]] (= :light (kw* (:ilk l)))))
-                           (map (fn [[id l]] (:item-id l)))
-                           (filter (fn [id] id))
-                           (into #{}))
-          unused (difference all-light-ids used-light-ids)
-          lights (map #(get-in db [:light %]) unused)]
-      (into [] lights))))
+      (let [all-light-ids (into #{} (get-in db [:room room-id :light]))
+            used-light-ids (->>
+                             (get-in db [:scene scene-id :nodes])
+                             (filter (fn [[id l]] (= :light (kw* (:ilk l)))))
+                             (map (fn [[id l]] (:item-id l)))
+                             (filter (fn [id] id))
+                             (into #{}))
+            unused (difference all-light-ids used-light-ids)
+            lights (map #(get-in db [:light %]) unused)]
+           (into [] lights))))
 
 (def-sub
   :light/unconfirmed
   (fn [db _]
-    (->> (:light db)
-         (vals)
-         (filter #(not (:accepted? %)))
-         (into []))))
+      (->> (:light db)
+           (vals)
+           (filter #(and (= :mqtt (:transport %)) (not (:accepted? %))))
+           (into []))))
 
 ;//           _
 ;//   _ __ __| |
