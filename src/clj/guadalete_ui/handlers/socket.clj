@@ -7,7 +7,10 @@
     [guadalete-ui.helpers.session :refer [session-role session-uid]]
     [guadalete-ui.helpers.config :refer [load-config]]
     [guadalete-ui.handlers.database :as db]
-    [guadalete-ui.handlers.redis :as redis]))
+    [guadalete-ui.handlers.redis :as redis]
+    [guadalete-ui.helpers.util :refer [pretty validate!]]
+    [schema.core :as s]
+    [guadalete-ui.schema :as gs]))
 
 ; custom sente functions
 (def handshake-data-fn
@@ -72,10 +75,8 @@
   [{:keys [ring-req ?reply-fn]}]
   (log/debug ":sync/role")
   (when-let [role (session-role ring-req)]
-    (log/debug ":sync/role")
     (when ?reply-fn
-      (?reply-fn {:role role})
-      )))
+      (?reply-fn {:role role}))))
 
 ; ROOM
 ; ****************

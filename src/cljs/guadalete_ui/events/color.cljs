@@ -63,12 +63,12 @@
   "Helper function which updates the color type after a type-change."
   [color new-type]
   (let [color* (condp = (keyword new-type)
-                 :v (dissoc color :saturatation :hue)
+                 :v (dissoc color :saturation :hue)
                  :sv (-> color
                          (dissoc :hue)
-                         (assoc :saturatation (or (:saturatation color) 0)))
+                         (assoc :saturation (or (:saturation color) 0)))
                  :hsv (-> color
-                          (assoc :saturatation (or (:saturatation color) 0))
+                          (assoc :saturation (or (:saturation color) 0))
                           (assoc :hue (or (:hue color) 0)))
                  color)]
     (-> color*

@@ -73,6 +73,8 @@
 (defn- update-light-effect
   "Creates a sente-effect for syncing an existing light with the backend"
   [id diff flag]
+  (log/debug "making update-light-effect")
+  (log/debug "[id diff flag]" id diff flag)
   {:topic      :light/update
    :data       [id diff flag]
    :on-success [:success-light-update]
@@ -179,14 +181,19 @@
   [db :- gs/DB
    original :- gs/Light
    update :- gs/Light]
-  (log/debug "update-mqtt")
   update)
 
 (s/defn ^:always-validate update-transport :- gs/Light
+;(s/defn update-transport :- gs/Light
   [db :- gs/DB
    original :- gs/Light
    update :- gs/Light]
-  (log/debug "update-dmx")
+
+  ;(log/debug "update-transport")
+  ;(validate! gs/DB db)
+  ;(validate! gs/Light original)
+  ;(validate! gs/Light update)
+
   (if (= :dmx (:transport original))
     (update-dmx db original update)
     (update-mqtt db original update)))
@@ -196,17 +203,18 @@
 (def default-color
   {:color {:brightness   0
            :hue          0
-           :saturatation 0}})
+           :saturation 0}})
 
 (def-event-fx
   :light/update
   (fn [{:keys [db]} [_ update]]
-    (log/debug ":light/update")
-    (log/debug "\t light" update)
+
     (let [original-light (get-in db [:light (:id update)])
           light-update (update-transport db original-light update)
 
           light-update (merge default-color light-update)
+          _ (log/debug ":light/update")
+          _ (log/debug "\t light" light-update)
 
           light-patch (differ/diff original-light light-update)
 
