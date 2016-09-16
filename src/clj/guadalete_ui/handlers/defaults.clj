@@ -15,8 +15,7 @@
                :scene item
                :signal (merge {:name (:id item)} item)
                :color item
-               (log/error (str "Cannot make default values for item: " item ". Dunno item type: " type))
-               ))
+               (log/error (str "Cannot make default values for item: " item ". Dunno item type: " type))))
 
 (defn all
       [coll type]
