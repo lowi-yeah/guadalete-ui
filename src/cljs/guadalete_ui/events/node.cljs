@@ -94,7 +94,7 @@
                         (first))
 
           ;; reassemble
-          in-links* (update-links (-> color (get :color-type)) node-id in-links)
+          in-links* (update-links (-> color (get :type)) node-id in-links)
 
           out-link* (assoc out-link :index (count in-links*))
 

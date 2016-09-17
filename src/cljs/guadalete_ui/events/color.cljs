@@ -72,7 +72,7 @@
                           (assoc :hue (or (:hue color) 0)))
                  color)]
     (-> color*
-        (assoc :color-type (keyword new-type)))))
+        (assoc :type (keyword new-type)))))
 
 (def-event-fx
   :color/change-type

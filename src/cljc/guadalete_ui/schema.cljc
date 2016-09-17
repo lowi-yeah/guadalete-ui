@@ -245,7 +245,7 @@
 
 (s/defschema Color
              {:id         s/Str
-              :color-type (s/enum :v :sv :hsv)
+              :type (s/enum :v :sv :hsv)
               :brightness s/Num})
 
 (s/defschema Colors
@@ -415,7 +415,6 @@
 
 (defn coerce!
       [item type]
-      (log/debug "coerce item" item type)
       (condp = type
              :user ((coerce/coercer User coerce/json-coercion-matcher) item)
              :room ((coerce/coercer Room coerce/json-coercion-matcher) item)

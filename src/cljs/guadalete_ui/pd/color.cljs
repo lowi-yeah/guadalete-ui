@@ -253,13 +253,13 @@
 
 (defn make-color []
       {:id         (str (random-uuid))
-       :color-type :v
+       :type :v
        :brightness 0})
 
 (defn from-id [color-id]
       (let [[type h s v] (str/split color-id #" ")
             color (col/hsva (read-string h) (read-string s) (read-string v))]
-           {:color-type type :color color}))
+           {:type type :color color}))
 
 (defn color-widget
       "Renders a color widget for the given color-item.
@@ -269,7 +269,7 @@
       (pressumably the color-modal)"
       []
       (fn [color-item-rctn channel]
-          (condp = (kw* (:color-type @color-item-rctn))
+          (condp = (kw* (:type @color-item-rctn))
                  :v [white-widget (:color @color-item-rctn) channel]
                  :sv [two-tone-widget (:color @color-item-rctn) channel]
                  :hsv [rgb-widget (:color @color-item-rctn) channel]
@@ -284,6 +284,5 @@
             c (condp = type
                      :hsv (col/hsva h s v 1)
                      :sv (col/hsva 0.125 s v 1)
-                     :v (col/hsva 0.2 0.1 v 1)
-                     :default (col/hsva 0 0 1 1))]
+                     :v (col/hsva 0.2 0.1 v 1))]
            @(col/as-css c)))

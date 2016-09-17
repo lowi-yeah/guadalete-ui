@@ -202,7 +202,7 @@
                [:select.ui.dropdown
                 {:id        id
                  :name      "color"
-                 :value     (:color-type @item-rctn)
+                 :value     (:type @item-rctn)
                  :on-change #(color-type-change % @data-rctn)}
                 [:option {:value :v} "White"]
                 [:option {:value :sv} "Two tone white"]

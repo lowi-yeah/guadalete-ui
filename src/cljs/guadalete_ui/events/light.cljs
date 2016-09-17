@@ -253,7 +253,6 @@
 (def-event-fx
   :light/update
   (fn [{:keys [db]} [_ update]]
-
       (let [original-light (get-in db [:light (:id update)])
             update* (update-transport db original-light update)
             update* (update-color update*)

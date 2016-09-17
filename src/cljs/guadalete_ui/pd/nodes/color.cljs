@@ -37,15 +37,15 @@
                    :emits   :color
                    :name      "out"
                    :direction :out
-                   :index     (-> color (:color-type) (name) (count))}]
-        in-links (condp = (:color-type color)
+                   :index     (-> color (:type) (name) (count))}]
+        in-links (condp = (:type color)
                    :v [(color-channel-link :brightness 0)]
                    :sv [(color-channel-link :brightness 0)
                         (color-channel-link :saturation 1)]
                    :hsv [(color-channel-link :brightness 0)
                          (color-channel-link :saturation 1)
                          (color-channel-link :hue 2)]
-                   :default (log/error (str "Unknown color type " (:color-type color) ". Must be either :v :sv or :hsv")))]
+                   :default (log/error (str "Unknown color type " (:type color) ". Must be either :v :sv or :hsv")))]
     (concat in-links out-link)))
 
 ;//                   _
@@ -58,7 +58,7 @@
   (let [
         id (:id node)
         position (:position node)
-        height (* line-height (+ 3 (count (name (:color-type item)))))
+        height (* line-height (+ 3 (count (name (:type item)))))
         ;hackedy hack:
         ;to make the rendering a bit nicer, take the brightness value and set it as the alpha channel
         ;that way not a black splot gets rendered when the birightness is low, but rather a transparent one
@@ -76,7 +76,7 @@
       {:class "bg"
        :rx    1}]
 
-     [node-title (str "Color: " (:color-type item))]
+     [node-title (str "Color: " (:type item))]
 
      [svg/rect (vec2 0 line-height) node-width (/ line-height 2)
       {:fill  hacked-color
@@ -97,7 +97,7 @@
 (s/defn ^:always-validate make :- gs/Color
   []
   {:id         (str (random-uuid))
-   :color-type :v
+   :type :v
    :brightness 0})
 
 (s/defn ^:always-validate make-node :- gs/Node
