@@ -29,6 +29,11 @@ pre, code, input{
   font-family: "Monofur";
   text-align: left;
   // font-family: "AvenirNext";
+
+  &.tiny {
+    font-family: Silkscreen, monospace;
+    font-size: 0.6rem;
+  }
 }
 
 

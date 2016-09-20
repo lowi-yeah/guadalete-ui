@@ -205,7 +205,6 @@
                    [:div.content.ui.form
 
                     [:h3.centred "Edit light"]
-                    [:pre.code (pretty @light-rctn)]
 
                     ;; name
                     ;; ----------------
@@ -238,8 +237,9 @@
                       "trash"]
 
                      [:div.ui.button.approve
-                      {:on-click #(dispatch [:light/ok (:id @light-rctn)])}
                       [:i.ui.check.icon]
                       "ok"]]
+
+                    [:pre.tiny.code (pretty @light-rctn)]
                     ]
                    ]))}))

@@ -120,8 +120,6 @@
       :current (let [scene-id (-> db
                                   (get-in [:room room-id :scene])
                                   (first))]
-                 (log/debug "room id" room-id)
-                 (log/debug "scene-id" scene-id)
                  (-> db
                      (assoc-in [:view :section] :room)
                      (assoc-in [:view :room-id] (keyword room-id))

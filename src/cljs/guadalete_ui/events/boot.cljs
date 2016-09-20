@@ -112,7 +112,6 @@
               :config config)
         ; coerce the schema
         db** (gs/parse-db db*)]
-    (log/debug "success-sync-state*" db**)
     db**))
 
 (def-event-fx

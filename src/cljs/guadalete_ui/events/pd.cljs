@@ -5,7 +5,9 @@
     [thi.ng.geom.core.vector :refer [vec2]]
     [guadalete-ui.util :refer [pretty kw* vec->map offset-position in?]]
     [guadalete-ui.console :as log]
-    [guadalete-ui.events.scene :as scene]))
+    [guadalete-ui.events.scene :as scene]
+    [schema.core :as s]
+    [guadalete-ui.schema :as gs]))
 
 (def-event
   :pd/mouse-down

@@ -7,12 +7,8 @@
     [guadalete-ui.util :refer [pretty validate! vec->map]]
     [guadalete-ui.pd.nodes.link :as link]
     [guadalete-ui.console :as log]
-
-    ; schema
-    [schema.core :as s]
-    [guadalete-ui.schema :as gs]
     [guadalete-ui.events.scene :as scene]
-
+    ; schema
     [schema.core :as s]
     [guadalete-ui.schema :as gs]))
 
