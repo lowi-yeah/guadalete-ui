@@ -104,7 +104,7 @@
 (s/defschema NodeData
              {:room-id  s/Str
               :scene-id s/Str
-              :ilk      (s/enum :signal :color :mixer :light)
+              :ilk      (s/enum :constant :signal :color :mixer :light)
               :position Vec2})
 
 (s/defschema NodeReference
@@ -115,7 +115,7 @@
 
 (s/defschema Node
              {:id       s/Str
-              :ilk      (s/enum :signal :color :mixer :light)
+              :ilk      (s/enum :constant :signal :color :mixer :light)
               :item-id  s/Str
               :position Vec2
               :links    [Link]})
@@ -251,6 +251,13 @@
 (s/defschema Colors
              {s/Str Color})
 
+(s/defschema Constant
+             {:id    s/Str
+              :value s/Num})
+
+(s/defschema Constants
+             {s/Str Constant})
+
 (s/defschema Mixer
              {:id       s/Str
               :mixin-fn s/Keyword})
@@ -265,8 +272,8 @@
 ;; configuration data for the ui
 (s/defschema Modal
              {:item-id    s/Str
-              :ilk        (s/enum :light :color :mixer :signal)
-              :modal-type (s/enum :light :color :mixer :signal)})
+              :ilk        (s/enum :constant :light :color :mixer :signal)
+              :modal-type (s/enum :constant :light :color :mixer :signal)})
 
 
 ;; description of the current ui-view
@@ -311,6 +318,7 @@
               (s/optional-key :color)  Colors
               (s/optional-key :mixer)  Mixers
               (s/optional-key :signal) Signals
+              (s/optional-key :constant) Constants
 
               ;; flag indicating whether or not the (sente/websocket) connection with the server has been established
               :ws/connected?           s/Bool
@@ -425,6 +433,7 @@
              :scene ((coerce/coercer Scene coerce/json-coercion-matcher) item)
              :signal ((coerce/coercer Signal coerce/json-coercion-matcher) item)
              :color ((coerce/coercer Color coerce/json-coercion-matcher) item)
+             :constant ((coerce/coercer Constant coerce/json-coercion-matcher) item)
              (log/error (str "Cannot coerce item: " item ". Dunno item type: " type))))
 
 (defn coerce-all

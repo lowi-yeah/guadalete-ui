@@ -75,7 +75,7 @@
                       (prune)
                       (gs/coerce! type))]
              (log/debug "update-item" type)
-             (log/debug (pretty patch))
+             (log/debug patch)
              (try
                (let [result (-> (r/table type)
                                 (r/get id)
@@ -238,6 +238,11 @@
 (defn create-mixer [connection mixer]
       (create-item connection :mixer mixer))
 
+; Constants
+; ****************
+(defn get-constants [connection]
+      (get-all connection :constant))
+
 
 ;//
 ;//   _  _ ______ _ _ ___
@@ -261,11 +266,16 @@
             lights (get-lights connection)
             scenes (get-scenes connection)
             colors (get-colors connection)
+            constants (get-constants connection)
             signals (get-signals connection)
             mixers (get-mixers connection)]
-           {:room   rooms
-            :light  lights
-            :scene  scenes
-            :color  colors
-            :signal signals
-            :mixer  mixers}))
+
+
+           (log/debug "DB/all constants" (into [] constants))
+           {:room     rooms
+            :light    lights
+            :scene    scenes
+            :color    colors
+            :signal   signals
+            :mixer    mixers
+            :constant constants}))

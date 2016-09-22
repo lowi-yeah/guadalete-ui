@@ -66,6 +66,7 @@
 (defn all! []
   (let [{:keys [host port auth-key db]} (:rethinkdb (load-config))]
     (with-open [conn (r/connect :host host :port port :auth-key auth-key :db db)]
+      (truncate conn "constant")
       (truncate conn "light")
       (truncate conn "color")
       (truncate conn "mixer")

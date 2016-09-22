@@ -4,8 +4,6 @@
       [schema.core :as s]
       [guadalete-ui.schema :as gs]))
 
-
-
 (s/defn one
         [item type]
         (condp = type
@@ -15,6 +13,7 @@
                :scene item
                :signal (merge {:name (:id item)} item)
                :color item
+               :constant item
                (log/error (str "Cannot make default values for item: " item ". Dunno item type: " type))))
 
 (defn all

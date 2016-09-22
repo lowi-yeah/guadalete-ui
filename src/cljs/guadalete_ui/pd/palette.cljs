@@ -81,6 +81,14 @@
       [:div#palette
        [:div.ui.list
 
+        ; VALUE
+        ; ****************
+        [:div#palette-constant.item
+         [:button.ui.circular.icon.button
+          {:on-drag-start #(start-drag % (:id @room-rctn) (:id @scene-rctn) :constant)
+           :draggable     true}
+          [:i.icon.gdlt.constant]]]
+
         ; SIGNAL
         ; ****************
         [:div#palette-signal.item

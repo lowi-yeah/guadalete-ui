@@ -124,8 +124,6 @@ i.icon {
     // background-repeat: no-repeat;
     // background-position: center;
 
-
-
     &:before {
       content: "" !important;
     }
@@ -136,6 +134,10 @@ i.icon {
 
     &.signal {
       background-image: url(#{$image-path}/signal-icon.svg);
+    }
+
+    &.constant {
+      background-image: url(#{$image-path}/constant-icon.svg);
     }
 
     &.mixer {
