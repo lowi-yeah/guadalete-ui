@@ -1,104 +1,46 @@
-{
-  "name": "w00t",
-  "id": "w00t",
-  "light": [],
-  "scene": [
+[
+  {
+    :
+  id
+  "kon-aba4dd41-705b-4208-9b00-162b9300694f",
+  :
+  ilk
+  :
+  constant,
+  :
+  item
+  -
+  id
+  "dd54f894-91ff-4d93-b62b-e94cf311eb57",
+  :
+  position
+  {
+    :
+  x
+  453,
+  :
+  y
+  118
+  },
+  :
+  links
+  [
     {
-      "id": "fix",
-      "name": "fix",
-      "room-id": "w00t",
-      "mode": "none",
-      "translation": {
-        "x": 49,
-        "y": 214
-      },
-      "nodes": {
-        "sgnl-35690daf-0e17-40eb-b749-3b6b3a8389e2": {
-          "id": "sgnl-35690daf-0e17-40eb-b749-3b6b3a8389e2",
-          "ilk": "signal",
-          "item-id": "slowsine",
-          "position": {
-            "x": 385,
-            "y": -161
-          },
-          "links": [
-            {
-              "id": "out",
-              "accepts": "value",
-              "index": 0,
-              "direction": "out"
-            }
-          ]
-        },
-        "sgnl-44fd99e3-8654-4bab-9dd4-1ae5e1d3f0fe": {
-          "id": "sgnl-44fd99e3-8654-4bab-9dd4-1ae5e1d3f0fe",
-          "ilk": "signal",
-          "item-id": "quicksine",
-          "position": {
-            "x": 238,
-            "y": -30
-          },
-          "links": [
-            {
-              "id": "out",
-              "accepts": "value",
-              "index": 0,
-              "direction": "out"
-            }
-          ]
-        },
-        "sgnl-10c6e918-c2cc-4841-a54f-b80a1586690b": {
-          "id": "sgnl-10c6e918-c2cc-4841-a54f-b80a1586690b",
-          "ilk": "signal",
-          "item-id": "sine",
-          "position": {
-            "x": 57,
-            "y": 118
-          },
-          "links": [
-            {
-              "id": "out",
-              "accepts": "value",
-              "index": 0,
-              "direction": "out"
-            }
-          ]
-        }
-      },
-      "flows": {},
-      "on?": false
-    },
-    {
-      "id": "hello",
-      "name": "hello",
-      "room-id": "w00t",
-      "mode": "none",
-      "translation": {
-        "x": 0,
-        "y": 0
-      },
-      "nodes": {
-        "sgnl-5601ec26-05f9-4b37-af4f-db9e39a42d32": {
-          "id": "sgnl-5601ec26-05f9-4b37-af4f-db9e39a42d32",
-          "ilk": "signal",
-          "item-id": "quicksine",
-          "position": {
-            "x": 22,
-            "y": 40
-          },
-          "links": [
-            {
-              "id": "out",
-              "accepts": "value",
-              "index": 0,
-              "direction": "out"
-            }
-          ]
-        }
-      },
-      "flows": {},
-      "on?": false
+      :
+    id
+    "out",
+    :
+    emits
+    :
+    value,
+    :
+    direction
+    :
+    out,
+    :
+    index
+    0
     }
-  ],
-  "sensor": []
+  ]
 }
+]

@@ -420,6 +420,12 @@ hr {
   .content {
     padding-top: 0;
     padding-bottom: 0;
+    #pd-constant-modal {
+      .value { 
+        text-align: right;
+        font-family: Monofur, monospace;
+      }
+    }
   }
 }
 

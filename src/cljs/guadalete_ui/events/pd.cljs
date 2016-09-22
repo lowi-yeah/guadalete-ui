@@ -110,12 +110,6 @@
                             (remove (fn [[id _]] (in? selected-node-ids (name id))))
                             (into {}))
 
-          _ (log/debug "scene-flows" (into {} (map #(identity %) scene-flows)))
-          _ (log/debug "scene-flows*" (into {} (map #(identity %) scene-flows*)))
-
-          ;_ (log/debug "scene-flows" (into [] (map #(first %) scene-flows)))
-          ;_ (log/debug "scene-flows*" (into [] (map #(first %) scene-flows*)))
-
           _ (log/debug "scene-nodes" (into [] (map #(first %) scene-nodes)))
           _ (log/debug "scene-nodes*" (into [] (map #(first %) scene-nodes*)))
 

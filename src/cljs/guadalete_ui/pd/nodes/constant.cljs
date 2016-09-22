@@ -24,7 +24,6 @@
 ;//
 (s/defn render-node
         [scene-id node item selected?]
-        (log/debug "render-node: constant" node item)
         (let [
               id (:id node)
               position (:position node)

@@ -5,7 +5,6 @@
     [thi.ng.geom.core.vector :refer [vec2]]
     [guadalete-ui.console :as log]
     [guadalete-ui.util :refer [pretty validate! vec->map offset-position]]
-
     [guadalete-ui.events.scene :as scene]
 
     [guadalete-ui.pd.nodes.signal :as signal]
@@ -94,9 +93,7 @@
                 δ (g/- (vec2 mouse-position) (vec2 (get-in db [:tmp :pos])))
                 position* (g/+ (vec2 position) δ)
                 node* (assoc node :position (vec->map position*))]
-               [(keyword id) node*])
-          )
-        )
+               [(keyword id) node*])))
 
 (def-event
   :node/mouse-move

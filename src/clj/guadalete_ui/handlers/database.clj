@@ -35,6 +35,7 @@
         [connection
          type :- s/Keyword
          id :- s/Str]
+        (log/debug "get-one" type id)
         (-> (r/table type)
             (r/get id)
             (r/run connection)
@@ -42,12 +43,25 @@
             (defaults/one type)
             (gs/coerce! type)))
 
+
 (s/defn ^:always-validate table-map
         "Generic convenience function for extracting all enties of a given table into a map"
         [connection
          table-key :- s/Keyword
          map-key :- s/Keyword]
         (mappify map-key (get-all connection table-key)))
+
+(s/defn ^:always-validate load-node
+        "Helper function for loading a node by scene-id and node-id"
+        [connection
+         scene-id :- s/Str
+         node-id :- s/Keyword]
+        (-> (r/table "scene")
+            (r/get scene-id)
+            (r/get-field "nodes")
+            (r/get-field node-id)
+            (r/run connection)
+            (gs/coerce! :node)))
 
 (defn create-item
       [connection type item]
@@ -74,14 +88,11 @@
                              (str "unexpected flag, \"" (str flag) \"))
                       (prune)
                       (gs/coerce! type))]
-             (log/debug "update-item" type)
-             (log/debug patch)
              (try
                (let [result (-> (r/table type)
                                 (r/get id)
                                 (r/replace patch)
                                 (r/run connection))]
-                    (log/debug "UPDATE result:" (pretty result))
                     {:ok patch})
                (catch ExceptionInfo ex
                  (let [msg (.getMessage ex)]
@@ -202,7 +213,26 @@
         (->> :scene
              (get-all connection)))
 
+(s/defn ^:always-validate is-transient? :- s/Bool
+        "Helper for checking whether the given node is considered transient,
+        ie. the item the node references if the node is being removed from the scene"
+        [node :- gs/Node]
+        (not (nil? (in? [:color :constant :mixer] (:ilk node)))))
+
 (defn update-scene [connection id diff flag]
+
+      ;; obacht!
+      ;; Wait and see if nodes are being removed from the scene.
+      ;; If so, check their type. If the type is 'transient' (for lack of a better word),
+      ;; i.e. if the type of node is created only in the context of the scene, remove the item
+      ;; the node references. (:color & :constant nodes)
+      (let [[updates removals] diff]
+           (->> (:nodes removals)
+                (map (fn [[node-id _]] node-id))
+                (map #(load-node connection id %))
+                (filter is-transient?)
+                (map #(trash-item connection (:ilk %) (:item-id %)))))
+
       (update-item connection id diff :scene flag))
 
 (defn trash-scene [connection id]
@@ -243,6 +273,15 @@
 (defn get-constants [connection]
       (get-all connection :constant))
 
+(s/defn ^:always-validate update-constant
+        [connection
+         id :- s/Str
+         update]
+        (update-item connection id update :constant :replace))
+
+(defn trash-constant [connection id]
+      (log/debug "trash-constant" id)
+      (trash-item connection :constant id))
 
 ;//
 ;//   _  _ ______ _ _ ___

@@ -309,32 +309,32 @@
 ;//  |_| |_| \___/_||_\__\___|_||_\__,_| |___/|___/
 ;//
 (s/defschema DB
-             {:name                    s/Str
-              :message                 s/Str
-              :view                    View
-              (s/optional-key :room)   Rooms                ;
-              (s/optional-key :light)  Lights
-              (s/optional-key :scene)  Scenes
-              (s/optional-key :color)  Colors
-              (s/optional-key :mixer)  Mixers
-              (s/optional-key :signal) Signals
+             {:name                      s/Str
+              :message                   s/Str
+              :view                      View
+              (s/optional-key :room)     Rooms              ;
+              (s/optional-key :light)    Lights
+              (s/optional-key :scene)    Scenes
+              (s/optional-key :color)    Colors
+              (s/optional-key :mixer)    Mixers
+              (s/optional-key :signal)   Signals
               (s/optional-key :constant) Constants
 
               ;; flag indicating whether or not the (sente/websocket) connection with the server has been established
-              :ws/connected?           s/Bool
+              :ws/connected?             s/Bool
               ;; flag indicating that the frontend is still loading (used during bootstrap)
-              :loading?                s/Bool
-              :user/role               (s/enum :anonymous :user :admin :none)
+              :loading?                  s/Bool
+              :user/role                 (s/enum :anonymous :user :admin :none)
 
-              (s/optional-key :config) Configuration        ;; map containing configuration data received from the server
-              (s/optional-key :modal)  Modal
+              (s/optional-key :config)   Configuration      ;; map containing configuration data received from the server
+              (s/optional-key :modal)    Modal
 
               ;; map for temporary data used during user-interaction
               ;; eg: the current interaction-mode, currently selected nodes or temporary (mouse) flows are put here
               ;:tmp                    {:nodes    s/Any
               ;                         :selected s/Any
               ;                         :mode     (s/enum :none :pan :link)}
-              :tmp                     TemporaryDB
+              :tmp                       TemporaryDB
               })
 
 
@@ -433,7 +433,9 @@
              :scene ((coerce/coercer Scene coerce/json-coercion-matcher) item)
              :signal ((coerce/coercer Signal coerce/json-coercion-matcher) item)
              :color ((coerce/coercer Color coerce/json-coercion-matcher) item)
+             :mixer ((coerce/coercer Mixer coerce/json-coercion-matcher) item)
              :constant ((coerce/coercer Constant coerce/json-coercion-matcher) item)
+             :node ((coerce/coercer Node coerce/json-coercion-matcher) item)
              (log/error (str "Cannot coerce item: " item ". Dunno item type: " type))))
 
 (defn coerce-all

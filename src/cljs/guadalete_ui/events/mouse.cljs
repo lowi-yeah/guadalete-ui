@@ -65,7 +65,7 @@
                 :node-id    id
                 :item-id    item-id
                 :ilk        ilk
-                :modal-type (keyword (str "pd/" (name ilk)))}]
+                :modal-type (keyword "pd" (name ilk))}]
       {:db    (assoc db :modal data)
        :modal [:show {}]})))
 
