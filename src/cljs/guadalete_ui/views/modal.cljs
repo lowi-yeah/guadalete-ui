@@ -181,13 +181,6 @@
                :component-did-mount
                (fn [_]
                    (-> (str "#" id) (js/$) (.dropdown)))
-               ;(fn [_]
-               ;(go-loop []
-               ;         (let [c (<! channel)
-               ;               color-id (color/make-id c (:type @item-rctn))]
-               ;           (if (not= (:item-id @node-rctn) color-id)
-               ;             (dispatch [:modal/register-node {:item-id color-id}])))
-               ;         (recur)))
                :reagent-render
                (fn []
                    (let [color "#3B3F44"]

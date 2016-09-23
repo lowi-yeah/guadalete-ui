@@ -181,14 +181,14 @@
 ;    (when ?reply-fn
 ;      (?reply-fn response))))
 ;
-;(defmethod event-handler :color/update
-;  [{:keys [?data db-conn ?reply-fn]}]
-;  (let [[id diff flag] ?data
-;        flag (or flag :patch)
-;        response (db/update-color db-conn id diff flag)]
-;    (log/debug ":color/update response:" response)
-;    (when ?reply-fn
-;      (?reply-fn response))))
+(defmethod event-handler :color/update
+  [{:keys [?data db-conn ?reply-fn]}]
+  (let [[id diff flag] ?data
+        flag (or flag :patch)
+        response (db/update-color db-conn id diff flag)]
+    (log/debug ":color/update response:" response)
+    (when ?reply-fn
+      (?reply-fn response))))
 
 
 ;//         _

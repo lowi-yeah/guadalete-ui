@@ -29,7 +29,7 @@
         link (->> (:links node)
                   (filter #(= id (:id %)))
                   (first))
-        offset (link-offset node link)
+        offset (* 2 (link-offset node link))
         x (if (= (:direction link) :in)
             (* -0.5 handle-width)
             (+ (* 0.5 handle-width) node-width))

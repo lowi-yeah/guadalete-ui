@@ -41,10 +41,7 @@
                    [:div.content.ui.form
                     [:h3.centred "Edit constant value"]
                     [:h1.value (int (* 100 (:value @constant-rctn)))]
-
                     [:div#constant-range.ui.range.margin-bottom]
-
-
                     [:div.flex-row-container.right.actions
                      [:div.ui.button.approve
                       [:i.ui.check.icon]

@@ -11,8 +11,7 @@
             [guadalete-ui.pd.color :refer [render-color]]
             [guadalete-ui.views.widgets :refer [signal-sparkline]]
             [guadalete-ui.views.segments.light :refer [light-segment]]
-            [guadalete-ui.views.editor :refer [editor]]
-            ))
+            [guadalete-ui.views.editor :refer [editor]]))
 
 ;// ROOM
 ;// ********************************

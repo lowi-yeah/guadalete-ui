@@ -2,7 +2,7 @@
   (:require-macros
     [reagent.ratom :refer [reaction]])
   (:require
-    [re-frame.core :refer [def-sub subscribe]]
+    [re-frame.core :refer [def-sub subscribe dispatch]]
     [thi.ng.geom.core.vector :refer [vec2]]
     [clojure.set :refer [difference]]
     [guadalete-ui.items :refer [assemble-item]]
@@ -79,7 +79,6 @@
              (assemble-item :room db room)
              room))))
 
-
 (def-sub
   :view/scene-id
   (fn [db _]
@@ -92,6 +91,19 @@
   (fn [db _]
       (let [scene-id-rctn (subscribe [:view/scene-id])
             scene (get-in db [:scene @scene-id-rctn])]
+
+           ; obacht! during development there is this annoying behaviour,
+           ; that when auto-reload is triggered, the scene might not yet be there
+           ; and in consequence we have nils all over the place.
+           ; check this here and make an additional dispatch, if necessary
+           (when (nil? scene)
+                 (let [room-rctn (subscribe [:view/room])]
+                      (when (not (nil? @room-rctn))
+                            (let [room-id (:id @room-rctn)
+                                  scene-id (first (:scene @room-rctn))]
+                                 (log/debug "redirect to" room-id scene-id)
+                                 (dispatch [:view/scene [room-id scene-id]])
+                                 ))))
            scene)))
 
 (def-sub

@@ -39,7 +39,6 @@
         [db :- gs/DB
          {:keys [scene-id node-id id position] :as data} :- gs/MouseEventData]
 
-
         (log/debug "mouse down")
         (log/debug "MouseEventData" data)
         (validate! gs/MouseEventData data)

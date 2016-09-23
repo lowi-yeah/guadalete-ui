@@ -244,9 +244,11 @@
              {s/Str Signal})
 
 (s/defschema Color
-             {:id         s/Str
-              :type       (s/enum :v :sv :hsv)
-              :brightness s/Num})
+             {:id                          s/Str
+              :type                        (s/enum :v :sv :hsv)
+              :brightness                  s/Num
+              (s/optional-key :saturation) s/Num
+              (s/optional-key :hue)        s/Num})
 
 (s/defschema Colors
              {s/Str Color})
@@ -351,24 +353,15 @@
               :scene-id s/Str})
 
 (s/defschema MouseEventData
-             {:room-id  s/Str
-              :scene-id s/Str
-              :node-id  s/Str
-              :type     (s/enum :pd
-                                :default-node
-                                :outlet/color
-                                :node/light
-                                :node/color
-                                :node/signal
-                                :inlet/color
-                                :inlet/hue
-                                :inlet/brightness
-                                :inlet/saturation
-                                )
-              :position Vec2
-              :layout   s/Any
-              :buttons  s/Int
-              })
+             {:room-id             s/Str
+              :scene-id            s/Str
+              :node-id             s/Str
+              (s/optional-key :id) s/Str
+              :type                (s/enum :pd :node :link :flow)
+              :position            Vec2
+              :buttons             s/Int
+              :modifiers           {:alt   s/Bool
+                                    :shift s/Bool}})
 
 
 (s/defschema Effect

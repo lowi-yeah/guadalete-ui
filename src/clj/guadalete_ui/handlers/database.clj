@@ -35,7 +35,6 @@
         [connection
          type :- s/Keyword
          id :- s/Str]
-        (log/debug "get-one" type id)
         (-> (r/table type)
             (r/get id)
             (r/run connection)
@@ -146,11 +145,9 @@
                       (vals)
                       (into []))]
              (try
-               (let [response (-> (r/table ilk)
-                                  (r/insert patch)
-                                  (r/run db-conn))]
-                    {:ok response})
-
+               {:ok (-> (r/table ilk)
+                        (r/insert patch)
+                        (r/run db-conn))}
                (catch ExceptionInfo ex
                  (let [msg (.getMessage ex)]
                       {:error msg})))))
