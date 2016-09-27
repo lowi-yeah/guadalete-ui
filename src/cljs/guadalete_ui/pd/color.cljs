@@ -278,6 +278,7 @@
 (defn render-color
       ; little hack used by color nodes for prettier rendering
       [{:keys [type brightness saturation hue] :as colorr}]
+      (log/debug "render-color" colorr)
       (let [h hue
             s saturation
             v (math/map-interval brightness (vec2 0 1) (vec2 0.2 1))

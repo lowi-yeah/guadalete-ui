@@ -306,6 +306,9 @@
             signals (get-signals connection)
             mixers (get-mixers connection)]
 
+           (log/debug "DB/everything")
+           (log/debug "lights" lights)
+
 
            (log/debug "DB/all constants" (into [] constants))
            {:room     rooms

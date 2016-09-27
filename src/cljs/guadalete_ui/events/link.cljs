@@ -38,24 +38,21 @@
 (s/defn mouse-down :- gs/DB
         [db :- gs/DB
          {:keys [scene-id node-id id position] :as data} :- gs/MouseEventData]
-
-        (log/debug "mouse down")
-        (log/debug "MouseEventData" data)
-        (validate! gs/MouseEventData data)
-
         (let [scene (get-in db [:scene scene-id])
               node-link (link/->get db scene-id node-id id)
               flow-reference (condp = (keyword (:direction node-link))
                                     :in {:from :mouse :to {:scene-id scene-id :node-id node-id :id id}}
                                     :out {:from {:scene-id scene-id :node-id node-id :id id} :to :mouse}
                                     nil)
-              db* (-> db
-                      (assoc-in [:tmp :flow] flow-reference)
-                      (assoc-in [:tmp :start-pos] (vec->map position))
-                      (assoc-in [:tmp :mouse-pos] (vec->map position))
-                      (assoc-in [:tmp :mode] :link)
-                      (assoc-in [:tmp :scene] scene))]
-             db*))
+              tmp* (merge (:tmp db)
+                          {:start-pos (vec->map position)
+                           :mouse-pos (vec->map position)
+                           :mode      :link
+                           :scene     scene})
+              tmp** (if (nil? flow-reference)
+                      (dissoc tmp* :flow)
+                      (assoc tmp* :flow flow-reference))]
+             (assoc db :tmp tmp**)))
 
 (def-event
   :link/mouse-down

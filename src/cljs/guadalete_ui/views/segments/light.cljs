@@ -9,7 +9,7 @@
 (defn- color-indicator []
        (fn [light]
            (let [color (:color light)
-                 c (render-color (assoc color :type (:type light)))]
+                 c (render-color (assoc color :type (:color-type light)))]
                 [:div.small-color-indicator
                  {:style {:background c}}])))
 
@@ -20,11 +20,11 @@
              b (:brightness color)
              s (:saturation color)
              h (:hue color)]
-            (condp = (:type light)
+            (condp = (:color-type light)
                    :v (str "brightness: " b)
                    :sv (str "brightness: " b ", tint: " s)
                    :hsv (str "[ h: " h ", s: " s ", v: " b " ]")
-                   (str "Unknown color type: " (:type light)))))
+                   (str "Unknown color type: " (:color-type light)))))
 
 (defn- channels-string
        "Returns a human readable representation of the DMX channels"

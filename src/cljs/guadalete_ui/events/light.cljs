@@ -80,7 +80,7 @@
         (let [light {:id           (str (random-uuid))
                      :name         (dickens/generate-name)
                      :room-id      room-id
-                     :type         :v
+                     :color-type   :v
                      :num-channels 1
                      :transport    :dmx
                      :channels     []
@@ -244,10 +244,10 @@
 
 (s/defn ^:always-validate update-color :- gs/Light
         [light :- gs/Light]
-        (let [default* (default-color (:type light))
+        (let [default* (default-color (:color-type light))
               existing* (or (:color light) {})
               merged* (merge default* existing*)
-              pruned* (prune-color merged* (:type light))]
+              pruned* (prune-color merged* (:color-type light))]
              (assoc light :color pruned*)))
 
 (def-event-fx

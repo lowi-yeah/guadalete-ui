@@ -171,8 +171,7 @@
               :sensor [s/Str]})
 
 (s/defschema Rooms
-             {s/Str s/Any})
-
+             {s/Str Room})
 
 (s/defschema ColorChannel
              {:name  s/Keyword
@@ -198,7 +197,7 @@
              {(s/optional-key :room-id) s/Str
               :id                       s/Str
               :name                     s/Str
-              :type                     (s/enum :v :sv :hsv)
+              :color-type               (s/enum :v :sv :hsv)
               :transport                (s/eq :mqtt)
               :accepted?                s/Bool
               (s/optional-key :created) s/Any
@@ -271,12 +270,14 @@
 (s/defschema Configuration
              {:signal {:sparkline/timespan-seconds s/Num}})
 
+(s/defschema ModalType
+             (s/enum :constant :light :color :mixer :signal :pd/light :pd/constant))
+
 ;; configuration data for the ui
 (s/defschema Modal
              {:item-id    s/Str
               :ilk        (s/enum :constant :light :color :mixer :signal)
-              :modal-type (s/enum :constant :light :color :mixer :signal)})
-
+              :modal-type ModalType})
 
 ;; description of the current ui-view
 (s/defschema View
@@ -393,7 +394,6 @@
 (s/defschema UpdateResponse
              "Definition for a patch supplied when synchronizing with the backend"
              {(s/enum :ok :error) s/Any})
-
 
 ;//
 ;//   _  _ ______ _ _ ___
